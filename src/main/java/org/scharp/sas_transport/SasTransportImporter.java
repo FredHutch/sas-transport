@@ -67,7 +67,7 @@ public final class SasTransportImporter implements AutoCloseable {
             throw new MalformedTransportFileException("missing first real header record");
         }
 
-        RealHeader firstRealHeader = new RealHeader(recordData, twoDigitYear -> twoDigitYearToRealYear(twoDigitYear));
+        RealHeader firstRealHeader = new RealHeader(recordData, SasTransportImporter::twoDigitYearToRealYear);
         String libraryOperatingSystem = firstRealHeader.operatingSystem();
         String librarySasVersion = firstRealHeader.sasVersion();
         LocalDateTime libraryCreateDate = firstRealHeader.createDate();
