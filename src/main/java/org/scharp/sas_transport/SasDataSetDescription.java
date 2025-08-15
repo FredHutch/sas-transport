@@ -247,6 +247,8 @@ public final class SasDataSetDescription {
     }
 
     /**
+     * Gets this data set's name.
+     *
      * @return This data set's name. This is never {@code null}.
      */
     public String name() {
@@ -254,6 +256,8 @@ public final class SasDataSetDescription {
     }
 
     /**
+     * Gets this data set's type.
+     *
      * @return This data set's type. For example, "BOXPLOT" or "TREE". This is never {@code null}.
      */
     public String type() {
@@ -261,6 +265,8 @@ public final class SasDataSetDescription {
     }
 
     /**
+     * Gets the operating system on which this data set was created.
+     *
      * @return The operating system on which this data set was created. This is never {@code null}.
      */
     public String sourceOperatingSystem() {
@@ -268,6 +274,8 @@ public final class SasDataSetDescription {
     }
 
     /**
+     * Gets the version of SAS on which this data set was last modified.
+     *
      * @return The version of SAS on which this data set was last modified. This is never {@code null}.
      */
     public String sourceSasVersion() {
@@ -275,28 +283,36 @@ public final class SasDataSetDescription {
     }
 
     /**
-     * @return This data set's label. This is never null.
+     * Gets this data set's label.
+     *
+     * @return This data set's label. This is never {@code null}.
      */
     public String label() {
         return label;
     }
 
     /**
-     * @return An unmodifiable list of this data's variables. This is never {@code null}.
+     * Gets a list of this data set's variables.  This list is not modifiable.
+     *
+     * @return A list of this data's variables. This is never {@code null}.
      */
     public List<Variable> variables() {
         return Collections.unmodifiableList(variables);
     }
 
     /**
-     * @return A date on which this data set was created. This is never {@code null}.
+     * Gets the date/time on which this data set was created.
+     *
+     * @return The date/time on which this data set was created. This is never {@code null}.
      */
     public LocalDateTime createTime() {
         return createTime;
     }
 
     /**
-     * @return A date on which this data set was most recently modified. This is never {@code null}.
+     * Gets the date/time on which this data set was most recently modified.
+     *
+     * @return The date/time on which this data set was most recently modified. This is never {@code null}.
      */
     public LocalDateTime modifiedTime() {
         return modifiedTime;
@@ -304,7 +320,7 @@ public final class SasDataSetDescription {
 
     /**
      * Creates a new SAS Library description that wraps this data set description. The library description has the same
-     * operating system, SAS version, create time, and modification time as this data set description.
+     * operating system, SAS version, create time, and modified time as this data set description.
      *
      * @return A new SAS library description that wraps this data set description.
      */
