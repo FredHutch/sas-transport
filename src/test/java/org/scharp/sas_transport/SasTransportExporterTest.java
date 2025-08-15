@@ -86,7 +86,7 @@ public class SasTransportExporterTest {
          *     The observation to write. This must contain an illegal argument.
          */
         static void addObservationWithIllegalArgument(SasTransportExporter exporter, String expectedMessage,
-            Object... observation) {
+            Object[] observation) {
             Exception exception = assertThrows(//
                 IllegalArgumentException.class, //
                 () -> exporter.appendObservation(Arrays.asList(observation)), //
@@ -1202,35 +1202,30 @@ public class SasTransportExporterTest {
                     addObservationWithIllegalArgument(//
                         exporter, //
                         "CHARACTER variables use the empty string for missing values", //
-                        "first", //
-                        badMissingValue);
+                        new Object[] { "first", badMissingValue });
                 }
 
                 // Try writing a value that exceeds the length of the variable.
                 addObservationWithIllegalArgument(//
                     exporter, //
                     "value length exceeds maximum length for variable TEXT2", //
-                    "first", //
-                    "0123456789X");
+                    new Object[] { "first", "0123456789X" });
 
                 // Try writing an object that isn't a String class
                 addObservationWithIllegalArgument(//
                     exporter, //
                     "values for character variables must be String", //
-                    "first", //
-                    new Date());
+                    new Object[] { "first", new Date() });
                 addObservationWithIllegalArgument(//
                     exporter, //
                     "values for character variables must be String", //
-                    "first", //
-                    Double.valueOf(12.3));
+                    new Object[] { "first", Double.valueOf(12.3) });
 
                 // Try writing a string that isn't fully ASCII
                 addObservationWithIllegalArgument(//
                     exporter, //
                     "values of character variables must contain only ASCII (7-bit) characters", //
-                    "first", //
-                    "BAD\u00B5");
+                    new Object[] { "first", "BAD\u00B5" });
 
                 // Write a missing value (successfully)
                 // This is a well-formed row to confirm that the exceptions failed without writing
@@ -1297,8 +1292,7 @@ public class SasTransportExporterTest {
                     addObservationWithIllegalArgument(//
                         exporter, //
                         "non-numeric value given for a numeric variable", //
-                        goodNumber, //
-                        badNumber);
+                        new Object[] { goodNumber, badNumber });
                 }
 
                 // The next set of numbers are tests for boundary conditions of the smallest possible
@@ -1314,15 +1308,13 @@ public class SasTransportExporterTest {
                     addObservationWithIllegalArgument(//
                         exporter, //
                         "XPORT format cannot store numbers smaller than pow(2, -260)", //
-                        goodNumber, //
-                        Double.valueOf(smallNumber));
+                        new Object[] { goodNumber, Double.valueOf(smallNumber) });
 
                     // negative version also fails
                     addObservationWithIllegalArgument(//
                         exporter, //
                         "XPORT format cannot store numbers smaller than pow(2, -260)", //
-                        goodNumber, //
-                        Double.valueOf(-smallNumber));
+                        new Object[] { goodNumber, Double.valueOf(-smallNumber) });
                 }
 
                 // The next set of numbers are tests for boundary conditions of the largest
@@ -1336,15 +1328,13 @@ public class SasTransportExporterTest {
                     addObservationWithIllegalArgument(//
                         exporter, //
                         "XPORT format cannot store numbers larger than pow(2, 248)", //
-                        goodNumber, //
-                        Double.valueOf(largeNumber));
+                        new Object[] { goodNumber, Double.valueOf(largeNumber) });
 
                     // negative version also fails
                     addObservationWithIllegalArgument(//
                         exporter, //
                         "XPORT format cannot store numbers larger than pow(2, 248)", //
-                        goodNumber, //
-                        Double.valueOf(-largeNumber));
+                        new Object[] { goodNumber, Double.valueOf(-largeNumber) });
                 }
 
                 // Write a well-formed observation to confirm that the bad exception didn't
@@ -1400,15 +1390,13 @@ public class SasTransportExporterTest {
                 addObservationWithIllegalArgument(//
                     exporter, //
                     "observation has different number of values than data set has variables", //
-                    "text", //
-                    1.2, //
-                    "too many");
+                    new Object[] { "text", 1.2, "too many" });
 
                 // Try to write too few values in an observation.
                 addObservationWithIllegalArgument(//
                     exporter, //
                     "observation has different number of values than data set has variables", //
-                    "too few");
+                    new Object[] { "too few" });
 
                 // Write a well-formed row (to confirm that the exceptions failed without
                 // writing a partial row).
