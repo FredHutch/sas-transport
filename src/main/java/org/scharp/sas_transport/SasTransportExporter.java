@@ -309,14 +309,8 @@ public final class SasTransportExporter implements AutoCloseable {
             if (value instanceof MissingValue) {
                 switch (variable.type()) {
                 case CHARACTER:
-                    // Only MissingValue.STANDARD is possible for character variables.
-                    if (value != MissingValue.STANDARD) {
-                        throw new IllegalArgumentException(
-                            "CHARACTER variables can only use MissingValue.STANDARD for missing values");
-                    }
-                    // Missing values of character variables are written as whitespace,
-                    // which is handled by the padding logic below.
-                    break;
+                    // MissingValue is only for numeric variables.  CHARACTER variables use the empty string.
+                    throw new IllegalArgumentException("CHARACTER variables use the empty string for missing values");
 
                 case NUMERIC:
                     // write the missing value byte

@@ -5,11 +5,18 @@
 package org.scharp.sas_transport;
 
 /**
- * A representation of a "missing value" in a dataset within a SAS transport file.
+ * A representation of a missing numeric value in a SAS7BDAT dataset.  (Missing character values are represented as the
+ * empty string).
+ * <p>
+ * SAS supports multiple of ways of specifying that a numeric variable's value is missing in an observation.  This can
+ * be used to encode <i>why</i> a value is missing.  For example, it could be that the value is unknown, or that the
+ * subject declined to report a value.  If you don't need to specify multiple ways that a value is missing, use
+ * {@link MissingValue#STANDARD}.
+ * </p>
  */
 public enum MissingValue {
     /**
-     * The missing value that is represented as "{@code .}" in SAS. This applies to both numeric and character values.
+     * The missing value that is represented as "{@code .}" in SAS. This only applies to only numeric values.
      */
     STANDARD('.'),
 

@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.EnumSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -199,7 +198,7 @@ public class SasTransportExporterTest {
             void addObservations(SasTransportExporter exporter) throws IOException {
                 exporter.appendObservation(Arrays.asList(15.2, 5, "first row"));
                 exporter.appendObservation(Arrays.asList(0, 10000, "second row"));
-                exporter.appendObservation(Arrays.asList(-400, 10000, MissingValue.STANDARD));
+                exporter.appendObservation(Arrays.asList(-400, 10000, ""));
                 exporter.appendObservation(Arrays.asList(MissingValue.B, 10000, "final row"));
             }
         }.run();
@@ -1199,10 +1198,10 @@ public class SasTransportExporterTest {
                 // Note that the illegal argument is second, to confirm that the unit-under-test
                 // doesn't write the first (well-formed) value to the output stream when any
                 // of the subsequent values is bad.
-                for (MissingValue badMissingValue : EnumSet.complementOf(EnumSet.of(MissingValue.STANDARD))) {
+                for (MissingValue badMissingValue : MissingValue.values()) {
                     addObservationWithIllegalArgument(//
                         exporter, //
-                        "CHARACTER variables can only use MissingValue.STANDARD for missing values", //
+                        "CHARACTER variables use the empty string for missing values", //
                         "first", //
                         badMissingValue);
                 }
@@ -1236,7 +1235,7 @@ public class SasTransportExporterTest {
                 // Write a missing value (successfully)
                 // This is a well-formed row to confirm that the exceptions failed without writing
                 // a partial row.
-                exporter.appendObservation(Arrays.asList("0123456789", MissingValue.STANDARD));
+                exporter.appendObservation(Arrays.asList("0123456789", ""));
             }
         }.run();
     }
