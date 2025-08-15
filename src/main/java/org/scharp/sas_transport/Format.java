@@ -4,11 +4,18 @@
 ///////////////////////////////////////////////////////////////////////////////
 package org.scharp.sas_transport;
 
+import java.util.HashMap;
+import java.util.Objects;
+
 /**
  * A simple class for describing a format of a SAS variable.
  *
  * <p>
  * Instances of this class are immutable.
+ * </p>
+ *
+ * <p>
+ * This class supports {@code equals()} and {@code hashCode()} so that its instances suitable for use in a HashMap.
  * </p>
  *
  * <p>
@@ -114,25 +121,96 @@ public final class Format {
     }
 
     /**
-     * @return The name of this format. This may be the empty string but never {@code null}.
+     * Gets the name of this format.  For example "COMMA", "$CHAR", "DOLLAR", or "".
+     *
+     * @return This format's name. This may be the empty string but never {@code null}.
      */
     public String name() {
         return name;
     }
 
     /**
-     * @return The width of this format. If this is zero, then no explicit width is set.
+     * Gets this format's width. If this is zero, then no explicit width is set.
+     *
+     * @return The width of this format.
      */
     public int width() {
         return width;
     }
 
     /**
-     * @return The number of digits. If this is zero, then no explicit number of digits is set.
+     * Gets this format's number of digits. If this is zero, then no explicit number of digits is set.
+     *
+     * @return The number of digits in this format.
      */
     public int numberOfDigits() {
         return numberOfDigits;
     }
 
-    // TODO: toString() to format like SAS.
+    /**
+     * Gets a hash code for this format.
+     * <p>
+     * This method is supported for the benefit of hash tables such as those provided by {@link HashMap}.
+     * </p>
+     *
+     * @return this format's hash code
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, width, numberOfDigits);
+    }
+
+    /**
+     * Determines if this format is equal to another object.
+     * <p>
+     * Two formats are equal if their format name, width, and numberOfDigits are all equal.
+     * </p>
+     *
+     * @param other
+     *     The object with which to compare this format
+     *
+     * @return {@code true}, if this format is equal to {@code other}.  {@code false}, otherwise.
+     */
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof Format)) {
+            return false;
+        }
+
+        Format otherFormat = (Format) other;
+        return name.equals(otherFormat.name) && //
+            width == otherFormat.width && //
+            numberOfDigits == otherFormat.numberOfDigits;
+    }
+
+    /**
+     * Gets this format as a string rendered the way that SAS would render it.
+     *
+     * <p>
+     * For example "$ASCII4." or "BESTD5.2".
+     * </p>
+     *
+     * @return A string representing this format.
+     */
+    @Override
+    public String toString() {
+        if (UNSPECIFIED.equals(this)) {
+            return "";
+        }
+
+        // SAS displays formats in the form: <name> <width> '.' <digits>.
+        // If <width> or <digits> is zero, then the component isn't included in the string.
+        StringBuilder builder = new StringBuilder(name);
+        if (width != 0) {
+            builder.append(width);
+        }
+        builder.append('.');
+        if (numberOfDigits != 0) {
+            builder.append(numberOfDigits);
+        }
+        return builder.toString();
+    }
 }
