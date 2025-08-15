@@ -180,43 +180,55 @@ public final class Variable {
     }
 
     /**
-     * @return this variable's type (character or numeric). This is never {@code null}.
+     * Gets this variable's type (character or numeric).
+     *
+     * @return This variable's type. This is never {@code null}.
      */
     public VariableType type() {
         return type;
     }
 
     /**
-     * @return this variable's name. This may be the empty string but never {@code null}.
+     * Gets this variable's name.
+     *
+     * @return This variable's name. This is never {@code null} or empty.
      */
     public String name() {
         return name;
     }
 
     /**
-     * @return this variable's label. This may be the empty string but never {@code null}.
+     * Gets this variable's label.
+     *
+     * @return This variable's label. This may be the empty string but never {@code null}.
      */
     public String label() {
         return label;
     }
 
     /**
-     * @return this variable's number (its column order).
+     * Gets this variable's number (its column order).
+     *
+     * @return This variable's number.
      */
     public int number() {
         return number;
     }
 
     /**
-     * @return The number of bytes that values of this variable can occupy within an observation.
+     * Gets this variable's length, which is number of bytes that values of this variable can occupy within an
+     * observation.
+     *
+     * @return This variable's length.
      */
     public int length() {
         return length;
     }
 
     /**
-     * @return The format to use when rendering values for display. This is never null. SAS refers to this as the
-     *     "FORMAT".
+     * Gets the format to use when rendering this variable's values for display. SAS refers to this as the "FORMAT".
+     *
+     * @return This variable's output format. This is never {@code null}.
      */
     public Format outputFormat() {
         return outputFormat;
@@ -236,8 +248,10 @@ public final class Variable {
     }
 
     /**
-     * @return The format to use when reading values into a SAS program. This is never {@code null}. SAS refers to this
-     *     as the "INFORMAT".
+     * Gets the format to use when rendering this variable's values into a SAS program. SAS refers to this as the
+     * "INFORMAT".
+     *
+     * @return The variable's input format. This is never {@code null}.
      */
     public Format inputFormat() {
         return inputFormat;
