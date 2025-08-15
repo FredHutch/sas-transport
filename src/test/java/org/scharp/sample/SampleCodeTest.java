@@ -106,7 +106,7 @@ public class SampleCodeTest {
 
         try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(path)) {
 
-            // Get the variables
+            // Get the variables.
             List<Variable> dataSetVariables = importer.sasLibraryDescription().dataSetDescription().variables();
 
             // Display a header using the variable names.
@@ -118,12 +118,12 @@ public class SampleCodeTest {
             List<Object> observation;
             while ((observation = importer.nextObservation()) != null) {
 
-                // Render each value in the observation
+                // Render each value in the observation.
                 for (int i = 0; i < observation.size(); i++) {
                     final Variable variable = dataSetVariables.get(i);
                     final Object value = observation.get(i);
 
-                    String formattedValue;
+                    final String formattedValue;
                     if (value instanceof MissingValue) {
                         formattedValue = padRight(variable, ".");
                     } else {

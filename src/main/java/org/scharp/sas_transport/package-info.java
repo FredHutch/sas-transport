@@ -70,8 +70,8 @@
  *
  * <p>
  * The XPORT format is publicly documented, but there is no specifications committee and the specification is vague,
- * incomplete, and incorrect at times. As a result, SAS still remains the defacto definition and this library follows
- * what SAS does whenever it conflicts with the standard.
+ * incomplete, and incorrect at times. As a result, SAS still remains the <i>de facto</i> definition and this library
+ * follows what SAS does whenever it conflicts with the standard.
  * </p>
  *
  * <p>
@@ -116,49 +116,49 @@
  * </p>
  *
  * <pre>
- * List&lt;Variable&gt; variables = List.of(
+ * List&lt;Variable&gt; variables = Arrays.asList(
  *
- *     new Variable(//
- *         "CITY", // name
- *         1, // variable number
- *         VariableType.CHARACTER, //
- *         20, // length
- *         "Name of city", //
- *         new Format("$CHAR", 18), //
- *         Justification.LEFT, //
- *         Format.UNSPECIFIED), //
+ *     new Variable(
+ *         "CITY",                  // name
+ *         1,                       // variable number
+ *         VariableType.CHARACTER,  // type
+ *         20,                      // length
+ *         "Name of city",          // label
+ *         new Format("$CHAR", 18), // output format
+ *         Justification.LEFT,
+ *         Format.UNSPECIFIED),     // input format
  *
- *     new Variable(//
- *         "STATE", // name
- *         2, // variable number
- *         VariableType.CHARACTER, //
- *         2, // length
- *         "Postal abbreviation of state", //
- *         new Format("$CHAR", 2), //,
- *         Justification.LEFT, //
- *         Format.UNSPECIFIED), //
+ *     new Variable(
+ *         "STATE",
+ *         2,
+ *         VariableType.CHARACTER,
+ *         2,
+ *         "Postal abbreviation of state",
+ *         new Format("$CHAR", 2),
+ *         Justification.LEFT,
+ *         Format.UNSPECIFIED),
  *
- *     new Variable(//
- *         "HIGH", //
- *         3, // variable number
- *         VariableType.NUMERIC, //
- *         8, //
- *         "Average daily high in F", //
- *         new Format("", 5), //
- *         Justification.LEFT, //
- *         Format.UNSPECIFIED), //
+ *     new Variable(
+ *         "HIGH",
+ *         3,
+ *         VariableType.NUMERIC,
+ *         8,
+ *         "Average daily high in F",
+ *         new Format("", 5),
+ *         Justification.LEFT,
+ *         Format.UNSPECIFIED),
  *
- *     new Variable(//
- *         "LOW", //
- *         4, //
- *         VariableType.NUMERIC, //
- *         8, //
- *         "Average daily low in F", //
- *         new Format("", 5), //
- *         Justification.LEFT, //
+ *     new Variable(
+ *         "LOW",
+ *         4,
+ *         VariableType.NUMERIC,
+ *         8,
+ *         "Average daily low in F",
+ *         new Format("", 5),
+ *         Justification.LEFT,
  *         Format.UNSPECIFIED));
  *
- * SasDataSetDescription dataSet = new SasDataSetDescription(//
+ * SasDataSetDescription dataSet = new SasDataSetDescription(
  *     "TEMP", // name
  *     "Average daily temperatures", // label
  *     "", // type
@@ -192,10 +192,10 @@
  *
  * try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(path)) {
  *
- *     // Get the variables
+ *     // Get the variables.
  *     List&lt;Variable&gt; dataSetVariables = importer.sasLibraryDescription().dataSetDescription().variables();
  *
- *     // Display a header using the variables
+ *     // Display a header using the variables.
  *     StringBuilder header = new StringBuilder();
  *     for (Variable variable : dataSetVariables) {
  *         header.append(String.format("%-" + (variable.outputFormat().width() + 1) + "s ", variable.name()));
@@ -206,12 +206,12 @@
  *     while ((observation = importer.nextObservation()) != null) {
  *         StringBuilder row = new StringBuilder(header.length());
  *
- *         // Render each value in the observation
+ *         // Render each value in the observation.
  *         for (int i = 0; i &lt; observation.size(); i++) {
  *             final Variable variable = dataSetVariables.get(i);
  *             final Object value = observation.get(i);
  *
- *             String formattedValue;
+ *             final String formattedValue;
  *             if (value instanceof MissingValue) {
  *                 formattedValue = String.format("%-" + (variable.outputFormat().width() + 1) + "s", ".");
  *             } else {
