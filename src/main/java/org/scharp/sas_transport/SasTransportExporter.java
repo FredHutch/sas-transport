@@ -263,10 +263,8 @@ public final class SasTransportExporter implements AutoCloseable {
      *
      *     <p>
      *     If the corresponding variable's type is {@code VariableType.CHARACTER}, then the object must be a
-     *     String that contains only ASCII characters and fit within the variable's length. If the object is a
-     *     {@code MissingValue}, then it must be {@code MissingValue.STANDARD}, as the other missing values are
-     *     not permitted for character data. Note that the empty string and a value consisting of only whitespace
-     *     are identical to {@code MissingValue.STANDARD} in the XPORT format.
+     *     String that contains only ASCII characters and fit within the variable's length. Note that the empty string
+     *     and a value consisting of only space characters are identical in the XPORT format.
      *     </p>
      *
      * @throws IOException

@@ -2753,7 +2753,7 @@ public class SasTransportImporterTest {
         try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
 
             // Read the first observation.
-            assertNextObservation(importer, MissingValue.STANDARD);
+            assertNextObservation(importer, " ");
 
             // Even though the dataset that generated this XPORT has three missing
             // values after this, because the missing values look like padding, SAS
@@ -2794,7 +2794,7 @@ public class SasTransportImporterTest {
 
             // The first 80 bytes (10 records) have only missing values.
             for (int i = 0; i < 10; i++) {
-                assertNextObservation(importer, MissingValue.STANDARD); // all values are missing
+                assertNextObservation(importer, "        "); // all values are missing
             }
 
             // Read the one (and only) non-missing value in the file.
@@ -2802,7 +2802,7 @@ public class SasTransportImporterTest {
 
             // The rest of the record (9 more observations) are also missing values.
             for (int i = 0; i < 9; i++) {
-                assertNextObservation(importer, MissingValue.STANDARD);
+                assertNextObservation(importer, "        ");
             }
 
             // The final record in this file is nothing but ASCII blanks.
@@ -2812,7 +2812,7 @@ public class SasTransportImporterTest {
 
             // BUG?: we follow the specification and assume that one observation was
             // written.  Should we do what SAS does instead?
-            assertNextObservation(importer, MissingValue.STANDARD);
+            assertNextObservation(importer, "        ");
 
             // Even though the dataset that generated this XPORT has missing
             // values after this, because the missing values look like padding, SAS
@@ -2878,10 +2878,10 @@ public class SasTransportImporterTest {
 
             // The variable is 20 bytes (1/4 of a record).
             // The first record is blank, so there are four missing values.
-            assertNextObservation(importer, MissingValue.STANDARD);
-            assertNextObservation(importer, MissingValue.STANDARD);
-            assertNextObservation(importer, MissingValue.STANDARD);
-            assertNextObservation(importer, MissingValue.STANDARD);
+            assertNextObservation(importer, "                    ");
+            assertNextObservation(importer, "                    ");
+            assertNextObservation(importer, "                    ");
+            assertNextObservation(importer, "                    ");
 
             // The subsequent record is truncated by one byte, so the XPORT is provably malformed.
             // SAS reads one more missing value from the XPORT file and exits without error.
@@ -2903,13 +2903,13 @@ public class SasTransportImporterTest {
         try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
 
             // The first observation is a missing value
-            assertNextObservation(importer, MissingValue.STANDARD);
+            assertNextObservation(importer, "                                   ");
 
             // The second observation is some text
             assertNextObservation(importer, "next value spans record boundary   ");
 
             // The third observation is a missing value and spans the record boundary.
-            assertNextObservation(importer, MissingValue.STANDARD);
+            assertNextObservation(importer, "                                   ");
 
             // EOF
             assertEndOfObservations(importer);
@@ -2926,22 +2926,22 @@ public class SasTransportImporterTest {
         try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
 
             // The first two records have observations with blank values.
-            assertNextObservation(importer, MissingValue.STANDARD);
-            assertNextObservation(importer, MissingValue.STANDARD);
-            assertNextObservation(importer, MissingValue.STANDARD);
-            assertNextObservation(importer, MissingValue.STANDARD);
+            assertNextObservation(importer, "                                        ");
+            assertNextObservation(importer, "                                        ");
+            assertNextObservation(importer, "                                        ");
+            assertNextObservation(importer, "                                        ");
 
             // The third record has an observation with some text.
             assertNextObservation(importer, "Value between records with blanks       ");
-            assertNextObservation(importer, MissingValue.STANDARD);
+            assertNextObservation(importer, "                                        ");
 
             // The fourth record has two observations of missing values.
-            assertNextObservation(importer, MissingValue.STANDARD);
-            assertNextObservation(importer, MissingValue.STANDARD);
+            assertNextObservation(importer, "                                        ");
+            assertNextObservation(importer, "                                        ");
 
             // The fifth record has two observations of missing values, but SAS
             // interprets the last one as padding.
-            assertNextObservation(importer, MissingValue.STANDARD);
+            assertNextObservation(importer, "                                        ");
             assertEndOfObservations(importer);
         }
     }
@@ -2960,7 +2960,7 @@ public class SasTransportImporterTest {
 
             // The next 78 observations have blank values.
             for (int i = 0; i < 78; i++) {
-                assertNextObservation(importer, MissingValue.STANDARD);
+                assertNextObservation(importer, " ");
             }
 
             // The final (80th) observation has a value.
@@ -2986,7 +2986,8 @@ public class SasTransportImporterTest {
             assertNextObservation(importer, value);
 
             // The second observation should be a missing value.
-            assertNextObservation(importer, MissingValue.STANDARD);
+            String missing = "                                                                                ";
+            assertNextObservation(importer, missing);
 
             // EOF
             assertEndOfObservations(importer);
@@ -3203,7 +3204,7 @@ public class SasTransportImporterTest {
             assertNextObservation(importer, "e item");
             assertNextObservation(importer, "/mater");
             assertNextObservation(importer, "ial   ");
-            assertNextObservation(importer, MissingValue.STANDARD);
+            assertNextObservation(importer, "      ");
             assertNextObservation(importer, "DOLLAR");
             assertNextObservation(importer, new String(new char[] { ' ', ' ', 0, 15, 0, 2 }));
             assertNextObservation(importer, new String(new char[] { 0, 0, 0, 0, 'C', 'O' }));

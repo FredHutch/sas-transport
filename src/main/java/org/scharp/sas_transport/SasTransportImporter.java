@@ -294,7 +294,14 @@ public final class SasTransportImporter implements AutoCloseable {
 
     /**
      * <p>
-     * Reads the next observation from the input stream and returns it as a list.
+     * Reads the next observation from the input stream and returns it as a list of objects.
+     *
+     * <p>The value of a Character variable is always returned as a {@link String} whose length matches the variable's
+     * length.  Strings may be right padded with space characters.
+     * </p>
+     *
+     * <p>
+     * The value of a Numeric variable is returned as a {@link Double} or a {@link MissingValue}.
      * </p>
      *
      * <p>
@@ -443,16 +450,11 @@ public final class SasTransportImporter implements AutoCloseable {
                 switch (variables[i].type()) {
                 case CHARACTER:
                     // For CHARACTER data, missing values are represented by blanks.
-                    if (isBlanks(observationBuffer, valueOffsetInObservation, valueLength)) {
-                        value = MissingValue.STANDARD;
-                    } else {
-                        // This was not a missing value, so treat it as a string.
-                        value = new String(//
-                            observationBuffer, //
-                            valueOffsetInObservation, //
-                            valueLength, //
-                            StandardCharsets.US_ASCII);
-                    }
+                    value = new String(//
+                        observationBuffer, //
+                        valueOffsetInObservation, //
+                        valueLength, //
+                        StandardCharsets.US_ASCII);
                     break;
 
                 case NUMERIC:
