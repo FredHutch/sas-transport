@@ -89,6 +89,8 @@ public final class SasLibraryDescription {
     }
 
     /**
+     * Gets the operating system on which this library was created.
+     *
      * @return The operating system on which this library was created. This is never {@code null}.
      */
     public String sourceOperatingSystem() {
@@ -96,13 +98,17 @@ public final class SasLibraryDescription {
     }
 
     /**
-     * @return The version of SAS on which this data set was last modified. This is never {@code null}.
+     * Gets the version of SAS which most recently modified this data set.
+     *
+     * @return The version of SAS which most recently modified this data set. This is never {@code null}.
      */
     public String sourceSasVersion() {
         return sourceSasVersion;
     }
 
     /**
+     * Gets this SAS library's one and only data set.
+     *
      * @return This library's one and only data set. This is never {@code null}.
      */
     public SasDataSetDescription dataSetDescription() {
@@ -110,14 +116,18 @@ public final class SasLibraryDescription {
     }
 
     /**
-     * @return A date on which this data set was created. This is never {@code null}.
+     * Gets the date/time on which this SAS library was created.
+     *
+     * @return The date/time on which this library was created. This is never {@code null}.
      */
     public LocalDateTime createTime() {
         return createTime;
     }
 
     /**
-     * @return A date on which this data set was most recently modified. This is never {@code null}.
+     * Gets the date/time on which this SAS library was most recently modified.
+     *
+     * @return The date/time on which this SAS library was most recently modified. This is never {@code null}.
      */
     public LocalDateTime modifiedTime() {
         return modifiedTime;
