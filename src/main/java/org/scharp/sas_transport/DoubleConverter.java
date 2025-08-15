@@ -29,6 +29,10 @@ package org.scharp.sas_transport;
  */
 abstract class DoubleConverter {
 
+    // Prevent ArgumentUtil from being instantiated.
+    private DoubleConverter() {
+    }
+
     //private static final long XPORT_MIN_POSITIVE = 0x0010000000000000L;
     //private static final long XPORT_MAX_POSITIVE = 0x7FFFFFFFFFFFFFFFL;
 

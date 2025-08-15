@@ -8,6 +8,11 @@ package org.scharp.sas_transport;
  * A class with utility methods for validating arguments.
  */
 abstract class ArgumentUtil {
+
+    // Prevent ArgumentUtil from being instantiated.
+    private ArgumentUtil() {
+    }
+
     /**
      * Throws an exception if {@code argument} is {@code null}.
      *
