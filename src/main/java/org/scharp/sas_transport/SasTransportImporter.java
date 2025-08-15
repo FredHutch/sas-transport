@@ -309,7 +309,7 @@ public final class SasTransportImporter implements AutoCloseable {
      * {@code SasLibraryDescription} that is returned from {@link #sasLibraryDescription()}.
      * </p>
      *
-     * @return The list of observations, or {@code null} if we've read to the end of the XPORT file.
+     * @return A list of values in the next observation, or {@code null} if we've read to the end of the XPORT file.
      *
      * @throws IOException
      *     if there was an error reading the input stream
@@ -440,7 +440,7 @@ public final class SasTransportImporter implements AutoCloseable {
 
             // Now that we have read the observation into a contiguous buffer, we can extract
             // the values in the observation according to their variable definition.
-            List<Object> observations = new ArrayList<>(variables.length);
+            List<Object> observation = new ArrayList<>(variables.length);
             for (int i = 0; i < variables.length; i++) {
                 // useful aliases to improve readability
                 final int valueOffsetInObservation = variableObservationOffsets[i];
@@ -478,10 +478,10 @@ public final class SasTransportImporter implements AutoCloseable {
                     throw new AssertionError("can't happen");
                 }
 
-                observations.add(value);
+                observation.add(value);
             }
 
-            return observations;
+            return observation;
         } catch (IOException exception) {
             // Save any exceptions that were encountered so that we can re-throw it
             // if we are called again.
