@@ -110,4 +110,11 @@ The following code sample demonstrates how to read a SAS transport file and prin
         }
     }
 
+Limitations
+-----------
 
+* Only XPORT V5 is supported.
+* The transport files must only have one data set per file.
+* Only ASCII strings are supported (as required by the FDA).
+* Requires Java 8 or later.
+* Compressed files (CPORT) are not supported.
