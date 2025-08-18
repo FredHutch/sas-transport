@@ -72,6 +72,7 @@ public final class SasTransportExporter implements AutoCloseable {
      *     The number of blank bytes to write.
      *
      * @throws IOException
+     *     when the padding can't be written to the output stream.
      */
     private void pad(int length) throws IOException {
         // Write out in chunks the size of the padding array.
