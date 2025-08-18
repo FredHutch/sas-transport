@@ -15,7 +15,7 @@ import java.util.List;
  * A structured interface for writing a SAS Transport File XPORT to an output stream.
  *
  * <p>
- * The definition of this format is maintained by the SAS Corporation at
+ * The definition of this file format is maintained by the SAS Corporation at
  * <a href="https://support.sas.com/techsup/technote/ts140.pdf">https://support.sas.com/techsup/technote/ts140.pdf</a>.
  */
 public final class SasTransportExporter implements AutoCloseable {
