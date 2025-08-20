@@ -3570,11 +3570,11 @@ public class SasTransportImporterTest {
     }
 
     /**
-     * Tests that reading a SAS XPORT file whose NAMESTR header claims that it has 10 NAMESTR records, but it, in fact,
-     * has 4. SAS cannot generate such a file. SAS can read/write the file as if it had 1 variable and no observations
-     * but when attempting to export it to a CSV, appears to reinterpret the HEADER after the NAMESTR records as the
-     * header of a new data set. In short, SAS has no special logic to correct for this, and it handles it however its
-     * logic happens to handle it.
+     * Tests reading a SAS XPORT file whose NAMESTR header claims that it has 10 NAMESTR records, but it, in fact, has
+     * 4. SAS cannot generate such a file. SAS can read/write the file as if it had 1 variable and no observations but
+     * when attempting to export it to a CSV, appears to reinterpret the HEADER after the NAMESTR records as the header
+     * of a new data set. In short, SAS has no special logic to correct for this, and it handles it however its logic
+     * happens to handle it.
      */
     @Test
     public void testTooFewNamestrRecords() {
