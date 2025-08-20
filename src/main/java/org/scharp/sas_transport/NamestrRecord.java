@@ -46,19 +46,19 @@ class NamestrRecord extends Record {
     NamestrRecord(VariableType type, int variableLength, int variableNumber, String variableName, String label,
         Format format, Justification justification, Format inputFormat, int positionInObservation) {
         super(140);
-        assert type != null : type;
+        assert type != null;
         short typeCode = type == VariableType.NUMERIC ? (short) 1 : (short) 2;
         short nameHash = 0;
         short nlng = toShort(variableLength);
         short nvar0 = toShort(variableNumber);
 
-        assert variableName != null : variableName;
+        assert variableName != null;
         assert variableName.length() <= 8 : variableName;
 
-        assert label != null : label;
+        assert label != null;
         assert label.length() <= 40 : label;
 
-        assert justification != null : justification;
+        assert justification != null;
         short justificationCode;
         switch (justification) {
         case LEFT:
@@ -115,7 +115,7 @@ class NamestrRecord extends Record {
     }
 
     private int toArray(Format format, int offset) {
-        assert format != null : format;
+        assert format != null;
         offset += toSpacePaddedArray(format.name(), offset, 8);
         offset += toArray((short) format.width(), offset);
         toArray((short) format.numberOfDigits(), offset);
