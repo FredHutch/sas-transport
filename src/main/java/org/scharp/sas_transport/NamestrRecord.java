@@ -86,7 +86,7 @@ class NamestrRecord extends Record {
         offset += toArray(justificationCode, offset);
         offset += toArray((short) 0, offset); // nfill
         offset += toArray(inputFormat, offset);
-        offset += toArray(positionInObservation, offset);
+        toArray(positionInObservation, offset);
         // the rest is already zero-filled.
     }
 
@@ -118,7 +118,7 @@ class NamestrRecord extends Record {
         assert format != null : format;
         offset += toSpacePaddedArray(format.name(), offset, 8);
         offset += toArray((short) format.width(), offset);
-        offset += toArray((short) format.numberOfDigits(), offset);
+        toArray((short) format.numberOfDigits(), offset);
         return 8 + 2 + 2;
     }
 
