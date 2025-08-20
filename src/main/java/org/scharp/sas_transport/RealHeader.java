@@ -29,11 +29,20 @@ class RealHeader extends Record {
      * The constructor to use when writing a REAL_HEADER.
      *
      * @param symbol1
+     *     The first symbol in the header.  For example, this is "SAS" in the real header that begins with
+     *     {@code "SAS     DATA    SASDATA 9.4     WIN_NT"}.
      * @param symbol2
+     *     The second symbol in the header.  For example, this is "DATA" in the real header that begins with
+     *     {@code "SAS     DATA    SASDATA 9.4     WIN_NT"}.
      * @param sasLibrary
+     *     The name of the SAs library.  For example, this is "SASDATA" in the real header that begins with
+     *     {@code "SAS     DATA    SASDATA 9.4     WIN_NT"}.
      * @param sasVersion
+     *     The version of SAS that most recently modified the library.
      * @param operatingSystem
+     *     The operating system on which SAS was running when it wrote the library.
      * @param createDate
+     *     The date/time when the record was created.
      */
     RealHeader(String symbol1, String symbol2, String sasLibrary, String sasVersion, String operatingSystem,
         LocalDateTime createDate) {
