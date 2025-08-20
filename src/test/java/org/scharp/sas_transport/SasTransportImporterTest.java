@@ -2262,20 +2262,8 @@ public class SasTransportImporterTest {
             Object[] expectedObservation1 = new Object[TOTAL_VARIABLES];
             Object[] expectedObservation2 = new Object[TOTAL_VARIABLES];
             for (int i = 0; i < TOTAL_VARIABLES; i++) {
-                // Start with the expected value
-                StringBuilder value1 = new StringBuilder("val" + (i + 1));
-                StringBuilder value2 = new StringBuilder("r2val" + (i + 1));
-
-                // pad with spaces
-                while (value1.length() != dataSetVariables.get(i).length()) {
-                    value1.append(' ');
-                }
-                while (value2.length() != dataSetVariables.get(i).length()) {
-                    value2.append(' ');
-                }
-
-                expectedObservation1[i] = value1.toString();
-                expectedObservation2[i] = value2.toString();
+                expectedObservation1[i] = "val" + (i + 1);
+                expectedObservation2[i] = "r2val" + (i + 1);
             }
             assertNextObservation(importer, expectedObservation1);
             assertNextObservation(importer, expectedObservation2);
@@ -2342,34 +2330,10 @@ public class SasTransportImporterTest {
                         "00160:ABCDEFGHIJKLMNOPQRSTUVWXYZ" + //
                         "00192:AB", //
                     12.34, //
-                    "ThisIsMoreTextForSecondVar      " + //
-                        "                                " + //
-                        "                                " + //
-                        "                                " + //
-                        "                                " + //
-                        "                                " + //
-                        "        ", //
+                    "ThisIsMoreTextForSecondVar", //
                 });
 
-            assertNextObservation(//
-                importer, //
-                new Object[] { //
-                    "This_is_long_text(butShortOne)  " + //
-                        "                                " + //
-                        "                                " + //
-                        "                                " + //
-                        "                                " + //
-                        "                                " + //
-                        "        ", //
-                    32.0, //
-                    "LastVal                         " + //
-                        "                                " + //
-                        "                                " + //
-                        "                                " + //
-                        "                                " + //
-                        "                                " + //
-                        "        ", //
-                });
+            assertNextObservation(importer, new Object[] { "This_is_long_text(butShortOne)", 32.0, "LastVal" });
 
             assertEndOfObservations(importer); // EOF
         }
@@ -2486,10 +2450,10 @@ public class SasTransportImporterTest {
                 Format.UNSPECIFIED); // input format
 
             // The data should appear as raw (unformatted) data.
-            assertNextObservation(importer, new Object[] { "31ABC   ", "M       ", 45000.0, 0.0 });
-            assertNextObservation(importer, new Object[] { "21JKL   ", "F       ", 200000.0, 1.0 });
-            assertNextObservation(importer, new Object[] { "382JI   ", "F       ", 131000.0, 2.0 });
-            assertNextObservation(importer, new Object[] { "MRX12   ", "X       ", 6000.0, 3.0 });
+            assertNextObservation(importer, new Object[] { "31ABC", "M", 45000.0, 0.0 });
+            assertNextObservation(importer, new Object[] { "21JKL", "F", 200000.0, 1.0 });
+            assertNextObservation(importer, new Object[] { "382JI", "F", 131000.0, 2.0 });
+            assertNextObservation(importer, new Object[] { "MRX12", "X", 6000.0, 3.0 });
             assertEndOfObservations(importer);
         }
     }
@@ -2521,7 +2485,7 @@ public class SasTransportImporterTest {
                 Format.UNSPECIFIED); // input format
 
             // Get the one (and only) observation
-            assertNextObservation(importer, new Object[] { "mydata  " });
+            assertNextObservation(importer, new Object[] { "mydata" });
 
             // There is only one observation.
             assertEndOfObservations(importer);
@@ -2555,7 +2519,7 @@ public class SasTransportImporterTest {
                 Format.UNSPECIFIED); // input format
 
             // Get the one (and only) observation.  Non-ASCII characters converted to <?>.
-            assertNextObservation(importer, new Object[] { "MICROS \uFFFD\uFFFD      " });
+            assertNextObservation(importer, new Object[] { "MICROS \uFFFD\uFFFD" });
 
             // There is only one observation.
             assertEndOfObservations(importer);
@@ -2591,7 +2555,7 @@ public class SasTransportImporterTest {
             assertNextObservation( //
                 importer, //
                 new Object[] { //
-                    "\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD    ",
+                    "\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD",
                 });
 
             // There is only one observation.
@@ -2758,7 +2722,7 @@ public class SasTransportImporterTest {
                 Format.UNSPECIFIED); // input format
 
             // The first data set has one observation.
-            assertNextObservation(importer, new Object[] { "data-in-dataset-a   " });
+            assertNextObservation(importer, new Object[] { "data-in-dataset-a" });
 
             // As we go to the next data set, an exception should be thrown
             assertNextObservationsThrowsException(importer, MultipleDataSetsNotSupportedException.class, null);
@@ -3028,12 +2992,12 @@ public class SasTransportImporterTest {
             // The first observation can be read.
             assertNextObservation( //
                 importer, //
-                new Object[] { Double.valueOf(15.2), Double.valueOf(5.0), "first row      " });
+                new Object[] { Double.valueOf(15.2), Double.valueOf(5.0), "first row" });
 
             // The second observation can be read.
             assertNextObservation( //
                 importer, //
-                new Object[] { Double.valueOf(0.0), Double.valueOf(10000.0), "second row     " });
+                new Object[] { Double.valueOf(0.0), Double.valueOf(10000.0), "second row" });
 
             // Now try to read the truncated observation.
             assertNextObservationsThrowsException(//
@@ -3053,12 +3017,9 @@ public class SasTransportImporterTest {
         try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
 
             // The first observation is complete.
-            String value1 = "This is TEXT1 in observation #1.                                                ";
-            String value2 = "This is TEXT2 in observation #1.                                                ";
-            String value3 = "This is TEXT3 in observation #1.                                                ";
-            assertEquals(80, value1.length(), "TEST BUG");
-            assertEquals(80, value2.length(), "TEST BUG");
-            assertEquals(80, value3.length(), "TEST BUG");
+            String value1 = "This is TEXT1 in observation #1.";
+            String value2 = "This is TEXT2 in observation #1.";
+            String value3 = "This is TEXT3 in observation #1.";
             assertNextObservation(importer, new Object[] { value1, value2, value3 });
 
             // Now try to read the truncated observation.
@@ -3081,7 +3042,7 @@ public class SasTransportImporterTest {
         try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
 
             // Read the first observation.
-            assertNextObservation(importer, new Object[] { " " });
+            assertNextObservation(importer, new Object[] { "" });
 
             // Even though the dataset that generated this XPORT has three missing
             // values after this, because the missing values look like padding, SAS
@@ -3101,7 +3062,7 @@ public class SasTransportImporterTest {
         try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
 
             // Read the one (and only) non-missing value in the file.
-            assertNextObservation(importer, new Object[] { "TEXT    " });
+            assertNextObservation(importer, new Object[] { "TEXT" });
 
             // Even though the dataset that generated this XPORT has missing
             // values after this, because the missing values look like padding, SAS
@@ -3122,15 +3083,15 @@ public class SasTransportImporterTest {
 
             // The first 80 bytes (10 records) have only missing values.
             for (int i = 0; i < 10; i++) {
-                assertNextObservation(importer, new Object[] { "        " }); // all values are missing
+                assertNextObservation(importer, new Object[] { "" }); // all values are missing
             }
 
             // Read the one (and only) non-missing value in the file.
-            assertNextObservation(importer, new Object[] { "TEXT    " });
+            assertNextObservation(importer, new Object[] { "TEXT" });
 
             // The rest of the record (9 more observations) are also missing values.
             for (int i = 0; i < 9; i++) {
-                assertNextObservation(importer, new Object[] { "        " });
+                assertNextObservation(importer, new Object[] { "" });
             }
 
             // The final record in this file is nothing but ASCII blanks.
@@ -3140,7 +3101,7 @@ public class SasTransportImporterTest {
 
             // BUG?: we follow the specification and assume that one observation was
             // written.  Should we do what SAS does instead?
-            assertNextObservation(importer, new Object[] { "        " });
+            assertNextObservation(importer, new Object[] { "" });
 
             // Even though the dataset that generated this XPORT has missing
             // values after this, because the missing values look like padding, SAS
@@ -3206,10 +3167,10 @@ public class SasTransportImporterTest {
 
             // The variable is 20 bytes (1/4 of a record).
             // The first record is blank, so there are four missing values.
-            assertNextObservation(importer, new Object[] { "                    " });
-            assertNextObservation(importer, new Object[] { "                    " });
-            assertNextObservation(importer, new Object[] { "                    " });
-            assertNextObservation(importer, new Object[] { "                    " });
+            assertNextObservation(importer, new Object[] { "" });
+            assertNextObservation(importer, new Object[] { "" });
+            assertNextObservation(importer, new Object[] { "" });
+            assertNextObservation(importer, new Object[] { "" });
 
             // The subsequent record is truncated by one byte, so the XPORT is provably malformed.
             // SAS reads one more missing value from the XPORT file and exits without error.
@@ -3231,13 +3192,13 @@ public class SasTransportImporterTest {
         try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
 
             // The first observation is a missing value
-            assertNextObservation(importer, new Object[] { "                                   " });
+            assertNextObservation(importer, new Object[] { "" });
 
             // The second observation is some text
-            assertNextObservation(importer, new Object[] { "next value spans record boundary   " });
+            assertNextObservation(importer, new Object[] { "next value spans record boundary" });
 
             // The third observation is a missing value and spans the record boundary.
-            assertNextObservation(importer, new Object[] { "                                   " });
+            assertNextObservation(importer, new Object[] { "" });
 
             // EOF
             assertEndOfObservations(importer);
@@ -3254,22 +3215,22 @@ public class SasTransportImporterTest {
         try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
 
             // The first two records have observations with blank values.
-            assertNextObservation(importer, new Object[] { "                                        " });
-            assertNextObservation(importer, new Object[] { "                                        " });
-            assertNextObservation(importer, new Object[] { "                                        " });
-            assertNextObservation(importer, new Object[] { "                                        " });
+            assertNextObservation(importer, new Object[] { "" });
+            assertNextObservation(importer, new Object[] { "" });
+            assertNextObservation(importer, new Object[] { "" });
+            assertNextObservation(importer, new Object[] { "" });
 
             // The third record has an observation with some text.
-            assertNextObservation(importer, new Object[] { "Value between records with blanks       " });
-            assertNextObservation(importer, new Object[] { "                                        " });
+            assertNextObservation(importer, new Object[] { "Value between records with blanks" });
+            assertNextObservation(importer, new Object[] { "" });
 
             // The fourth record has two observations of missing values.
-            assertNextObservation(importer, new Object[] { "                                        " });
-            assertNextObservation(importer, new Object[] { "                                        " });
+            assertNextObservation(importer, new Object[] { "" });
+            assertNextObservation(importer, new Object[] { "" });
 
             // The fifth record has two observations of missing values, but SAS
             // interprets the last one as padding.
-            assertNextObservation(importer, new Object[] { "                                        " });
+            assertNextObservation(importer, new Object[] { "" });
             assertEndOfObservations(importer);
         }
     }
@@ -3288,7 +3249,7 @@ public class SasTransportImporterTest {
 
             // The next 78 observations have blank values.
             for (int i = 0; i < 78; i++) {
-                assertNextObservation(importer, new Object[] { " " });
+                assertNextObservation(importer, new Object[] { "" });
             }
 
             // The final (80th) observation has a value.
@@ -3309,13 +3270,11 @@ public class SasTransportImporterTest {
         try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
 
             // The first observation is some explanatory text.
-            String value = "This is an observation.  The next observation is missing.  After that is EOF.   ";
-            assertEquals(80, value.length(), "TEST BUG");
+            String value = "This is an observation.  The next observation is missing.  After that is EOF.";
             assertNextObservation(importer, new Object[] { value });
 
             // The second observation should be a missing value.
-            String missing = "                                                                                ";
-            assertNextObservation(importer, new Object[] { missing });
+            assertNextObservation(importer, new Object[] { "" });
 
             // EOF
             assertEndOfObservations(importer);
@@ -3332,9 +3291,7 @@ public class SasTransportImporterTest {
         try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
 
             // The first observation is some explanatory text.
-            String value = "This is an observation. After this value is EOF.                                 ";
-            assertEquals(81, value.length(), "TEST BUG");
-            assertNextObservation(importer, new Object[] { value });
+            assertNextObservation(importer, new Object[] { "This is an observation. After this value is EOF." });
 
             // EOF
             assertEndOfObservations(importer);
@@ -3515,8 +3472,7 @@ public class SasTransportImporterTest {
                 new Format("$CHAR", 0));// input format
 
             // BUG: the observations are corrupt
-            // It would be better to have no observations (like SAS) or to reject the file
-            // as malformed.
+            // It would be better to have no observations (like SAS) or to reject the file as malformed.
             assertNextObservation(importer, new Object[] { new String(new char[] { 0, 0, 0, 0, 0, 0 }) });
             assertNextObservation(importer, new Object[] { new String(new char[] { 0, 0, 0, 0, 0, 0 }) });
             assertNextObservation(importer, new Object[] { new String(new char[] { 0, 0, 0, 0, 0, 0 }) });
@@ -3525,18 +3481,18 @@ public class SasTransportImporterTest {
             assertNextObservation(importer, new Object[] { new String(new char[] { 0, 0, 0, 0, 0, 0 }) });
             assertNextObservation(importer, new Object[] { new String(new char[] { 0, 0, 0, 0, 0, 1 }) });
             assertNextObservation(importer, new Object[] { new String(new char[] { 0, 0, 0, 8, 0, 3 }) });
-            assertNextObservation(importer, new Object[] { "COST  " });
+            assertNextObservation(importer, new Object[] { "COST" });
             assertNextObservation(importer, new Object[] { "  Doll" });
             assertNextObservation(importer, new Object[] { "ars to" });
             assertNextObservation(importer, new Object[] { " creat" });
             assertNextObservation(importer, new Object[] { "e item" });
             assertNextObservation(importer, new Object[] { "/mater" });
-            assertNextObservation(importer, new Object[] { "ial   " });
-            assertNextObservation(importer, new Object[] { "      " });
+            assertNextObservation(importer, new Object[] { "ial" });
+            assertNextObservation(importer, new Object[] { "" });
             assertNextObservation(importer, new Object[] { "DOLLAR" });
             assertNextObservation(importer, new Object[] { new String(new char[] { ' ', ' ', 0, 15, 0, 2 }) });
             assertNextObservation(importer, new Object[] { new String(new char[] { 0, 0, 0, 0, 'C', 'O' }) });
-            assertNextObservation(importer, new Object[] { "MMA   " });
+            assertNextObservation(importer, new Object[] { "MMA" });
             assertNextObservation(importer, new Object[] { new String(new char[] { 0, 10, 0, 2, 0, 0 }) });
             assertNextObservation(importer, new Object[] { new String(new char[] { 0, '\r', 0, 0, 0, 0 }) });
             assertNextObservation(importer, new Object[] { new String(new char[] { 0, 0, 0, 0, 0, 0 }) });
@@ -3550,12 +3506,12 @@ public class SasTransportImporterTest {
             assertNextObservation(importer, new Object[] { new String(new char[] { 0, 1, 0, 0, 0, 8 }) });
             assertNextObservation(importer, new Object[] { new String(new char[] { 0, 4, 'P', 'R', 'O', 'F' }) });
             assertNextObservation(importer, new Object[] { "IT  Do" });
-            assertNextObservation(importer, new Object[] { "llars " });
+            assertNextObservation(importer, new Object[] { "llars" });
             assertNextObservation(importer, new Object[] { "of pro" });
             assertNextObservation(importer, new Object[] { "fit fo" });
             assertNextObservation(importer, new Object[] { "r item" });
             assertNextObservation(importer, new Object[] { "/mater" });
-            assertNextObservation(importer, new Object[] { "ial   " });
+            assertNextObservation(importer, new Object[] { "ial" });
             assertNextObservation(importer, new Object[] { "  DOLL" });
             assertNextObservation(importer, new Object[] { new String(new char[] { 'A', 'R', ' ', ' ', 0, 15 }) });
             assertNextObservation(importer, new Object[] { new String(new char[] { 0, 2, 0, 0, 0, 0 }) });
@@ -3574,7 +3530,7 @@ public class SasTransportImporterTest {
             assertNextObservation(importer, new Object[] { "ER REC" });
             assertNextObservation(importer, new Object[] { "ORD***" });
             assertNextObservation(importer, new Object[] { "****OB" });
-            assertNextObservation(importer, new Object[] { "S     " });
+            assertNextObservation(importer, new Object[] { "S" });
             assertNextObservation(importer, new Object[] { "HEADER" });
             assertNextObservation(importer, new Object[] { " RECOR" });
             assertNextObservation(importer, new Object[] { "D!!!!!" });
@@ -3603,11 +3559,11 @@ public class SasTransportImporterTest {
             assertNextObservation(importer, new Object[] { new String(new char[] { 'e', 'r', 'D', 30, 13, 0 }) });
             assertNextObservation(importer, new Object[] { "\0\0\0\0D:" });
             assertNextObservation(importer, new Object[] { "-\0\0\0\0\0" });
-            assertNextObservation(importer, new Object[] { "shoes " });
+            assertNextObservation(importer, new Object[] { "shoes" });
             assertNextObservation(importer, new Object[] { "leathe" });
             assertNextObservation(importer, new Object[] { new String(new char[] { 'r', 'F', 'y', 26, '\uFFFD', 0 }) });
             assertNextObservation(importer, new Object[] { new String(new char[] { 0, 0, 0, 'D', 'Y', '\uFFFD' }) });
-            assertNextObservation(importer, new Object[] { new String(new char[] { 0, 0, 0, 0, 0, ' ' }) });
+            assertNextObservation(importer, new Object[] { "\0\0\0\0\0" });
 
             assertEndOfObservations(importer); // EOF
         }
@@ -3690,10 +3646,10 @@ public class SasTransportImporterTest {
 
             // Despite the corruption, data should still be readable.
             assertNextObservation(importer, new Object[] { "shirts", "s", 83952175.0, 83952175.0 });
-            assertNextObservation(importer, new Object[] { "ties  ", "t", 2349615.0, 2349615.0 });
-            assertNextObservation(importer, new Object[] { "suits ", "s", 69839563.0, 69839563.0 });
-            assertNextObservation(importer, new Object[] { "belts ", "b", 14893.0, 14893.0 });
-            assertNextObservation(importer, new Object[] { "shoes ", "s", 22964.0, 22964.0 });
+            assertNextObservation(importer, new Object[] { "ties", "t", 2349615.0, 2349615.0 });
+            assertNextObservation(importer, new Object[] { "suits", "s", 69839563.0, 69839563.0 });
+            assertNextObservation(importer, new Object[] { "belts", "b", 14893.0, 14893.0 });
+            assertNextObservation(importer, new Object[] { "shoes", "s", 22964.0, 22964.0 });
 
             assertEndOfObservations(importer); // EOF
         }
@@ -3758,11 +3714,11 @@ public class SasTransportImporterTest {
                 new Format("$CHAR", 0));// input format
 
             // Despite the corruption, data should still be readable.
-            assertNextObservation(importer, new Object[] { 83952175.0, 2256354.0, "cotton ", "shirts" });
-            assertNextObservation(importer, new Object[] { 2349615.0, 498678.0, "silk   ", "ties  " });
-            assertNextObservation(importer, new Object[] { 69839563.0, 9482146.0, "silk   ", "suits " });
-            assertNextObservation(importer, new Object[] { 14893.0, 7693.0, "leather", "belts " });
-            assertNextObservation(importer, new Object[] { 22964.0, 7936712.0, "leather", "shoes " });
+            assertNextObservation(importer, new Object[] { 83952175.0, 2256354.0, "cotton", "shirts" });
+            assertNextObservation(importer, new Object[] { 2349615.0, 498678.0, "silk", "ties" });
+            assertNextObservation(importer, new Object[] { 69839563.0, 9482146.0, "silk", "suits" });
+            assertNextObservation(importer, new Object[] { 14893.0, 7693.0, "leather", "belts" });
+            assertNextObservation(importer, new Object[] { 22964.0, 7936712.0, "leather", "shoes" });
 
             assertEndOfObservations(importer); // EOF
         }
@@ -3993,11 +3949,11 @@ public class SasTransportImporterTest {
                 new Format("DOLLAR", 10, 2)); // input format
 
             // Despite the corruption, data should still be readable.
-            assertNextObservation(importer, new Object[] { "shirts", "cotton ", 2256354.0, 83952175.0 });
-            assertNextObservation(importer, new Object[] { "ties  ", "silk   ", 498678.0, 2349615.0 });
-            assertNextObservation(importer, new Object[] { "suits ", "silk   ", 9482146.0, 69839563.0 });
-            assertNextObservation(importer, new Object[] { "belts ", "leather", 7693.0, 14893.0 });
-            assertNextObservation(importer, new Object[] { "shoes ", "leather", 7936712.0, 22964.0 });
+            assertNextObservation(importer, new Object[] { "shirts", "cotton", 2256354.0, 83952175.0 });
+            assertNextObservation(importer, new Object[] { "ties", "silk", 498678.0, 2349615.0 });
+            assertNextObservation(importer, new Object[] { "suits", "silk", 9482146.0, 69839563.0 });
+            assertNextObservation(importer, new Object[] { "belts", "leather", 7693.0, 14893.0 });
+            assertNextObservation(importer, new Object[] { "shoes", "leather", 7936712.0, 22964.0 });
 
             assertEndOfObservations(importer); // EOF
         }

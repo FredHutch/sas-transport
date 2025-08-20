@@ -294,10 +294,11 @@ public final class SasTransportImporter implements AutoCloseable {
 
     /**
      * <p>
-     * Reads the next observation from the input stream and returns it as a list of objects.
+     * Reads the next observation from the input stream and returns it as a list of objects. The returned list never
+     * contains {@code null}.
      *
-     * <p>The value of a Character variable is always returned as a {@link String} whose length matches the variable's
-     * length.  Strings may be right padded with space characters.
+     * <p>The value of a Character variable is returned as a {@link String} whose trailing space characters have been
+     * removed.
      * </p>
      *
      * <p>
@@ -448,11 +449,18 @@ public final class SasTransportImporter implements AutoCloseable {
                 final Object value;
                 switch (variables[i].type()) {
                 case CHARACTER:
-                    // For CHARACTER data, missing values are represented by blanks.
+                    // The XPORT format pads all CHARACTER data with blanks to meet the variable's fixed width.
+                    // In Java, it's unnatural to have trailing whitespace on the data, so we strip it off.
+                    // If a caller really wants it, they can add it back.
+                    int stringLength = valueLength;
+                    while (stringLength != 0 &&
+                        observationBuffer[valueOffsetInObservation + stringLength - 1] == Record.ASCII_BLANK) {
+                        stringLength--;
+                    }
                     value = new String(//
                         observationBuffer, //
                         valueOffsetInObservation, //
-                        valueLength, //
+                        stringLength, //
                         StandardCharsets.US_ASCII);
                     break;
 

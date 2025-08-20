@@ -222,7 +222,7 @@ public final class SasLibraryDescription {
      * otherwise.</li>
      * <li>Two-digit dates for the creation/modified in the headers are assumed to be in the default time zone.</li>
      * <li>trailing whitespace is trimmed from header fields.</li>
-     * <li>trailing whitespace retained in observation values.</li>
+     * <li>trailing whitespace is trimmed from observation values.</li>
      * </ul>
      *
      * @param inputStream

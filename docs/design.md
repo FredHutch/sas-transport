@@ -193,10 +193,6 @@ interpreted as MissingValue.STANDARD or throw an NPE?
 In one case, you have an library to export.
 In the other case, you want to read the library from a file.
 
-**NUL-padded and Space-padding strings**
-The writer must pad the string.
-I'd think the importer wouldn't want the padding, but it's part of the definition.
-
 **Builder pattern to support immutable objects**
 In order for SasLibrary and SasDataSet to be immutable, I expect to provide
 a builder. I haven't made a builder anything with a class hierarchy this deep
