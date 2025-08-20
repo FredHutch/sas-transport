@@ -7,6 +7,7 @@ package org.scharp.sas_transport;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +15,10 @@ import java.util.List;
 
 /**
  * A class for reading SAS Transport files.
+ * <p>
+ * Instances of this class are created with {@link SasLibraryDescription#importTransportDataSet(InputStream)} or
+ * {@link SasLibraryDescription#importTransportDataSet(Path)}.
+ * </p>
  */
 public final class SasTransportImporter implements AutoCloseable {
 
@@ -497,6 +502,12 @@ public final class SasTransportImporter implements AutoCloseable {
         }
     }
 
+    /**
+     * Closes this importer, as well as {@code InputStream} that it was provided when it was created.
+     *
+     * @throws IOException
+     *     if an I/O error prevents this importer from being closed.
+     */
     @Override
     public void close() throws IOException {
         if (inputStream != null) {
