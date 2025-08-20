@@ -220,7 +220,6 @@ public final class SasLibraryDescription {
      * <li>non-ASCII characters are replaced with the Unicode REPLACEMENT CHARACTER (U+FFFD).</li>
      * <li>Two-digit dates for the creation/modified in the headers are based at 1900 if &gt;=60 and based at 2000
      * otherwise.</li>
-     * <li>Two-digit dates for the creation/modified in the headers are assumed to be in the default time zone.</li>
      * <li>trailing whitespace is trimmed from header fields.</li>
      * <li>trailing whitespace is trimmed from observation values.</li>
      * </ul>
