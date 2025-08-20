@@ -18,9 +18,6 @@ public class MalformedTransportFileException extends IOException {
      */
     private static final long serialVersionUID = 1L;
 
-    MalformedTransportFileException() {
-    }
-
     MalformedTransportFileException(String message) {
         super(message);
     }
