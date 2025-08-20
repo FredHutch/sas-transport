@@ -158,14 +158,14 @@ class Record {
 
     short readShort(int offset) {
         // deserialized as big-endian ("IBM-style integer format" in ts140.pdf)
-        int highByte = 0xFF & data[offset + 0];
+        int highByte = 0xFF & data[offset];
         int lowByte = 0xFF & data[offset + 1];
         return (short) ((highByte << 8) | lowByte);
     }
 
     int readInt(int offset) {
         // deserialized as big-endian ("IBM-style integer format" in ts140.pdf)
-        int byte1 = 0xFF & data[offset + 0];
+        int byte1 = 0xFF & data[offset];
         int byte2 = 0xFF & data[offset + 1];
         int byte3 = 0xFF & data[offset + 2];
         int byte4 = 0xFF & data[offset + 3];
@@ -174,14 +174,14 @@ class Record {
 
     int toArray(short number, int offset) {
         // serialized as big-endian ("IBM-style integer format" in ts140.pdf)
-        data[offset + 0] = (byte) ((number >> 8) & 0xFF);
+        data[offset] = (byte) ((number >> 8) & 0xFF);
         data[offset + 1] = (byte) (number & 0xFF);
         return 2;
     }
 
     int toArray(int number, int offset) {
         // serialized as big-endian ("IBM-style integer format" in ts140.pdf)
-        data[offset + 0] = (byte) ((number >> 24) & 0xFF);
+        data[offset] = (byte) ((number >> 24) & 0xFF);
         data[offset + 1] = (byte) ((number >> 16) & 0xFF);
         data[offset + 2] = (byte) ((number >> 8) & 0xFF);
         data[offset + 3] = (byte) (number & 0xFF);
