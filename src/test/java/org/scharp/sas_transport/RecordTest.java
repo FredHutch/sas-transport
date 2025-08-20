@@ -122,4 +122,105 @@ public class RecordTest {
         runParseBadDateTest("29FEB03:00:00:00", (i) -> 2000 + i);
         runParseDateTest("29FEB04:00:00:00", (i) -> 2000 + i, LocalDateTime.of(2004, 2, 29, 0, 0));
     }
+
+    /** Unit tests for {@link Record#readInt}. */
+    @Test
+    public void testReadInt() {
+        // Create a record some sample data.
+        byte[] data = new byte[80];
+        data[0] = 0;
+        data[1] = 1;
+        data[2] = 2;
+        data[3] = 3;
+        data[4] = 4;
+        data[5] = (byte) 0xFE;
+        data[6] = (byte) 0xFD;
+        data[7] = (byte) 0xFC;
+        data[8] = (byte) 0xFB;
+        Record record = new Record(data);
+
+        assertEquals(0x00_01_02_03, record.readInt(0));
+        assertEquals(0x01_02_03_04, record.readInt(1));
+        assertEquals(0xFE_FD_FC_FB, record.readInt(5));
+        assertEquals(0, record.readInt(9));
+    }
+
+    /** Unit tests for {@link Record#toArray} overloads. */
+    @Test
+    public void testToArray() {
+        // Create a blank record.
+        byte[] data = new byte[80];
+        Record record = new Record(data);
+
+        // Write short value
+        assertEquals(2, record.toArray((short) 0x12_34, 0));
+        assertEquals(0x12, data[0]);
+        assertEquals(0x34, data[1]);
+        assertEquals(0x00, data[2]); // not changed
+
+        // Write short value with the high bit set
+        assertEquals(2, record.toArray((short) 0xFA_FB, 1));
+        assertEquals(0x12, data[0]); // not changed
+        assertEquals((byte) 0xFA, data[1]);
+        assertEquals((byte) 0xFB, data[2]);
+        assertEquals(0x00, data[3]); // not changed
+
+        // Write an int value
+        assertEquals(4, record.toArray(0x12_34_56_78, 0));
+        assertEquals(0x12, data[0]);
+        assertEquals(0x34, data[1]);
+        assertEquals(0x56, data[2]);
+        assertEquals(0x78, data[3]);
+        assertEquals(0x00, data[4]); // not changed
+
+        // Write an int value with the high bit set.
+        assertEquals(4, record.toArray(0xFA_FB_FC_FD, 1));
+        assertEquals(0x12, data[0]); // not changed
+        assertEquals((byte) 0xFA, data[1]);
+        assertEquals((byte) 0xFB, data[2]);
+        assertEquals((byte) 0xFC, data[3]);
+        assertEquals((byte) 0xFD, data[4]);
+        assertEquals(0x00, data[5]); // not changed
+
+        // Write a String
+        assertEquals(5, record.toArray("hello", 0));
+        assertEquals('h', data[0]);
+        assertEquals('e', data[1]);
+        assertEquals('l', data[2]);
+        assertEquals('l', data[3]);
+        assertEquals('o', data[4]);
+        assertEquals(0x00, data[5]); // not changed
+
+        // Write a non-ASCII string
+        final String sigma = "\u03C3"; // GREEK SMALL LETTER SIGMA
+        final String grin = "\uD83D\uDE01"; // GRINNING FACE WITH SMILING EYES (two chars)
+        assertEquals(5, record.toArray("a" + sigma + grin + "z", 20));
+        assertEquals('a', data[20]);
+        assertEquals('?', data[21]);
+        assertEquals('?', data[22]);
+        assertEquals('z', data[23]);
+        assertEquals(' ', data[24]); // may be a bug, grin should is two chars (surrogate pair)
+        assertEquals(0x00, data[25]); // not changed
+
+        // Write a String with padding
+        assertEquals(5, record.toPaddedArray("HI", 1, 5, (byte) 0xFD));
+        assertEquals('h', data[0]); // not changed
+        assertEquals('H', data[1]);
+        assertEquals('I', data[2]);
+        assertEquals((byte) 0xFD, data[3]);
+        assertEquals((byte) 0xFD, data[4]);
+        assertEquals((byte) 0xFD, data[5]);
+        assertEquals(0x00, data[6]); // not changed
+
+        // Write a String with space padding
+        assertEquals(5, record.toSpacePaddedArray("data", 2, 5));
+        assertEquals('h', data[0]); // not changed
+        assertEquals('H', data[1]); // not changed
+        assertEquals('d', data[2]);
+        assertEquals('a', data[3]);
+        assertEquals('t', data[4]);
+        assertEquals('a', data[5]);
+        assertEquals(' ', data[6]);
+        assertEquals(0x00, data[7]); // not changed
+    }
 }

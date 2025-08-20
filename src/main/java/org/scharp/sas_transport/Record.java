@@ -174,17 +174,17 @@ class Record {
 
     int toArray(short number, int offset) {
         // serialized as big-endian ("IBM-style integer format" in ts140.pdf)
-        data[offset] = (byte) ((number >> 8) & 0xFF);
-        data[offset + 1] = (byte) (number & 0xFF);
+        data[offset] = (byte) (number >> 8);
+        data[offset + 1] = (byte) number;
         return 2;
     }
 
     int toArray(int number, int offset) {
         // serialized as big-endian ("IBM-style integer format" in ts140.pdf)
-        data[offset] = (byte) ((number >> 24) & 0xFF);
-        data[offset + 1] = (byte) ((number >> 16) & 0xFF);
-        data[offset + 2] = (byte) ((number >> 8) & 0xFF);
-        data[offset + 3] = (byte) (number & 0xFF);
+        data[offset] = (byte) (number >> 24);
+        data[offset + 1] = (byte) (number >> 16);
+        data[offset + 2] = (byte) (number >> 8);
+        data[offset + 3] = (byte) number;
         return 4;
     }
 
