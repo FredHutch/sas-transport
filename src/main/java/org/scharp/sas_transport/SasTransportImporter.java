@@ -303,7 +303,7 @@ public final class SasTransportImporter implements AutoCloseable {
      * contains {@code null}.
      *
      * <p>The value of a Character variable is returned as a {@link String} whose trailing space characters have been
-     * removed.
+     * removed.  Any non-ASCII characters are replaced with the Unicode REPLACEMENT CHARACTER (U+FFFD).
      * </p>
      *
      * <p>
