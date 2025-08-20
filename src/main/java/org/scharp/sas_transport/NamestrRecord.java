@@ -34,14 +34,23 @@ class NamestrRecord extends Record {
      * The constructor for a NAMESTR record to be used when writing.
      *
      * @param type
+     *     The variable's type.
      * @param variableLength
+     *     The variable's length.
      * @param variableNumber
+     *     The variable's number (1-based index).
      * @param variableName
+     *     The variable's name
      * @param label
+     *     The variable's label
      * @param format
+     *     The variable's FORMAT
      * @param justification
+     *     The variable's justification.
      * @param inputFormat
+     *     The variable's INFORMAT
      * @param positionInObservation
+     *     The offset of this variable's values within an observation.
      */
     NamestrRecord(VariableType type, int variableLength, int variableNumber, String variableName, String label,
         Format format, Justification justification, Format inputFormat, int positionInObservation) {
