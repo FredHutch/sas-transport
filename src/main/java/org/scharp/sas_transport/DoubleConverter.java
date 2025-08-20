@@ -59,7 +59,7 @@ abstract class DoubleConverter {
                 (Byte.toUnsignedLong(data[4]) << 24) | //
                 (Byte.toUnsignedLong(data[5]) << 16) | //
                 (Byte.toUnsignedLong(data[6]) << 8) | //
-                (Byte.toUnsignedLong(data[7]) << 0);
+                (Byte.toUnsignedLong(data[7]));
         if (xportLong == 0) {
             return 0D; // optimization for common case, return 0.
         }
@@ -158,7 +158,7 @@ abstract class DoubleConverter {
             (byte) (0xFF & (xportDoubleLongBits >> 24)), //
             (byte) (0xFF & (xportDoubleLongBits >> 16)), //
             (byte) (0xFF & (xportDoubleLongBits >> 8)), //
-            (byte) (0xFF & (xportDoubleLongBits >> 0)), //
+            (byte) (0xFF & xportDoubleLongBits), //
         };
     }
 
