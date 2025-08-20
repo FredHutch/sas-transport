@@ -11,7 +11,7 @@ package org.scharp.sas_transport;
  * </p>
  * <p>
  * The SAS documentation makes no further references to its semantics and seems to ignore whatever value is set. It is
- * likely that this is misdocumented in TS-140 and really should be considered padding and ignored.
+ * likely that this is documented incorrectly in TS-140 and really should be considered padding and ignored.
  * </p>
  * <p>
  * This enum is defined only for completeness. It is recommended that you always set this to {@code Justification.LEFT}
