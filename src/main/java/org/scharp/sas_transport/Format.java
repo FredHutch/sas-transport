@@ -30,8 +30,8 @@ public final class Format {
     public static Format UNSPECIFIED = new Format("", 0, 0);
 
     private final String name;
-    private final int width;
-    private final int numberOfDigits;
+    private final short width;
+    private final short numberOfDigits;
 
     /**
      * Creates a new Format specification.
@@ -90,8 +90,8 @@ public final class Format {
 
         // TODO: provide an overload with a structured name for standard formats DOLLAR, CHAR, etc.
         this.name = name;
-        this.width = width;
-        this.numberOfDigits = numberOfDigits;
+        this.width = (short) width;
+        this.numberOfDigits = (short) numberOfDigits;
     }
 
     /**
@@ -134,7 +134,7 @@ public final class Format {
      *
      * @return The width of this format.
      */
-    public int width() {
+    public short width() {
         return width;
     }
 
@@ -143,7 +143,7 @@ public final class Format {
      *
      * @return The number of digits in this format.
      */
-    public int numberOfDigits() {
+    public short numberOfDigits() {
         return numberOfDigits;
     }
 
