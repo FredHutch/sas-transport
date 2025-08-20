@@ -349,8 +349,7 @@ public final class SasTransportImporter implements AutoCloseable {
             // identical to missing data.  We detect the final padding here.
             if (recordDataOffset != 0 && // some data has already been read from this record (an entire record can't be padding)
                 nextRecordData == null && // we haven't already proven that data exists after the current record
-                // the rest of the current record is blanks
-                isBlanks(recordData, recordDataOffset, Record.RECORD_SIZE - recordDataOffset)) {
+                isBlanks(recordData, recordDataOffset, Record.RECORD_SIZE - recordDataOffset)) { // the rest is blank
 
                 // We need to distinguish between the final padding and a long run of
                 // MISSING VALUEs which only looks like padding.  The right way to do this is to probe
