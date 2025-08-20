@@ -139,7 +139,7 @@ abstract class DoubleConverter {
         javaExponent += shift;
 
         // There should be no excess bits.
-        assert (sign & ~(0x1 << 63)) == 0;
+        assert (sign & ~(1L << 63)) == 0;
         assert (javaExponent & ~0x7FFL) == 0;
         assert (javaMantissa & (0xFFFL << 52)) == 0;
 
