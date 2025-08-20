@@ -8,7 +8,7 @@ package org.scharp.sas_transport;
  * An interface for mapping the two-digit years which is stored in SAS format to a real year (usually four digits).
  */
 @FunctionalInterface
-public interface YearMapper {
+interface YearMapper {
     /**
      * Maps a two-digit year, like 99, to a real year, like 1999.
      *
