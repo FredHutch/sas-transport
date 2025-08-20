@@ -151,14 +151,14 @@ abstract class DoubleConverter {
 
     private static byte[] longBitsToByteArray(long xportDoubleLongBits) {
         return new byte[] { //
-            (byte) (0xFF & (xportDoubleLongBits >> 56)), //
-            (byte) (0xFF & (xportDoubleLongBits >> 48)), //
-            (byte) (0xFF & (xportDoubleLongBits >> 40)), //
-            (byte) (0xFF & (xportDoubleLongBits >> 32)), //
-            (byte) (0xFF & (xportDoubleLongBits >> 24)), //
-            (byte) (0xFF & (xportDoubleLongBits >> 16)), //
-            (byte) (0xFF & (xportDoubleLongBits >> 8)), //
-            (byte) (0xFF & xportDoubleLongBits), //
+            (byte) (xportDoubleLongBits >> 56), //
+            (byte) (xportDoubleLongBits >> 48), //
+            (byte) (xportDoubleLongBits >> 40), //
+            (byte) (xportDoubleLongBits >> 32), //
+            (byte) (xportDoubleLongBits >> 24), //
+            (byte) (xportDoubleLongBits >> 16), //
+            (byte) (xportDoubleLongBits >> 8), //
+            (byte) (xportDoubleLongBits), //
         };
     }
 
