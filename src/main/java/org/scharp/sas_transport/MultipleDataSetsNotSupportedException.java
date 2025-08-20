@@ -16,8 +16,4 @@ public class MultipleDataSetsNotSupportedException extends UnsupportedTransportF
 
     MultipleDataSetsNotSupportedException() {
     }
-
-    MultipleDataSetsNotSupportedException(String message) {
-        super(message);
-    }
 }
