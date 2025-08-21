@@ -6,7 +6,10 @@
 
 # Check command-line arguments
 if [ "$#" -ne 2 ]; then
-  echo "Usage: $0 XPORTBASE DATASET" >&2
+  echo "Usage: $0 XPORTBASE DATASET"    >&2
+  echo ""                               >&2
+  echo "Example:"                       >&2
+  echo "  $0 160_byte_observation DATA" >&2
   exit 1
 fi
 
