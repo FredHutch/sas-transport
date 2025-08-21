@@ -81,4 +81,24 @@ public class ArgumentUtilTest {
             () -> ArgumentUtil.checkMaximumLength("hello", 3, "myArg"));
         assertEquals("myArg must not be longer than 3 characters", exception.getMessage());
     }
+
+    /** Tests for {@link ArgumentUtil#checkNotNegative} */
+    @Test
+    void testCheckNotNegative() {
+        // non-negative tests
+        ArgumentUtil.checkNotNegative(0, "arg");
+        ArgumentUtil.checkNotNegative(0, "argument");
+        ArgumentUtil.checkNotNegative(1, "argument");
+        ArgumentUtil.checkNotNegative(Integer.MAX_VALUE, "argument");
+
+        Exception exception = assertThrows(
+            IllegalArgumentException.class,
+            () -> ArgumentUtil.checkNotNegative(-1, "arg"));
+        assertEquals("arg must not be negative", exception.getMessage());
+
+        exception = assertThrows(
+            IllegalArgumentException.class,
+            () -> ArgumentUtil.checkNotNegative(Integer.MIN_VALUE, "myArg"));
+        assertEquals("myArg must not be negative", exception.getMessage());
+    }
 }

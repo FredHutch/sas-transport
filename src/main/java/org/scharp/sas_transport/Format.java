@@ -73,17 +73,13 @@ public final class Format {
         ArgumentUtil.checkMaximumLength(name, 8, "format name");
         ArgumentUtil.checkIsAscii(name, "format name");
 
-        if (width < 0) {
-            // This might be too strict.  SAS permits (and ignores) negative lengths.
-            throw new IllegalArgumentException("format width must not be negative");
-        }
+        // This might be too strict.  SAS permits (and ignores) negative lengths.
+        ArgumentUtil.checkNotNegative(width, "format width");
         if (Short.MAX_VALUE < width) {
             throw new IllegalArgumentException("format width must not be greater than Short.MAX_VALUE");
         }
 
-        if (numberOfDigits < 0) {
-            throw new IllegalArgumentException("format numberOfDigits must not be negative");
-        }
+        ArgumentUtil.checkNotNegative(numberOfDigits, "format numberOfDigits");
         if (Short.MAX_VALUE < numberOfDigits) {
             throw new IllegalArgumentException("format numberOfDigits must not be greater than Short.MAX_VALUE");
         }

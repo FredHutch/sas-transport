@@ -68,4 +68,23 @@ abstract class ArgumentUtil {
                 argumentName + " must not be longer than " + maximumLength + " characters");
         }
     }
+
+    /**
+     * Throws an exception if {@code argument} is negative (less than zero).
+     *
+     * @param argument
+     *     The argument to check
+     * @param argumentName
+     *     The name of the argument. This is used to create a more informative exception message.
+     *
+     * @throws IllegalArgumentException
+     *     if {@code argument} is negative
+     */
+    static void checkNotNegative(int argument, String argumentName) {
+        assert argumentName != null : "argumentName must not be null";
+
+        if (argument < 0) {
+            throw new IllegalArgumentException(argumentName + " must not be negative");
+        }
+    }
 }
