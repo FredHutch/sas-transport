@@ -1,9 +1,9 @@
 Purpose
 ============
 
-The primary purpose of this library is to be able to generate SAS datasets for submission to the FDA.
+The primary purpose of this library is to be able to generate SAS transport datasets for submission to the FDA.
 
-The secondary purpose is to accept as data as input from SAS programmers where CSV is not practical.
+A secondary purpose is to accept as data as input from SAS programmers where CSV is not practical.
 
 Requirements
 ------------
@@ -58,6 +58,35 @@ Companion Scripts
 - `xport2csv.sas`: A SAS program that converts an XPORT file into a CSV.
   This is a debugging tool to show how SAS interprets an XPORT (that is, the correct way to view the XPORT).
 
+API Anti-symmetry problems
+---------------------------
+
+**StandardFormat and user formats.**
+Formats can be specified with enum StandardFormat for CHAR, UPCASE, etc.
+When reading, if we get a non-standard, it would be USER_DEFINED.
+This means we need a way to get the enum and the String form.
+
+**Years are two-digits.**
+Create or Modify time are stored as strings, giving 2 digits for dates.
+
+The writer takes a Date (naturally), but the reader cannot set a Date
+without caller intervention to supply the base year.
+Most caller won't even care about this.
+
+**Internal "Header" records.**
+There are some C structs documented in TS-140 that need to be serialized and unserialized.
+I created package-private intermediate classes for these, but the truth is that the writing
+is so different from the reading that there is no overlap in their use.
+
+**Is writing a "null" observation a MissingValue, or an NPE?**
+Reading a missing numeric value results in the corresponding MissingValue being returned,
+but should writing "null" be interpreted as MissingValue.STANDARD or throw an NPE?
+
+**createExporter() is an instance method, createImporter() is static.**
+In one case, you have a library object to export.
+In the other case, you want to construct the library from a file.
+
+
 Design Decisions
 ----------------
 
@@ -91,6 +120,7 @@ Following from naturalness in Java...this will support JVMs configured in any lo
 Mostly, this means not relying on the default character set or calendar formatting for dates.
 
 **There will be a "strict" mode when reading**
+
 There will be different parsing modes to let the reader decide how lenient the API should be.
 For example, if data would be truncated when writing to XPORT, if data doesn't conform to FDA guidelines, or
 if non-essential values are corrupt when reading.
@@ -104,6 +134,7 @@ The Java 8 features that I plan to use are:
 - java.time.* types
 
 **No validation plan is provided on GitHub**
+
 Even though the only people who might use this library would care have to
 validate their software, we will not provide a validation plan.
 
@@ -163,35 +194,6 @@ The writer can reasonably take a "strictness" flag, but the reader may want fine
 - Non-ASCII characters in data
 - Data truncation
 - Unknown format
-
-**Anti-symmetry problems**
-
-**StandardFormat and user formats**.
-Formats can be specified with enum StandardFormat for CHAR, UPCASE, etc.
-When reading, if we get a non-standard, it would be USER_DEFINED.
-This means we need a way to get the enum and the String form.
-
-**Years are two-digits**
-Create or Modify time are stored as strings, giving 2 digits for dates.
-
-The writer takes a Date (naturally), but the reader cannot set a Date
-without caller intervention to supply the base year.
-Most caller won't even care about this.
-
-**Internal "Header" records**
-There are some C structs documented in TS-140 that need to be serialized
-and unserialized. I created package-private intermediate classes for these,
-but the truth is that the writing is so different from the reading that
-there is no overlap in their use.
-
-**Is writing a "null" observation a MissingValue, or an NPE?**
-Reading a missing observation will result in the corresponding
-MissingValue being returned, but should writing "null" be
-interpreted as MissingValue.STANDARD or throw an NPE?
-
-**createExporter() is instance method, createImporter() is static**
-In one case, you have an library to export.
-In the other case, you want to read the library from a file.
 
 **Builder pattern to support immutable objects**
 In order for SasLibraryDescription and SasDatasetDescription to be immutable, I expect to provide a builder.
