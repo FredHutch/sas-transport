@@ -6,8 +6,8 @@
  *   src/test/res/blank_first_dataset.xpt
  *********************************************************************/
 
-* Data set A;
-data blank(label='Data set with no observations');
+* Dataset A;
+data blank(label='Dataset with no observations');
    input  VAR $ 1-20;
    format VAR $20.;
    label  VAR='Some variable';
@@ -15,8 +15,8 @@ datalines;
 ;
 run;
 
-* Second data set;
-data second(label='Second data set');
+* Second dataset;
+data second(label='Second dataset');
    input  B1 $ 1-20;
    format B1 $20.;
    label  B1='Text in dataset B';
@@ -26,7 +26,7 @@ data-in-second-dataset
 run;
 
 
-* Export both data sets to the same V5 XPORT file;
+* Export both datasets to the same V5 XPORT file;
 libname xportout xport 'blank_first_dataset.xpt';
 proc copy in=work out=xportout memtype=data;
 run;

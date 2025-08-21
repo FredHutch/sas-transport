@@ -101,13 +101,13 @@ abstract class TestUtil {
     }
 
     /**
-     * Fails the current test if any of the fields of a {@link SasDataSetDescription} are not as expected.
+     * Fails the current test if any of the fields of a {@link SasDatasetDescription} are not as expected.
      * <p>
      * This does NOT check the variables.
      * </p>
      *
-     * @param dataSetDescription
-     *     The SAS Data Set whose properties should be tested.
+     * @param datasetDescription
+     *     The SAS dataset whose properties should be tested.
      * @param expectedName
      *     The expected value of the name property.
      * @param expectedLabel
@@ -123,23 +123,23 @@ abstract class TestUtil {
      * @param expectedModifiedTime
      *     The expected modified timestamp.
      */
-    static void assertSasDataSetDescription(SasDataSetDescription dataSetDescription, String expectedName,
+    static void assertSasDatasetDescription(SasDatasetDescription datasetDescription, String expectedName,
         String expectedLabel, String expectedType, String expectedSourceOperatingSystem,
         String expectedSourceSasVersion, LocalDateTime expectedCreateTime, LocalDateTime expectedModifiedTime) {
-        assertNotNull(dataSetDescription);
-        assertEquals(expectedName, dataSetDescription.name());
-        assertEquals(expectedLabel, dataSetDescription.label());
-        assertEquals(expectedType, dataSetDescription.type());
-        assertEquals(expectedSourceOperatingSystem, dataSetDescription.sourceOperatingSystem());
-        assertEquals(expectedSourceSasVersion, dataSetDescription.sourceSasVersion());
-        assertEquals(expectedCreateTime, dataSetDescription.createTime());
-        assertEquals(expectedModifiedTime, dataSetDescription.modifiedTime());
+        assertNotNull(datasetDescription);
+        assertEquals(expectedName, datasetDescription.name());
+        assertEquals(expectedLabel, datasetDescription.label());
+        assertEquals(expectedType, datasetDescription.type());
+        assertEquals(expectedSourceOperatingSystem, datasetDescription.sourceOperatingSystem());
+        assertEquals(expectedSourceSasVersion, datasetDescription.sourceSasVersion());
+        assertEquals(expectedCreateTime, datasetDescription.createTime());
+        assertEquals(expectedModifiedTime, datasetDescription.modifiedTime());
     }
 
     /**
      * Fails the current test if any of the properties of a {@link SasLibraryDescription} are not as expected.
      * <p>
-     * This does NOT check the data set.
+     * This does NOT check the dataset.
      * </p>
      *
      * @param libraryDescription

@@ -70,7 +70,7 @@ The library should first and foremost feel like a natural Java language.
 Where further conventions are arbitrary, they will follow TS-140.
 For example, the term "label" is used instead of "tag" or "description".
 
-**There will be a streaming interface to support very large data sets.**
+**There will be a streaming interface to support very large datasets.**
 
 The FDA says it supports datasets up to 5 GB.
 
@@ -194,8 +194,8 @@ In one case, you have an library to export.
 In the other case, you want to read the library from a file.
 
 **Builder pattern to support immutable objects**
-In order for SasLibrary and SasDataSet to be immutable, I expect to provide
-a builder. I haven't made a builder anything with a class hierarchy this deep
+In order for SasLibraryDescription and SasDatasetDescription to be immutable, I expect to provide a builder.
+I haven't made a builder anything with a class hierarchy this deep
 and I probably wouldn't if it were within a single app.
 
 **Since immutable should I implement hashCode(), equals()?**

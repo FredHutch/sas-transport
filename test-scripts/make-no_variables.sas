@@ -6,9 +6,9 @@
  *  src/test/res/no_variables.xpt
  *********************************************************************/
 
-* A data set with no variables;
+* A dataset with no variables;
 libname xportout xport 'no_variables.xpt';
-data xportout.blank(label='Data set with no variables');
+data xportout.blank(label='A dataset with no variables');
 datalines;
 ;
 run;

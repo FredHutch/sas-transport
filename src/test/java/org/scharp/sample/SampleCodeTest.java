@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.scharp.sas_transport.Format;
 import org.scharp.sas_transport.Justification;
 import org.scharp.sas_transport.MissingValue;
-import org.scharp.sas_transport.SasDataSetDescription;
+import org.scharp.sas_transport.SasDatasetDescription;
 import org.scharp.sas_transport.SasLibraryDescription;
 import org.scharp.sas_transport.SasTransportExporter;
 import org.scharp.sas_transport.SasTransportImporter;
@@ -74,7 +74,7 @@ public class SampleCodeTest {
                 Justification.LEFT, //
                 Format.UNSPECIFIED));
 
-        SasDataSetDescription dataSet = new SasDataSetDescription(//
+        SasDatasetDescription dataset = new SasDatasetDescription(//
             "TEMP", // name
             "Average daily temperatures", // label
             "", // type
@@ -84,7 +84,7 @@ public class SampleCodeTest {
             LocalDateTime.now(), // create
             LocalDateTime.now()); // modified
 
-        try (SasTransportExporter exporter = dataSet.newLibraryDescription().exportTransportDataSet(path)) {
+        try (SasTransportExporter exporter = dataset.newLibraryDescription().exportTransportDataset(path)) {
             exporter.appendObservation(Arrays.asList("Atlanta", "GA", 72, 53));
             exporter.appendObservation(Arrays.asList("Austin", "TX", 80, 5));
             exporter.appendObservation(Arrays.asList("Baltimore", "MD", 65, 45));
@@ -104,13 +104,13 @@ public class SampleCodeTest {
 
     private void importSampleTransportFile(Path path) throws IOException {
 
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(path)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(path)) {
 
             // Get the variables.
-            List<Variable> dataSetVariables = importer.sasLibraryDescription().dataSetDescription().variables();
+            List<Variable> datasetVariables = importer.sasLibraryDescription().datasetDescription().variables();
 
             // Display a header using the variable names.
-            for (Variable variable : dataSetVariables) {
+            for (Variable variable : datasetVariables) {
                 System.out.print(padRight(variable, variable.name()));
             }
             System.out.println();
@@ -120,7 +120,7 @@ public class SampleCodeTest {
 
                 // Render each value in the observation.
                 for (int i = 0; i < observation.size(); i++) {
-                    final Variable variable = dataSetVariables.get(i);
+                    final Variable variable = datasetVariables.get(i);
                     final Object value = observation.get(i);
 
                     final String formattedValue;
@@ -144,8 +144,10 @@ public class SampleCodeTest {
         Path targetLocation = Files.createTempFile("sas-transport-sample", ".xpt");
 
         try {
-            // Write a data set.
+            // Write a dataset.
             exportSampleTransportFile(targetLocation);
+
+            // Read the dataset.
             importSampleTransportFile(targetLocation);
 
         } finally {

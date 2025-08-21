@@ -6,9 +6,9 @@
  *  src/test/res/max_variables.xpt
  *********************************************************************/
 
-* Create a data set with the maximum number of variables that an;
+* Create a dataset with the maximum number of variables that an;
 * XPORT file can have (9999).;
-* This data set has two observations;
+* This dataset has two observations;
 data data(label='Max number of variables in XPORT');
    infile datalines FLOWOVER;
    input
@@ -30013,7 +30013,7 @@ r2val9998
 r2val9999
 ;
 
-* Export the data set into an V5 XPORT file;
+* Export the dataset into an V5 XPORT file;
 libname xportout xport 'max_variables.xpt';
 data xportout.data;
    set work.data;

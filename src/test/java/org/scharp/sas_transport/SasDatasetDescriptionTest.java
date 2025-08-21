@@ -20,12 +20,12 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- * Unit tests for the {@link SasDataSetDescription} class.
+ * Unit tests for the {@link SasDatasetDescription} class.
  */
-public class SasDataSetDescriptionTest {
+public class SasDatasetDescriptionTest {
 
     /**
-     * Unit tests for basic construction and property getting of the {@link SasDataSetDescription} class.
+     * Unit tests for basic construction and property getting of the {@link SasDatasetDescription} class.
      */
     @Test
     public void basicTest() {
@@ -54,25 +54,25 @@ public class SasDataSetDescriptionTest {
         final LocalDateTime createdTime = LocalDateTime.of(1999, 12, 31, 23, 59, 59, 999);
         final LocalDateTime modifiedTime = LocalDateTime.of(2001, 6, 30, 12, 59, 59, 123);
 
-        // Create the data set.
-        SasDataSetDescription dataSet = new SasDataSetDescription("DSNAME", "Data Set Label", "TYPE", "SOUREOS", "12.4",
+        // Create the dataset.
+        SasDatasetDescription dataset = new SasDatasetDescription("DSNAME", "Dataset Label", "TYPE", "SOUREOS", "12.4",
             variables, createdTime, modifiedTime);
 
         // Confirm that all of its properties were set correctly.
-        TestUtil.assertSasDataSetDescription(//
-            dataSet, //
+        TestUtil.assertSasDatasetDescription(//
+            dataset, //
             "DSNAME", //
-            "Data Set Label", //
+            "Dataset Label", //
             "TYPE", //
             "SOUREOS", //
             "12.4", //
             createdTime, //
             modifiedTime);
-        assertEquals(2, dataSet.variables().size());
+        assertEquals(2, dataset.variables().size());
 
         // Check the variables
         TestUtil.assertVariable(//
-            dataSet.variables().get(0), //
+            dataset.variables().get(0), //
             "VAR_1", // name
             1, // number
             VariableType.CHARACTER, // type
@@ -82,7 +82,7 @@ public class SasDataSetDescriptionTest {
             Justification.LEFT, // justification
             new Format("INPUT", 5, 1)); // input format name
         TestUtil.assertVariable(//
-            dataSet.variables().get(1), //
+            dataset.variables().get(1), //
             "var2", // name
             2, // number
             VariableType.NUMERIC, // type
@@ -93,23 +93,23 @@ public class SasDataSetDescriptionTest {
             Format.UNSPECIFIED); // input format
 
         //
-        // Now test the immutability of the SasDataSetDescription.
+        // Now test the immutability of the SasDatasetDescription.
         //
 
         // Change the list of variable which we gave to the constructor.
         variables.clear();
-        assertEquals(2, dataSet.variables().size());
+        assertEquals(2, dataset.variables().size());
 
         // Attempt to change the variable list that is returned from accessor.
-        List<Variable> dataSetVariables = dataSet.variables();
+        List<Variable> datasetVariables = dataset.variables();
         assertThrows(//
             UnsupportedOperationException.class, //
-            dataSetVariables::clear, //
-            "Was able to clear the variable returned by SasDataSetDescription");
+            datasetVariables::clear, //
+            "Was able to clear the variable returned by SasDatasetDescription");
     }
 
     /**
-     * Test {@link SasDataSetDescription#newLibraryDescription()}.
+     * Test {@link SasDatasetDescription#newLibraryDescription()}.
      */
     @Test
     public void testNewLibrary() {
@@ -118,29 +118,29 @@ public class SasDataSetDescriptionTest {
         final LocalDateTime createdTime = LocalDateTime.of(1999, 12, 31, 23, 59, 59, 999);
         final LocalDateTime modifiedTime = LocalDateTime.of(2001, 6, 30, 12, 59, 59, 123);
 
-        // Create a data set.
-        SasDataSetDescription dataSetA = new SasDataSetDescription("A", "B", "C", "OS123456", "VER12345", variables,
+        // Create a dataset.
+        SasDatasetDescription datasetA = new SasDatasetDescription("A", "B", "C", "OS123456", "VER12345", variables,
             createdTime, modifiedTime);
 
         // Create a library from it.
-        SasLibraryDescription libraryA1 = dataSetA.newLibraryDescription();
+        SasLibraryDescription libraryA1 = datasetA.newLibraryDescription();
         TestUtil.assertSasLibraryDescription(libraryA1, "OS123456", "VER12345", createdTime, modifiedTime);
 
         // Create another library.  It should have the same data but a different reference.
-        SasLibraryDescription libraryB2 = dataSetA.newLibraryDescription();
+        SasLibraryDescription libraryB2 = datasetA.newLibraryDescription();
         TestUtil.assertSasLibraryDescription(libraryB2, "OS123456", "VER12345", createdTime, modifiedTime);
         assertNotSame(libraryA1, libraryB2, "newLibrary() returned same reference");
 
         // Create another dataset with different blank values.
-        SasDataSetDescription dataSetB = new SasDataSetDescription("B", "", "", "", "", variables,
+        SasDatasetDescription datasetB = new SasDatasetDescription("B", "", "", "", "", variables,
             LocalDateTime.of(0, 1, 1, 0, 0), LocalDateTime.of(0, 1, 1, 0, 0));
-        SasLibraryDescription libraryB1 = dataSetB.newLibraryDescription();
+        SasLibraryDescription libraryB1 = datasetB.newLibraryDescription();
         TestUtil.assertSasLibraryDescription(libraryB1, "", "", LocalDateTime.of(0, 1, 1, 0, 0),
             LocalDateTime.of(0, 1, 1, 0, 0));
     }
 
     /**
-     * Tests that {@link SasDataSetDescription} throws the correct exception when two variables share the same name.
+     * Tests that {@link SasDatasetDescription} throws the correct exception when two variables share the same name.
      */
     @Test
     public void constructWithRepeatedVariableNames() {
@@ -214,9 +214,9 @@ public class SasDataSetDescriptionTest {
         LocalDateTime modifiedTime, String expectedErrorMessage) {
         Exception exception = assertThrows( //
             IllegalArgumentException.class, //
-            () -> new SasDataSetDescription(name, label, type, sourceOperatingSystem, sourceSasVersion, variables,
+            () -> new SasDatasetDescription(name, label, type, sourceOperatingSystem, sourceSasVersion, variables,
                 createTime, modifiedTime), //
-            "creating SasDataSetDescription with a bad argument");
+            "creating SasDatasetDescription with a bad argument");
         assertEquals(expectedErrorMessage, exception.getMessage());
     }
 
@@ -241,9 +241,9 @@ public class SasDataSetDescriptionTest {
         for (StrictnessMode strictnessMode : strictnessModesToTest) {
             Exception exception = assertThrows( //
                 IllegalArgumentException.class, //
-                () -> new SasDataSetDescription(name, label, type, sourceOperatingSystem, sourceSasVersion, variables,
+                () -> new SasDatasetDescription(name, label, type, sourceOperatingSystem, sourceSasVersion, variables,
                     createTime, modifiedTime, strictnessMode), //
-                "creating SasDataSetDescription with a bad argument");
+                "creating SasDatasetDescription with a bad argument");
             assertEquals(expectedErrorMessage, exception.getMessage());
         }
     }
@@ -280,18 +280,18 @@ public class SasDataSetDescriptionTest {
         // The null parameter check should apply to the public constructor
         Exception exception = assertThrows(//
             NullPointerException.class, //
-            () -> new SasDataSetDescription(name, label, type, sourceOperatingSystem, sourceSasVersion, variables,
+            () -> new SasDatasetDescription(name, label, type, sourceOperatingSystem, sourceSasVersion, variables,
                 createTime, modifiedTime), //
-            "creating SasDataSetDescription with a null argument");
+            "creating SasDatasetDescription with a null argument");
         assertEquals(expectedErrorMessage, exception.getMessage());
 
         // Null parameter checking should apply in all strictness modes.
         for (StrictnessMode strictnessMode : StrictnessMode.values()) {
             exception = assertThrows(//
                 NullPointerException.class, //
-                () -> new SasDataSetDescription(name, label, type, sourceOperatingSystem, sourceSasVersion, variables,
+                () -> new SasDatasetDescription(name, label, type, sourceOperatingSystem, sourceSasVersion, variables,
                     createTime, modifiedTime, strictnessMode), //
-                "creating SasDataSetDescription with a null argument in " + strictnessMode);
+                "Creating SasDatasetDescription with a null argument in " + strictnessMode);
             assertEquals(expectedErrorMessage, exception.getMessage());
         }
     }
@@ -313,7 +313,7 @@ public class SasDataSetDescriptionTest {
     }
 
     /**
-     * Tests constructing a SAS data set description with the empty string for the name.
+     * Tests constructing a SAS dataset description with the empty string for the name.
      */
     @Test
     public void constructWithBlankName() {
@@ -326,11 +326,11 @@ public class SasDataSetDescriptionTest {
             newVariableList(), // variable list
             LocalDateTime.now(), // creation date
             LocalDateTime.now(), // modification date
-            "data set names cannot be blank");
+            "dataset names cannot be blank");
     }
 
     /**
-     * Tests constructing a SAS data set description with the empty string for the name.
+     * Tests constructing a SAS dataset description with the empty string for the name.
      */
     @Test
     public void constructWithNonAsciiName() {
@@ -343,11 +343,11 @@ public class SasDataSetDescriptionTest {
             newVariableList(), // variable list
             LocalDateTime.now(), // creation date
             LocalDateTime.now(), // modification date
-            "data set names must contain only ASCII (7-bit) characters");
+            "dataset names must contain only ASCII (7-bit) characters");
     }
 
     /**
-     * Tests constructing a SAS data set description with a name that's too long.
+     * Tests constructing a SAS dataset description with a name that's too long.
      */
     @Test
     public void constructWithLongName() {
@@ -360,7 +360,7 @@ public class SasDataSetDescriptionTest {
             newVariableList(), // variable list
             LocalDateTime.now(), // creation date
             LocalDateTime.now(), // modification date
-            "data set names must not be longer than 8 characters");
+            "dataset names must not be longer than 8 characters");
     }
 
     /**
@@ -386,13 +386,13 @@ public class SasDataSetDescriptionTest {
                 variables, // variable list
                 date, // creation date
                 date, // modification date
-                "data set name is illegal for SAS");
+                "dataset name is illegal for SAS");
         }
 
         String[] goodNames = { "DATA_SET", "A", "B", "Z", "_", "A10", "a", "z" };
         for (String name : goodNames) {
-            // Create the data set
-            SasDataSetDescription dataSet = new SasDataSetDescription(//
+            // Create the dataset
+            SasDatasetDescription dataset = new SasDatasetDescription(//
                 name, //name
                 label, // label
                 type, // type
@@ -401,12 +401,12 @@ public class SasDataSetDescriptionTest {
                 variables, // variable list
                 date, // creation date
                 date); // modification date
-            assertEquals(name, dataSet.name());
+            assertEquals(name, dataset.name());
         }
     }
 
     /**
-     * Tests constructing a SAS data set description with a label that's too long.
+     * Tests constructing a SAS dataset description with a label that's too long.
      */
     @Test
     public void constructWithLongLabel() {
@@ -415,7 +415,7 @@ public class SasDataSetDescriptionTest {
         String longLabel = limitLabel + "Y";
 
         // The 40 character label is permitted.
-        SasDataSetDescription dataSet = new SasDataSetDescription(//
+        SasDatasetDescription dataset = new SasDatasetDescription(//
             "DATASET", // name
             limitLabel, // label
             "type", // type
@@ -424,7 +424,7 @@ public class SasDataSetDescriptionTest {
             newVariableList(), // variable list
             LocalDateTime.now(), // creation date
             LocalDateTime.now()); // modification date
-        assertEquals(limitLabel, dataSet.label());
+        assertEquals(limitLabel, dataset.label());
 
         // The 41 character label is prohibited.
         runAllConstructWithIllegalArgumentTests(//
@@ -436,11 +436,11 @@ public class SasDataSetDescriptionTest {
             newVariableList(), // variable list
             LocalDateTime.now(), // creation date
             LocalDateTime.now(), // modification date
-            "data set labels must not be longer than 40 characters");
+            "dataset labels must not be longer than 40 characters");
     }
 
     /**
-     * Tests constructing a SAS data set description with a type that's too long.
+     * Tests constructing a SAS dataset description with a type that's too long.
      */
     @Test
     public void constructWithLongType() {
@@ -449,7 +449,7 @@ public class SasDataSetDescriptionTest {
         String longType = limitType + "X";
 
         // The 8 character type is permitted.
-        SasDataSetDescription dataSet = new SasDataSetDescription(//
+        SasDatasetDescription dataset = new SasDatasetDescription(//
             "DATASET", // name
             "label", // label
             limitType, // type
@@ -458,7 +458,7 @@ public class SasDataSetDescriptionTest {
             newVariableList(), // variable list
             LocalDateTime.now(), // creation date
             LocalDateTime.now()); // modification date
-        assertEquals(limitType, dataSet.type());
+        assertEquals(limitType, dataset.type());
 
         // The 9 character type is prohibited.
         runAllConstructWithIllegalArgumentTests(//
@@ -470,11 +470,11 @@ public class SasDataSetDescriptionTest {
             newVariableList(), // variable list
             LocalDateTime.now(), // creation date
             LocalDateTime.now(), // modification date
-            "data set types must not be longer than 8 characters");
+            "dataset types must not be longer than 8 characters");
     }
 
     /**
-     * Tests constructing a SAS data set description with a type that contains non-ASCII characters.
+     * Tests constructing a SAS dataset description with a type that contains non-ASCII characters.
      */
     @Test
     public void constructWithNonAsciiType() {
@@ -496,7 +496,7 @@ public class SasDataSetDescriptionTest {
             variables, // variable list
             date, // creation date
             date, // modification date
-            "data set type must contain only ASCII (7-bit) characters");
+            "dataset type must contain only ASCII (7-bit) characters");
 
         // the "FDA" strictness should prohibit this
         runConstructWithIllegalArgumentTest(//
@@ -509,10 +509,10 @@ public class SasDataSetDescriptionTest {
             date, // creation date
             date, // modification date
             EnumSet.of(StrictnessMode.FDA_SUBMISSION), //
-            "data set type must contain only ASCII (7-bit) characters");
+            "dataset type must contain only ASCII (7-bit) characters");
 
         // the "basic" strictness should permit this
-        SasDataSetDescription dataSet = new SasDataSetDescription(//
+        SasDatasetDescription dataset = new SasDatasetDescription(//
             name, // name
             label, // label
             nonAsciiType, // type
@@ -522,11 +522,11 @@ public class SasDataSetDescriptionTest {
             date, // creation date
             date, // modification date
             StrictnessMode.BASIC);
-        assertEquals(nonAsciiType, dataSet.type(), "non-ASCII type was not preserved");
+        assertEquals(nonAsciiType, dataset.type(), "non-ASCII type was not preserved");
     }
 
     /**
-     * Tests constructing a SAS data set description with a source operating system that's too long.
+     * Tests constructing a SAS dataset description with a source operating system that's too long.
      */
     @Test
     public void constructWithLongSourceOperatingSystem() {
@@ -535,7 +535,7 @@ public class SasDataSetDescriptionTest {
         String longOperatingSystem = limitOperatingSystem + "Y";
 
         // The 8 character operating system is permitted.
-        SasDataSetDescription dataSet = new SasDataSetDescription(//
+        SasDatasetDescription dataset = new SasDatasetDescription(//
             "DATASET", // name
             "label", // label
             "", // type
@@ -544,7 +544,7 @@ public class SasDataSetDescriptionTest {
             newVariableList(), // variable list
             LocalDateTime.now(), // creation date
             LocalDateTime.now()); // modification date
-        assertEquals(limitOperatingSystem, dataSet.sourceOperatingSystem());
+        assertEquals(limitOperatingSystem, dataset.sourceOperatingSystem());
 
         // The 9 character operating system is prohibited.
         runAllConstructWithIllegalArgumentTests(//
@@ -556,11 +556,11 @@ public class SasDataSetDescriptionTest {
             newVariableList(), // variable list
             LocalDateTime.now(), // creation date
             LocalDateTime.now(), // modification date
-            "data set operating system must not be longer than 8 characters");
+            "dataset operating system must not be longer than 8 characters");
     }
 
     /**
-     * Tests constructing a SAS data set description with a source operating system that contains non-ASCII characters.
+     * Tests constructing a SAS dataset description with a source operating system that contains non-ASCII characters.
      */
     @Test
     public void constructWithNonAsciiSourceOperatingSystem() {
@@ -573,11 +573,11 @@ public class SasDataSetDescriptionTest {
             newVariableList(), // variable list
             LocalDateTime.now(), // creation date
             LocalDateTime.now(), // modification date
-            "data set operating system must contain only ASCII (7-bit) characters");
+            "dataset operating system must contain only ASCII (7-bit) characters");
     }
 
     /**
-     * Tests constructing a SAS data set description with a source SAS version that's too long.
+     * Tests constructing a SAS dataset description with a source SAS version that's too long.
      */
     @Test
     public void constructWithLongSourceSasVersion() {
@@ -586,7 +586,7 @@ public class SasDataSetDescriptionTest {
         String longVersion = limitVersion + "9";
 
         // The 8 character SAS version is permitted.
-        SasDataSetDescription dataSet = new SasDataSetDescription(//
+        SasDatasetDescription dataset = new SasDatasetDescription(//
             "DATASET", // name
             "label", // label
             "", // type
@@ -595,7 +595,7 @@ public class SasDataSetDescriptionTest {
             newVariableList(), // variable list
             LocalDateTime.now(), // creation date
             LocalDateTime.now()); // modification date
-        assertEquals(limitVersion, dataSet.sourceSasVersion());
+        assertEquals(limitVersion, dataset.sourceSasVersion());
 
         // The 9 character SAS version is prohibited.
         runConstructWithIllegalArgumentTest(//
@@ -607,11 +607,11 @@ public class SasDataSetDescriptionTest {
             newVariableList(), // variable list
             LocalDateTime.now(), // creation date
             LocalDateTime.now(), // modification date
-            "data set SAS versions must not be longer than 8 characters");
+            "dataset SAS versions must not be longer than 8 characters");
     }
 
     /**
-     * Tests constructing a SAS data set description with one too many variables. The XPORT format only supports 9999.
+     * Tests constructing a SAS dataset description with one too many variables. The XPORT format only supports 9999.
      */
     @Test
     public void constructWithTooManyVariables() {
@@ -643,7 +643,7 @@ public class SasDataSetDescriptionTest {
             Format.UNSPECIFIED));
 
         // The 9,999 variable list is permitted.
-        SasDataSetDescription dataSet = new SasDataSetDescription(//
+        SasDatasetDescription dataset = new SasDatasetDescription(//
             "DATASET", // name
             "label", // label
             "", // type
@@ -652,7 +652,7 @@ public class SasDataSetDescriptionTest {
             limitVariables, // variable list
             LocalDateTime.now(), // creation date
             LocalDateTime.now()); // modification date
-        assertEquals(limitVariables.size(), dataSet.variables().size());
+        assertEquals(limitVariables.size(), dataset.variables().size());
 
         // The 10,000 variable list is prohibited.
         runConstructWithIllegalArgumentTest(//
@@ -668,7 +668,7 @@ public class SasDataSetDescriptionTest {
     }
 
     /**
-     * Tests constructing a SAS data set description with a SAS version that contains non-ASCII characters.
+     * Tests constructing a SAS dataset description with a SAS version that contains non-ASCII characters.
      */
     @Test
     public void constructWithNonAsciiSourceSasVersion() {
@@ -681,11 +681,11 @@ public class SasDataSetDescriptionTest {
             newVariableList(), // variable list
             LocalDateTime.now(), // creation date
             LocalDateTime.now(), // modification date
-            "data set SAS versions must contain only ASCII (7-bit) characters");
+            "dataset SAS versions must contain only ASCII (7-bit) characters");
     }
 
     /**
-     * Tests constructing a SAS data set description with a null name.
+     * Tests constructing a SAS dataset description with a null name.
      */
     @Test
     public void constructWithNullName() {
@@ -702,7 +702,7 @@ public class SasDataSetDescriptionTest {
     }
 
     /**
-     * Tests constructing a SAS data set description with a null label.
+     * Tests constructing a SAS dataset description with a null label.
      */
     @Test
     public void constructWithNullLabel() {
@@ -719,7 +719,7 @@ public class SasDataSetDescriptionTest {
     }
 
     /**
-     * Tests constructing a SAS data set description with a null type.
+     * Tests constructing a SAS dataset description with a null type.
      */
     @Test
     public void constructWithNullType() {
@@ -736,7 +736,7 @@ public class SasDataSetDescriptionTest {
     }
 
     /**
-     * Tests constructing a SAS data set description with a null source operating system.
+     * Tests constructing a SAS dataset description with a null source operating system.
      */
     @Test
     public void constructWithNullSourceOperatingSystem() {
@@ -753,7 +753,7 @@ public class SasDataSetDescriptionTest {
     }
 
     /**
-     * Tests constructing a SAS data set description with a null source SAS version.
+     * Tests constructing a SAS dataset description with a null source SAS version.
      */
     @Test
     public void constructWithNullSourceSasVersion() {
@@ -770,7 +770,7 @@ public class SasDataSetDescriptionTest {
     }
 
     /**
-     * Tests constructing a SAS data set description with a null variable list.
+     * Tests constructing a SAS dataset description with a null variable list.
      */
     @Test
     public void constructWithNullVariables() {
@@ -787,7 +787,7 @@ public class SasDataSetDescriptionTest {
     }
 
     /**
-     * Tests constructing a SAS data set description with a null creation date.
+     * Tests constructing a SAS dataset description with a null creation date.
      */
     @Test
     public void constructWithNullCreationDate() {
@@ -804,7 +804,7 @@ public class SasDataSetDescriptionTest {
     }
 
     /**
-     * Tests constructing a SAS data set description with a null modification date.
+     * Tests constructing a SAS dataset description with a null modification date.
      */
     @Test
     public void constructWithNullModificationDate() {

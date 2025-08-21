@@ -13,7 +13,7 @@
 * Record #4-#6 - observation #2 (all values set);
 * Record #6-#9 - observation #3 (third value missing);
 libname xportout xport '240_byte_observation.xpt';
-data xportout.data(label='Data Set with 240 byte observation');
+data xportout.data(label='A dataset with 240-byte observations');
    infile datalines FLOWOVER;
    input  TEXT1 $ 1-80 TEXT2 $ 81-160 TEXT3 $ 161-240;
    format TEXT1   $80. TEXT2 $80.     TEXT3 $80.;

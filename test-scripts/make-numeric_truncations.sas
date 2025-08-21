@@ -6,7 +6,7 @@
  *  src/test/res/numeric_truncations.xpt
  *********************************************************************/
 
-* Data set with variations on the size of numeric data, which
+* Create a dataset with variations on the size of numeric data, which;
 * leads to different amounts of truncation and padding within the;
 * XPORT file, even though, internally, the numbers are 8 bytes;
 *
@@ -212,7 +212,7 @@ datalines;
 1.234567890123456890E+76 1.234567890123456890E+76 1.234567890123456890E+76 1.234567890123456890E+76 1.234567890123456890E+76 1.234567890123456890E+76
 ;
 
-* Export the data set into a V5 XPORT file;
+* Export the dataset into a V5 XPORT file;
 libname xportout xport 'numeric_truncations.xpt';
 data xportout.numbers;
    set work.numbers;

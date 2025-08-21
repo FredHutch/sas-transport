@@ -67,25 +67,25 @@ public class SasTransportImporterTest {
     }
 
     /**
-     * Calls {@link SasLibraryDescription#importTransportDataSet(InputStream)} with a {@code null} {@code InputStream}
+     * Calls {@link SasLibraryDescription#importTransportDataset(InputStream)} with a {@code null} {@code InputStream}
      * argument.
      */
     @Test
     public void importNullStream() {
         Exception exception = assertThrows(//
             NullPointerException.class, //
-            () -> SasLibraryDescription.importTransportDataSet((InputStream) null));
+            () -> SasLibraryDescription.importTransportDataset((InputStream) null));
         assertEquals("inputStream must not be null", exception.getMessage());
     }
 
     /**
-     * Calls {@link SasLibraryDescription#importTransportDataSet(Path)} with a {@code null} {@code Path} argument.
+     * Calls {@link SasLibraryDescription#importTransportDataset(Path)} with a {@code null} {@code Path} argument.
      */
     @Test
     public void importNullPath() {
         Exception exception = assertThrows(//
             NullPointerException.class, //
-            () -> SasLibraryDescription.importTransportDataSet((Path) null));
+            () -> SasLibraryDescription.importTransportDataset((Path) null));
         assertEquals("path must not be null", exception.getMessage());
     }
 
@@ -96,7 +96,7 @@ public class SasTransportImporterTest {
     public void testClosedImporter() throws IOException {
 
         InputStream testStream = TestUtil.getTestResource("minidata.xpt");
-        SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream);
+        SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream);
 
         // Close the importer.
         importer.close();
@@ -108,35 +108,35 @@ public class SasTransportImporterTest {
         importer.close();
 
         // Getting the library description should still work.
-        LocalDateTime expectedTimestamp = LocalDateTime.of(2017, 8, 23, 8, 56, 39);
+        LocalDateTime expectedTimestamp = LocalDateTime.of(2025, 8, 20, 10, 50, 54);
         SasLibraryDescription libraryDescription = importer.sasLibraryDescription();
         TestUtil.assertSasLibraryDescription(//
             libraryDescription, //
-            "Linux", // OS
+            "LIN X64", // OS
             "9.4", // SAS version
             expectedTimestamp, // creation time
             expectedTimestamp); // modified time
 
-        // Getting the data set description should still work.
-        SasDataSetDescription dataSetDescription = libraryDescription.dataSetDescription();
-        TestUtil.assertSasDataSetDescription(//
-            dataSetDescription, //
+        // Getting the dataset description should still work.
+        SasDatasetDescription datasetDescription = libraryDescription.datasetDescription();
+        TestUtil.assertSasDatasetDescription(//
+            datasetDescription, //
             "MINIDATA", // name
-            "Data set with only one value", // label
+            "A dataset with only one value", // label
             "", // type
-            "Linux", // OS
+            " LIN X64", // OS
             "9.4", // SAS version
             expectedTimestamp, // creation time
             expectedTimestamp); // modified time
 
         // Getting the variables should still work.
-        List<Variable> dataSetVariables = dataSetDescription.variables();
-        assertNotNull(dataSetVariables);
-        assertEquals(1, dataSetVariables.size()); // only one variable is expected.
+        List<Variable> datasetVariables = datasetDescription.variables();
+        assertNotNull(datasetVariables);
+        assertEquals(1, datasetVariables.size()); // only one variable is expected.
 
         // Check the variable
         TestUtil.assertVariable(//
-            dataSetVariables.get(0), //
+            datasetVariables.get(0), //
             "NUMBER", // name
             1, // number (1-indexed)
             VariableType.NUMERIC, // type
@@ -153,37 +153,37 @@ public class SasTransportImporterTest {
     @Test
     public void testNoObservations() throws IOException {
 
-        LocalDateTime expectedTimestamp = LocalDateTime.of(2017, 9, 19, 9, 8, 35);
+        LocalDateTime expectedTimestamp = LocalDateTime.of(2025, 8, 20, 10, 50, 55);
 
         InputStream testStream = TestUtil.getTestResource("no_observations.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
             SasLibraryDescription libraryDescription = importer.sasLibraryDescription();
             TestUtil.assertSasLibraryDescription(//
                 libraryDescription, //
                 "LIN X64", // OS
-                "9.1", // SAS version
+                "9.4", // SAS version
                 expectedTimestamp, // creation time
                 expectedTimestamp); // modified time
 
-            SasDataSetDescription dataSetDescription = libraryDescription.dataSetDescription();
-            TestUtil.assertSasDataSetDescription(//
-                dataSetDescription, //
+            SasDatasetDescription datasetDescription = libraryDescription.datasetDescription();
+            TestUtil.assertSasDatasetDescription(//
+                datasetDescription, //
                 "REPORT", // name
-                "Data set with no observations", // label
+                "A dataset with no observations", // label
                 "", // type
                 " LIN X64", // OS
-                "9.1", // SAS version
+                "9.4", // SAS version
                 expectedTimestamp, // creation time
                 expectedTimestamp); // modified time
 
-            List<Variable> dataSetVariables = dataSetDescription.variables();
-            assertNotNull(dataSetVariables);
-            assertEquals(1, dataSetVariables.size()); // only one variable is expected.
+            List<Variable> datasetVariables = datasetDescription.variables();
+            assertNotNull(datasetVariables);
+            assertEquals(1, datasetVariables.size()); // only one variable is expected.
 
             // Check the variable
             TestUtil.assertVariable(//
-                dataSetVariables.get(0), //
+                datasetVariables.get(0), //
                 "TEXT", // name
                 1, // number (1-indexed)
                 VariableType.CHARACTER, // type
@@ -204,37 +204,37 @@ public class SasTransportImporterTest {
     @Test
     public void testReadingOneValue() throws IOException {
 
-        LocalDateTime expectedTimestamp = LocalDateTime.of(2017, 8, 23, 8, 56, 39);
+        LocalDateTime expectedTimestamp = LocalDateTime.of(2025, 8, 20, 10, 50, 54);
 
         InputStream testStream = TestUtil.getTestResource("minidata.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
             SasLibraryDescription libraryDescription = importer.sasLibraryDescription();
             TestUtil.assertSasLibraryDescription(//
                 libraryDescription, //
-                "Linux", // OS
+                "LIN X64", // OS
                 "9.4", // SAS version
                 expectedTimestamp, // creation time
                 expectedTimestamp); // modified time
 
-            SasDataSetDescription dataSetDescription = libraryDescription.dataSetDescription();
-            TestUtil.assertSasDataSetDescription(//
-                dataSetDescription, //
+            SasDatasetDescription datasetDescription = libraryDescription.datasetDescription();
+            TestUtil.assertSasDatasetDescription(//
+                datasetDescription, //
                 "MINIDATA", // name
-                "Data set with only one value", // label
+                "A dataset with only one value", // label
                 "", // type
-                "Linux", // OS
+                " LIN X64", // OS
                 "9.4", // SAS version
                 expectedTimestamp, // creation time
                 expectedTimestamp); // modified time
 
-            List<Variable> dataSetVariables = dataSetDescription.variables();
-            assertNotNull(dataSetVariables);
-            assertEquals(1, dataSetVariables.size()); // only one variable is expected.
+            List<Variable> datasetVariables = datasetDescription.variables();
+            assertNotNull(datasetVariables);
+            assertEquals(1, datasetVariables.size()); // only one variable is expected.
 
             // Check the variable
             TestUtil.assertVariable(//
-                dataSetVariables.get(0), //
+                datasetVariables.get(0), //
                 "NUMBER", // name
                 1, // number (1-indexed)
                 VariableType.NUMERIC, // type
@@ -259,16 +259,16 @@ public class SasTransportImporterTest {
     public void testNumericVariations() throws IOException {
 
         InputStream testStream = TestUtil.getTestResource("numeric_variations.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
             SasLibraryDescription libraryDescription = importer.sasLibraryDescription();
-            SasDataSetDescription dataSetDescription = libraryDescription.dataSetDescription();
-            List<Variable> dataSetVariables = dataSetDescription.variables();
-            assertNotNull(dataSetVariables);
-            assertEquals(1, dataSetVariables.size()); // only one variable is expected.
+            SasDatasetDescription datasetDescription = libraryDescription.datasetDescription();
+            List<Variable> datasetVariables = datasetDescription.variables();
+            assertNotNull(datasetVariables);
+            assertEquals(1, datasetVariables.size()); // only one variable is expected.
 
             TestUtil.assertVariable(//
-                dataSetVariables.get(0), //
+                datasetVariables.get(0), //
                 "NUMBER", // name
                 1, // number (1-indexed)
                 VariableType.NUMERIC, // type
@@ -517,7 +517,7 @@ public class SasTransportImporterTest {
     @Test
     public void testNumericTruncation() throws IOException {
         InputStream testStream = TestUtil.getTestResource("numeric_truncations.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
             // The first 28 values are variations on MissingValue
             assertNextObservation(importer, repeat(6, MissingValue.STANDARD));
@@ -2116,16 +2116,16 @@ public class SasTransportImporterTest {
     public void testDateTimeVariations() throws IOException {
 
         InputStream testStream = TestUtil.getTestResource("datetime_variations.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
             SasLibraryDescription libraryDescription = importer.sasLibraryDescription();
-            SasDataSetDescription dataSetDescription = libraryDescription.dataSetDescription();
-            List<Variable> dataSetVariables = dataSetDescription.variables();
-            assertNotNull(dataSetVariables);
-            assertEquals(3, dataSetVariables.size());
+            SasDatasetDescription datasetDescription = libraryDescription.datasetDescription();
+            List<Variable> datasetVariables = datasetDescription.variables();
+            assertNotNull(datasetVariables);
+            assertEquals(3, datasetVariables.size());
 
             TestUtil.assertVariable(//
-                dataSetVariables.get(0), //
+                datasetVariables.get(0), //
                 "DATETIME", // name
                 1, // number (1-indexed)
                 VariableType.NUMERIC, // type
@@ -2136,7 +2136,7 @@ public class SasTransportImporterTest {
                 new Format("DATETIME", 22, 3));// input format
 
             TestUtil.assertVariable(//
-                dataSetVariables.get(1), //
+                datasetVariables.get(1), //
                 "DATE", // name
                 2, // number (1-indexed)
                 VariableType.NUMERIC, // type
@@ -2147,7 +2147,7 @@ public class SasTransportImporterTest {
                 new Format("DATE", 11, 0)); // input format
 
             TestUtil.assertVariable(//
-                dataSetVariables.get(2), //
+                datasetVariables.get(2), //
                 "TIME", // name
                 3, // number (1-indexed)
                 VariableType.NUMERIC, // type
@@ -2210,15 +2210,15 @@ public class SasTransportImporterTest {
     public void testNoVariables() throws IOException {
 
         InputStream testStream = TestUtil.getTestResource("no_variables.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
             SasLibraryDescription libraryDescription = importer.sasLibraryDescription();
-            SasDataSetDescription dataSetDescription = libraryDescription.dataSetDescription();
+            SasDatasetDescription datasetDescription = libraryDescription.datasetDescription();
 
             // There should be no variables
-            List<Variable> dataSetVariables = dataSetDescription.variables();
-            assertNotNull(dataSetVariables);
-            assertEquals(0, dataSetVariables.size());
+            List<Variable> datasetVariables = datasetDescription.variables();
+            assertNotNull(datasetVariables);
+            assertEquals(0, datasetVariables.size());
 
             // There should be no variables, there cannot be any observations.
             // Rather than returning the empty list infinitely, we return EOF.
@@ -2235,19 +2235,19 @@ public class SasTransportImporterTest {
         final int TOTAL_VARIABLES = 9999;
 
         InputStream testStream = TestUtil.getTestResource("max_variables.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
             SasLibraryDescription libraryDescription = importer.sasLibraryDescription();
-            SasDataSetDescription dataSetDescription = libraryDescription.dataSetDescription();
+            SasDatasetDescription datasetDescription = libraryDescription.datasetDescription();
 
-            List<Variable> dataSetVariables = dataSetDescription.variables();
-            assertNotNull(dataSetVariables);
-            assertEquals(TOTAL_VARIABLES, dataSetVariables.size());
+            List<Variable> datasetVariables = datasetDescription.variables();
+            assertNotNull(datasetVariables);
+            assertEquals(TOTAL_VARIABLES, datasetVariables.size());
 
             // Confirm that each of the variables was read correctly.
             for (int i = 0; i < TOTAL_VARIABLES; i++) {
                 TestUtil.assertVariable(//
-                    dataSetVariables.get(i), //
+                    datasetVariables.get(i), //
                     String.format("V%04d", i + 1), // name
                     i + 1, // number (1-indexed)
                     VariableType.CHARACTER, // type
@@ -2279,12 +2279,12 @@ public class SasTransportImporterTest {
     @Test
     public void testValuesWithLongLength() throws IOException {
         InputStream testStream = TestUtil.getTestResource("max_length_variable.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
-            List<Variable> variables = importer.sasLibraryDescription().dataSetDescription().variables();
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
+            List<Variable> variables = importer.sasLibraryDescription().datasetDescription().variables();
             assertEquals(3, variables.size());
 
             // The first character variable was specified as being 32767 long
-            // in the data set, but the XPORT engine truncated it to 200.
+            // in the dataset, but the XPORT engine truncated it to 200.
             TestUtil.assertVariable(//
                 variables.get(0), //
                 "LONGTEXT", // name
@@ -2345,7 +2345,7 @@ public class SasTransportImporterTest {
     @Test
     public void testYearCutoff() throws IOException {
         InputStream testStream = TestUtil.getTestResource("yearcutoff.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
             SasLibraryDescription libraryDescription = importer.sasLibraryDescription();
             TestUtil.assertSasLibraryDescription(//
@@ -2355,11 +2355,11 @@ public class SasTransportImporterTest {
                 LocalDateTime.of(1960, 1, 1, 0, 0, 0), // creation time
                 LocalDateTime.of(1960, 12, 31, 23, 59, 59)); // modified time
 
-            SasDataSetDescription dataSetDescription = libraryDescription.dataSetDescription();
-            TestUtil.assertSasDataSetDescription(//
-                dataSetDescription, //
+            SasDatasetDescription datasetDescription = libraryDescription.datasetDescription();
+            TestUtil.assertSasDatasetDescription(//
+                datasetDescription, //
                 "REPORT", // name
-                "Data set created in year '60", // label
+                "A dataset created in the year '60", // label
                 "", // type
                 " LIN X64", // OS
                 "9.1", // SAS version
@@ -2368,7 +2368,7 @@ public class SasTransportImporterTest {
         }
 
         testStream = TestUtil.getTestResource("yearcutoff_minus_one.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
             SasLibraryDescription libraryDescription = importer.sasLibraryDescription();
             TestUtil.assertSasLibraryDescription(//
@@ -2378,11 +2378,11 @@ public class SasTransportImporterTest {
                 LocalDateTime.of(2059, 1, 1, 0, 0, 0), // creation time
                 LocalDateTime.of(2059, 12, 31, 23, 59, 59)); // modified time
 
-            SasDataSetDescription dataSetDescription = libraryDescription.dataSetDescription();
-            TestUtil.assertSasDataSetDescription(//
-                dataSetDescription, //
+            SasDatasetDescription datasetDescription = libraryDescription.datasetDescription();
+            TestUtil.assertSasDatasetDescription(//
+                datasetDescription, //
                 "REPORT", // name
-                "Data set created in year '59", // label
+                "A dataset created in the year '59", // label
                 "", // type
                 " LIN X64", // OS
                 "9.1", // SAS version
@@ -2398,15 +2398,15 @@ public class SasTransportImporterTest {
     @Test
     public void testUserDefinedFormat() throws IOException {
         InputStream testStream = TestUtil.getTestResource("user_defined_format.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
             // Check the variables
-            List<Variable> dataSetVariables = importer.sasLibraryDescription().dataSetDescription().variables();
-            assertNotNull(dataSetVariables);
-            assertEquals(4, dataSetVariables.size());
+            List<Variable> datasetVariables = importer.sasLibraryDescription().datasetDescription().variables();
+            assertNotNull(datasetVariables);
+            assertEquals(4, datasetVariables.size());
 
             TestUtil.assertVariable(//
-                dataSetVariables.get(0), //
+                datasetVariables.get(0), //
                 "ID", // name
                 1, // number (1-indexed)
                 VariableType.CHARACTER, // type
@@ -2417,7 +2417,7 @@ public class SasTransportImporterTest {
                 Format.UNSPECIFIED); // input format
 
             TestUtil.assertVariable(//
-                dataSetVariables.get(1), //
+                datasetVariables.get(1), //
                 "SEX", // name
                 2, // number (1-indexed)
                 VariableType.CHARACTER, // type
@@ -2428,7 +2428,7 @@ public class SasTransportImporterTest {
                 Format.UNSPECIFIED); // input format
 
             TestUtil.assertVariable(//
-                dataSetVariables.get(2), //
+                datasetVariables.get(2), //
                 "INCOME", // name
                 3, // number (1-indexed)
                 VariableType.NUMERIC, // type
@@ -2439,7 +2439,7 @@ public class SasTransportImporterTest {
                 Format.UNSPECIFIED); // input format
 
             TestUtil.assertVariable(//
-                dataSetVariables.get(3), //
+                datasetVariables.get(3), //
                 "SMOKER", // name
                 4, // number (1-indexed)
                 VariableType.NUMERIC, // type
@@ -2466,15 +2466,15 @@ public class SasTransportImporterTest {
     public void testReadingNonAsciiVariableLabel() throws IOException {
 
         InputStream testStream = TestUtil.getTestResource("variable_nonascii_label.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
-            List<Variable> dataSetVariables = importer.sasLibraryDescription().dataSetDescription().variables();
-            assertNotNull(dataSetVariables);
-            assertEquals(1, dataSetVariables.size()); // only one variable is expected.
+            List<Variable> datasetVariables = importer.sasLibraryDescription().datasetDescription().variables();
+            assertNotNull(datasetVariables);
+            assertEquals(1, datasetVariables.size()); // only one variable is expected.
 
             // Check the variable
             TestUtil.assertVariable(//
-                dataSetVariables.get(0), //
+                datasetVariables.get(0), //
                 "TEXT", // name
                 1, // number (1-indexed)
                 VariableType.CHARACTER, // type
@@ -2500,15 +2500,15 @@ public class SasTransportImporterTest {
     public void testReadingNonAsciiValue() throws IOException {
 
         InputStream testStream = TestUtil.getTestResource("nonascii_value.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
-            List<Variable> dataSetVariables = importer.sasLibraryDescription().dataSetDescription().variables();
-            assertNotNull(dataSetVariables);
-            assertEquals(1, dataSetVariables.size()); // only one variable is expected.
+            List<Variable> datasetVariables = importer.sasLibraryDescription().datasetDescription().variables();
+            assertNotNull(datasetVariables);
+            assertEquals(1, datasetVariables.size()); // only one variable is expected.
 
             // Check the variable
             TestUtil.assertVariable(//
-                dataSetVariables.get(0), //
+                datasetVariables.get(0), //
                 "TEXT", // name
                 1, // number (1-indexed)
                 VariableType.CHARACTER, // type
@@ -2532,16 +2532,16 @@ public class SasTransportImporterTest {
     @Test
     public void testUtf8Value() throws IOException {
         InputStream testStream = TestUtil.getTestResource("utf8.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
             // Getting the variables should still work.
-            List<Variable> dataSetVariables = importer.sasLibraryDescription().dataSetDescription().variables();
-            assertNotNull(dataSetVariables);
-            assertEquals(1, dataSetVariables.size()); // only one variable is expected.
+            List<Variable> datasetVariables = importer.sasLibraryDescription().datasetDescription().variables();
+            assertNotNull(datasetVariables);
+            assertEquals(1, datasetVariables.size()); // only one variable is expected.
 
             // Check the variable
             TestUtil.assertVariable(//
-                dataSetVariables.get(0), //
+                datasetVariables.get(0), //
                 "TEXT", // name
                 1, // number (1-indexed)
                 VariableType.CHARACTER, // type
@@ -2569,30 +2569,30 @@ public class SasTransportImporterTest {
     @Test
     public void testBinaryData() throws IOException {
         InputStream testStream = TestUtil.getTestResource("binary_character_data.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
-            // We should see only the first data set.
+            // We should see only the first dataset.
             SasLibraryDescription libraryDescription = importer.sasLibraryDescription();
-            SasDataSetDescription dataSetDescription = libraryDescription.dataSetDescription();
+            SasDatasetDescription datasetDescription = libraryDescription.datasetDescription();
 
-            LocalDateTime expectedTimestamp = LocalDateTime.of(2017, 10, 27, 7, 41, 32);
-            TestUtil.assertSasDataSetDescription(//
-                dataSetDescription, //
+            LocalDateTime expectedTimestamp = LocalDateTime.of(2025, 8, 20, 10, 50, 52);
+            TestUtil.assertSasDatasetDescription(//
+                datasetDescription, //
                 "TESTDATA", // name
-                "Data set of binary data (all bytes)", // label
+                "Dataset of binary data (all bytes)", // label
                 "", // type
                 "Linux", // OS
                 "9.4", // SAS version
                 expectedTimestamp, // creation time
                 expectedTimestamp); // modified time
 
-            List<Variable> dataSetVariables = dataSetDescription.variables();
-            assertNotNull(dataSetVariables);
-            assertEquals(1, dataSetVariables.size());
+            List<Variable> datasetVariables = datasetDescription.variables();
+            assertNotNull(datasetVariables);
+            assertEquals(1, datasetVariables.size());
 
             // Confirm that each of the variables was read correctly.
             TestUtil.assertVariable(//
-                dataSetVariables.get(0), //
+                datasetVariables.get(0), //
                 "BINARY", // name
                 1, // number (1-indexed)
                 VariableType.CHARACTER, // type
@@ -2646,7 +2646,7 @@ public class SasTransportImporterTest {
         // importing should throw an exception
         Throwable exception = assertThrows(//
             expectedExceptionClass, //
-            () -> SasLibraryDescription.importTransportDataSet(testStream));
+            () -> SasLibraryDescription.importTransportDataset(testStream));
 
         // Confirm that the correct exception was thrown.
         assertEquals(expectedExceptionMessage, exception.getMessage());
@@ -2683,35 +2683,35 @@ public class SasTransportImporterTest {
     }
 
     /**
-     * Tests importing an XPORT that has multiple data sets. This is not supported.
+     * Tests importing an XPORT that has multiple datasets. This is not supported.
      */
     @Test
     public void testMultipleDatasets() throws IOException {
         InputStream testStream = TestUtil.getTestResource("multiple_datasets.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
-            // We should see only the first data set.
+            // We should see only the first dataset.
             SasLibraryDescription libraryDescription = importer.sasLibraryDescription();
-            SasDataSetDescription dataSetDescription = libraryDescription.dataSetDescription();
+            SasDatasetDescription datasetDescription = libraryDescription.datasetDescription();
 
-            LocalDateTime expectedTimestamp = LocalDateTime.of(2017, 9, 27, 10, 27, 42);
-            TestUtil.assertSasDataSetDescription(//
-                dataSetDescription, //
+            LocalDateTime expectedTimestamp = LocalDateTime.of(2025, 8, 20, 10, 50, 54);
+            TestUtil.assertSasDatasetDescription(//
+                datasetDescription, //
                 "A", // name
-                "Data set A", // label
+                "Dataset A", // label
                 "", // type
                 "Linux", // OS
                 "9.4", // SAS version
                 expectedTimestamp, // creation time
                 expectedTimestamp); // modified time
 
-            List<Variable> dataSetVariables = dataSetDescription.variables();
-            assertNotNull(dataSetVariables);
-            assertEquals(1, dataSetVariables.size());
+            List<Variable> datasetVariables = datasetDescription.variables();
+            assertNotNull(datasetVariables);
+            assertEquals(1, datasetVariables.size());
 
             // Confirm that each of the variables was read correctly.
             TestUtil.assertVariable(//
-                dataSetVariables.get(0), //
+                datasetVariables.get(0), //
                 "A1", // name
                 1, // number (1-indexed)
                 VariableType.CHARACTER, // type
@@ -2721,45 +2721,45 @@ public class SasTransportImporterTest {
                 Justification.LEFT, // output format justification
                 Format.UNSPECIFIED); // input format
 
-            // The first data set has one observation.
+            // The first dataset has one observation.
             assertNextObservation(importer, new Object[] { "data-in-dataset-a" });
 
-            // As we go to the next data set, an exception should be thrown
-            assertNextObservationsThrowsException(importer, MultipleDataSetsNotSupportedException.class, null);
+            // As we go to the next dataset, an exception should be thrown.
+            assertNextObservationsThrowsException(importer, MultipleDatasetsNotSupportedException.class, null);
         }
     }
 
     /**
-     * Tests importing an XPORT that has multiple data sets where the first one has no observations. There is specific
+     * Tests importing an XPORT that has multiple datasets where the first one has no observations. There is specific
      * code to handle this case. This is not supported.
      */
     @Test
     public void testBlankFirstDataset() throws IOException {
         InputStream testStream = TestUtil.getTestResource("blank_first_dataset.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
-            // We should see only the first data set.
+            // We should see only the first dataset.
             SasLibraryDescription libraryDescription = importer.sasLibraryDescription();
-            SasDataSetDescription dataSetDescription = libraryDescription.dataSetDescription();
+            SasDatasetDescription datasetDescription = libraryDescription.datasetDescription();
 
-            LocalDateTime expectedTimestamp = LocalDateTime.of(2017, 9, 27, 14, 28, 12);
-            TestUtil.assertSasDataSetDescription(//
-                dataSetDescription, //
+            LocalDateTime expectedTimestamp = LocalDateTime.of(2025, 8, 20, 10, 50, 52);
+            TestUtil.assertSasDatasetDescription(//
+                datasetDescription, //
                 "BLANK", // name
-                "Data set with no observations", // label
+                "Dataset with no observations", // label
                 "", // type
                 "Linux", // OS
                 "9.4", // SAS version
                 expectedTimestamp, // creation time
                 expectedTimestamp); // modified time
 
-            List<Variable> dataSetVariables = dataSetDescription.variables();
-            assertNotNull(dataSetVariables);
-            assertEquals(1, dataSetVariables.size());
+            List<Variable> datasetVariables = datasetDescription.variables();
+            assertNotNull(datasetVariables);
+            assertEquals(1, datasetVariables.size());
 
-            // Confirm that variable of the first data set was processed correctly.
+            // Confirm that variable of the first dataset was processed correctly.
             TestUtil.assertVariable(//
-                dataSetVariables.get(0), //
+                datasetVariables.get(0), //
                 "VAR", // name
                 1, // number (1-indexed)
                 VariableType.CHARACTER, // type
@@ -2769,9 +2769,9 @@ public class SasTransportImporterTest {
                 Justification.LEFT, // output format justification
                 Format.UNSPECIFIED); // input format
 
-            // The first data set has no observations, so the first observation that is
-            // read should pass to the next data set and throw a "not supported" exception.
-            assertNextObservationsThrowsException(importer, MultipleDataSetsNotSupportedException.class, null);
+            // The first dataset has no observations, so the first observation that is
+            // read should pass to the next dataset and throw a "not supported" exception.
+            assertNextObservationsThrowsException(importer, MultipleDatasetsNotSupportedException.class, null);
         }
     }
 
@@ -2791,7 +2791,7 @@ public class SasTransportImporterTest {
         InputStream csvInputStream = new ByteArrayInputStream(sampleData.getBytes(StandardCharsets.US_ASCII));
         Exception exception = assertThrows(//
             MalformedTransportFileException.class, //
-            () -> SasLibraryDescription.importTransportDataSet(csvInputStream), //
+            () -> SasLibraryDescription.importTransportDataset(csvInputStream), //
             "No exception was thrown about not supporting the format");
         assertEquals("First record indicates this is not SAS V5 XPORT format", exception.getMessage());
     }
@@ -2859,7 +2859,7 @@ public class SasTransportImporterTest {
     }
 
     /**
-     * Tests importing an XPORT that is truncated within the first data set (member) header.
+     * Tests importing an XPORT that is truncated within the first dataset (member) header.
      */
     @Test
     public void testTruncatedInMemberHeader() {
@@ -2871,7 +2871,7 @@ public class SasTransportImporterTest {
     }
 
     /**
-     * Tests importing an XPORT that is truncated within the second data set (member) header.
+     * Tests importing an XPORT that is truncated within the second dataset (member) header.
      */
     @Test
     public void testTruncatedInMemberDescriptor() {
@@ -2972,7 +2972,7 @@ public class SasTransportImporterTest {
     @Test
     public void testTruncatedObservation() throws IOException {
         InputStream testStream = TestUtil.getTestResource("truncated_observation.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
             // try to read the truncated observation.
             assertNextObservationsThrowsException(//
                 importer, //
@@ -2987,7 +2987,7 @@ public class SasTransportImporterTest {
     @Test
     public void testTruncatedObservationAtRecordBoundary() throws IOException {
         InputStream testStream = TestUtil.getTestResource("truncated_observation_at_record.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
             // The first observation can be read.
             assertNextObservation( //
@@ -3014,7 +3014,7 @@ public class SasTransportImporterTest {
     @Test
     public void testTruncatedBigObservation() throws IOException {
         InputStream testStream = TestUtil.getTestResource("truncated_big_observation.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
             // The first observation is complete.
             String value1 = "This is TEXT1 in observation #1.";
@@ -3039,7 +3039,7 @@ public class SasTransportImporterTest {
     @Test
     public void testSingleBlankRecord() throws IOException {
         InputStream testStream = TestUtil.getTestResource("single_blank_record.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
             // Read the first observation.
             assertNextObservation(importer, new Object[] { "" });
@@ -3059,7 +3059,7 @@ public class SasTransportImporterTest {
     @Test
     public void testMissingValuesAtEndOfFile() throws IOException {
         InputStream testStream = TestUtil.getTestResource("missing_values_or_padding.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
             // Read the one (and only) non-missing value in the file.
             assertNextObservation(importer, new Object[] { "TEXT" });
@@ -3079,7 +3079,7 @@ public class SasTransportImporterTest {
     @Test
     public void testRecordOfMissingValues() throws IOException {
         InputStream testStream = TestUtil.getTestResource("record_of_missing_values.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
             // The first 80 bytes (10 records) have only missing values.
             for (int i = 0; i < 10; i++) {
@@ -3119,7 +3119,7 @@ public class SasTransportImporterTest {
     @Test
     public void testRecordOfNumericSpaces() throws IOException {
         InputStream testStream = TestUtil.getTestResource("record_of_numeric_spaces.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
             final Object[] numericDataThatLooksLikeSpaces = { 3.687825414344431E-40 };
 
@@ -3163,7 +3163,7 @@ public class SasTransportImporterTest {
     @Test
     public void testTruncatedMidRecordAfterBlankData() throws IOException {
         InputStream testStream = TestUtil.getTestResource("truncated_after_blank_observation.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
             // The variable is 20 bytes (1/4 of a record).
             // The first record is blank, so there are four missing values.
@@ -3189,7 +3189,7 @@ public class SasTransportImporterTest {
     @Test
     public void testMissingValueSpansFinalRecordBoundary() throws IOException {
         InputStream testStream = TestUtil.getTestResource("missing_value_spans_last_record_boundary.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
             // The first observation is a missing value
             assertNextObservation(importer, new Object[] { "" });
@@ -3212,7 +3212,7 @@ public class SasTransportImporterTest {
     @Test
     public void testConsecutiveRecordsOfMissingValues() throws IOException {
         InputStream testStream = TestUtil.getTestResource("two_records_with_blanks.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
             // The first two records have observations with blank values.
             assertNextObservation(importer, new Object[] { "" });
@@ -3242,7 +3242,7 @@ public class SasTransportImporterTest {
     @Test
     public void testRecordsOfMissingValues() throws IOException {
         InputStream testStream = TestUtil.getTestResource("not_missing_at_end_of_record.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
             // The first value exists.
             assertNextObservation(importer, new Object[] { "A" });
@@ -3267,7 +3267,7 @@ public class SasTransportImporterTest {
     @Test
     public void test80ByteObservation() throws IOException {
         InputStream testStream = TestUtil.getTestResource("80_byte_observation.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
             // The first observation is some explanatory text.
             String value = "This is an observation.  The next observation is missing.  After that is EOF.";
@@ -3288,7 +3288,7 @@ public class SasTransportImporterTest {
     @Test
     public void test81ByteObservation() throws IOException {
         InputStream testStream = TestUtil.getTestResource("81_byte_observation.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
             // The first observation is some explanatory text.
             assertNextObservation(importer, new Object[] { "This is an observation. After this value is EOF." });
@@ -3312,7 +3312,7 @@ public class SasTransportImporterTest {
     }
 
     /**
-     * Tests importing an XPORT with a malformed data set "last modified" date. SAS cannot generate such an XPORT. For
+     * Tests importing an XPORT with a malformed dataset "last modified" date. SAS cannot generate such an XPORT. For
      * the most part, SAS ignores this field, but in the places where it reads it, it shows the date as a missing
      * value.
      */
@@ -3327,36 +3327,36 @@ public class SasTransportImporterTest {
 
     /**
      * Tests importing an XPORT with an OS field in the library header that has a non-ASCII character. SAS does not
-     * generate such a field and completely ignores this field when reading data sets.
+     * generate such a field and completely ignores this field when reading datasets.
      */
     @Test
     public void testLibraryOperatingSystemWithNonAsciiCharacter() {
         runImportMalformedXportTest(//
             "malformed_library_nonascii_os.xpt", //
             MalformedTransportFileException.class, //
-            "Data set is malformed", //
+            "Dataset is malformed", //
             "library operating system must contain only ASCII (7-bit) characters");
     }
 
     /**
      * Tests importing an XPORT with a SAS Version field in the library header that has a non-ASCII character. SAS does
-     * not generate such a field and completely ignores this field when reading data sets.
+     * not generate such a field and completely ignores this field when reading datasets.
      */
     @Test
     public void testLibrarySasVersionWithNonAsciiCharacter() {
         runImportMalformedXportTest(//
             "malformed_library_nonascii_version.xpt", //
             MalformedTransportFileException.class, //
-            "Data set is malformed", //
+            "Dataset is malformed", //
             "library SAS version must contain only ASCII (7-bit) characters");
     }
 
     /**
-     * Tests importing an XPORT with a malformed data set creation date. SAS cannot generate such an XPORT. For the most
+     * Tests importing an XPORT with a malformed dataset creation date. SAS cannot generate such an XPORT. For the most
      * part, SAS ignores this field, but in the places where it reads it, it shows the date as a missing value.
      */
     @Test
-    public void testDataSetWithMalformedCreationDate() {
+    public void testDatasetWithMalformedCreationDate() {
         runImportMalformedXportTest(//
             "malformed_dataset_createtime.xpt", //
             MalformedTransportFileException.class, //
@@ -3365,12 +3365,12 @@ public class SasTransportImporterTest {
     }
 
     /**
-     * Tests importing an XPORT with a malformed data set "last modified" date. SAS cannot generate such an XPORT. For
+     * Tests importing an XPORT with a malformed dataset "last modified" date. SAS cannot generate such an XPORT. For
      * the most part, SAS ignores this field, but in the places where it reads it, it shows the date as a missing
      * value.
      */
     @Test
-    public void testDataSetWithMalformedModificationDate() {
+    public void testDatasetWithMalformedModificationDate() {
         runImportMalformedXportTest(//
             "malformed_dataset_modifiedtime.xpt", //
             MalformedTransportFileException.class, //
@@ -3400,8 +3400,8 @@ public class SasTransportImporterTest {
     @Test
     public void testPaddedNumberOfVariables() throws IOException {
         InputStream testStream = TestUtil.getTestResource("malformed_variables_padded.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
-            List<Variable> variables = importer.sasLibraryDescription().dataSetDescription().variables();
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
+            List<Variable> variables = importer.sasLibraryDescription().datasetDescription().variables();
             assertEquals(1, variables.size());
 
             TestUtil.assertVariable(//
@@ -3456,8 +3456,8 @@ public class SasTransportImporterTest {
     @Test
     public void testTooManyNamestrRecords() throws IOException {
         InputStream testStream = TestUtil.getTestResource("malformed_variables_count_too_small.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
-            List<Variable> variables = importer.sasLibraryDescription().dataSetDescription().variables();
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
+            List<Variable> variables = importer.sasLibraryDescription().datasetDescription().variables();
             assertEquals(1, variables.size());
 
             TestUtil.assertVariable(//
@@ -3573,7 +3573,7 @@ public class SasTransportImporterTest {
      * Tests reading a SAS XPORT file whose NAMESTR header claims that it has 10 NAMESTR records, but it, in fact, has
      * 4. SAS cannot generate such a file. SAS can read/write the file as if it had 1 variable and no observations but
      * when attempting to export it to a CSV, appears to reinterpret the HEADER after the NAMESTR records as the header
-     * of a new data set. In short, SAS has no special logic to correct for this, and it handles it however its logic
+     * of a new dataset. In short, SAS has no special logic to correct for this, and it handles it however its logic
      * happens to handle it.
      */
     @Test
@@ -3596,8 +3596,8 @@ public class SasTransportImporterTest {
     public void testVariablesWithOverlappingRegionsInObservation() throws IOException {
 
         InputStream testStream = TestUtil.getTestResource("reused-data.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
-            List<Variable> variables = importer.sasLibraryDescription().dataSetDescription().variables();
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
+            List<Variable> variables = importer.sasLibraryDescription().datasetDescription().variables();
             assertEquals(4, variables.size());
 
             TestUtil.assertVariable(//
@@ -3665,8 +3665,8 @@ public class SasTransportImporterTest {
     public void testVariablesInReverseOrderInObservation() throws IOException {
 
         InputStream testStream = TestUtil.getTestResource("malformed_variables_reverse_order.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
-            List<Variable> variables = importer.sasLibraryDescription().dataSetDescription().variables();
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
+            List<Variable> variables = importer.sasLibraryDescription().datasetDescription().variables();
             assertEquals(4, variables.size());
 
             TestUtil.assertVariable(//
@@ -3725,83 +3725,83 @@ public class SasTransportImporterTest {
     }
 
     /**
-     * Tests importing an XPORT with a blank data set name. SAS cannot generate such an XPORT. It cannot read this
-     * XPORT, but that's only because there's no other data set within the XPORT library that has a non-blank name.
-     * Regardless, SAS cannot read the dataset.
+     * Tests importing an XPORT with a blank dataset name. SAS cannot generate such an XPORT. It cannot read this XPORT,
+     * but that's only because there's no other dataset within the XPORT library that has a non-blank name. Regardless,
+     * SAS cannot read the dataset.
      */
     @Test
-    public void testBlankDataSetName() {
+    public void testBlankDatasetName() {
         runImportMalformedXportTest(//
             "malformed_blank_name.xpt", //
             MalformedTransportFileException.class, //
-            "Data set is malformed", //
-            "data set names cannot be blank");
+            "Dataset is malformed", //
+            "dataset names cannot be blank");
     }
 
     /**
      * Tests importing an XPORT with a non-ASCII character in its name. By default, SAS cannot generate such an XPORT
-     * (it must be set into a mode that permits such names). The FDA prohibits such data set names.
+     * (it must be set into a mode that permits such names). The FDA prohibits such dataset names.
      */
     @Test
-    public void testNonAsciiDataSetName() {
+    public void testNonAsciiDatasetName() {
         runImportMalformedXportTest(//
             "malformed_nonascii_name.xpt", //
             MalformedTransportFileException.class, //
-            "Data set is malformed", //
-            "data set names must contain only ASCII (7-bit) characters");
+            "Dataset is malformed", //
+            "dataset names must contain only ASCII (7-bit) characters");
     }
 
     /**
      * Tests importing an XPORT with a space in its name. By default, SAS cannot generate such an XPORT (it must be set
-     * into a mode that permits such names). The FDA prohibits such data set names.
+     * into a mode that permits such names). The FDA prohibits such dataset names.
      */
     @Test
-    public void testDataSetWithSpaceInName() {
+    public void testDatasetWithSpaceInName() {
         runImportMalformedXportTest(//
             "malformed_blank_in_name.xpt", //
             MalformedTransportFileException.class, //
-            "Data set is malformed", //
-            "data set name is illegal for SAS");
+            "Dataset is malformed", //
+            "dataset name is illegal for SAS");
     }
 
     /**
-     * Tests importing an XPORT with a SAS Version field in the data set header that has a non-ASCII character. SAS does
-     * not generate such a field and completely ignores this field when reading data sets.
+     * Tests importing an XPORT with a SAS Version field in the dataset header that has a non-ASCII character. SAS does
+     * not generate such a field and completely ignores this field when reading datasets.
      */
     @Test
-    public void testDataSetSasVersionWithNonAsciiCharacter() {
+    public void testDatasetSasVersionWithNonAsciiCharacter() {
         runImportMalformedXportTest(//
             "malformed_dataset_nonascii_version.xpt", //
             MalformedTransportFileException.class, //
-            "Data set is malformed", //
-            "data set SAS versions must contain only ASCII (7-bit) characters");
+            "Dataset is malformed", //
+            "dataset SAS versions must contain only ASCII (7-bit) characters");
     }
 
     /**
-     * Tests importing an XPORT with an OS field in the data set header that has a non-ASCII character. SAS does not
-     * generate such a field and completely ignores this field when reading data sets.
+     * Tests importing an XPORT with an OS field in the dataset header that has a non-ASCII character. SAS does not
+     * generate such a field and completely ignores this field when reading datasets.
      */
     @Test
-    public void testDataSetOperatingSystemWithNonAsciiCharacter() {
+    public void testDatasetOperatingSystemWithNonAsciiCharacter() {
         runImportMalformedXportTest(//
             "malformed_dataset_nonascii_os.xpt", //
             MalformedTransportFileException.class, //
-            "Data set is malformed", //
-            "data set operating system must contain only ASCII (7-bit) characters");
+            "Dataset is malformed", //
+            "dataset operating system must contain only ASCII (7-bit) characters");
     }
 
     /**
-     * Tests importing an XPORT with a "type" field in the data set header that has a non-ASCII character. SAS can
-     * generate such a field. It ignores it when reading data sets.
+     * Tests importing an XPORT with a "type" field in the dataset header that has a non-ASCII character. SAS can
+     * generate such a field. It ignores it when reading datasets.
      */
     @Test
-    public void testDataSetTypeWithNonAsciiCharacter() throws IOException {
+    public void testDatasetTypeWithNonAsciiCharacter() throws IOException {
 
         InputStream testStream = TestUtil.getTestResource("dataset_nonascii_type.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
             // Getting the library description should still work.
-            LocalDateTime expectedTimestamp = LocalDateTime.of(2017, 10, 19, 9, 33, 22);
+            LocalDateTime expectedTimestamp = LocalDateTime.of(2025, 8, 20, 10, 50, 53);
             SasLibraryDescription libraryDescription = importer.sasLibraryDescription();
             TestUtil.assertSasLibraryDescription(//
                 libraryDescription, //
@@ -3810,12 +3810,12 @@ public class SasTransportImporterTest {
                 expectedTimestamp, // creation time
                 expectedTimestamp); // modified time
 
-            // Getting the data set description should still work.
-            SasDataSetDescription dataSetDescription = libraryDescription.dataSetDescription();
-            TestUtil.assertSasDataSetDescription(//
-                dataSetDescription, //
+            // Getting the dataset description should still work.
+            SasDatasetDescription datasetDescription = libraryDescription.datasetDescription();
+            TestUtil.assertSasDatasetDescription(//
+                datasetDescription, //
                 "DATA", // name
-                "Data Set with non-ASCII char in type", // label
+                "A dataset with a non-ASCII char in type", // label
                 "MICRO\uFFFD\uFFFD", // type
                 "Linux", // OS
                 "9.4", // SAS version
@@ -3823,11 +3823,11 @@ public class SasTransportImporterTest {
                 expectedTimestamp); // modified time
 
             // Getting the variables should still work.
-            List<Variable> dataSetVariables = dataSetDescription.variables();
-            assertNotNull(dataSetVariables);
-            assertEquals(1, dataSetVariables.size()); // only one variable is expected.
+            List<Variable> datasetVariables = datasetDescription.variables();
+            assertNotNull(datasetVariables);
+            assertEquals(1, datasetVariables.size()); // only one variable is expected.
 
-            List<Variable> variables = dataSetDescription.variables();
+            List<Variable> variables = datasetDescription.variables();
             assertEquals(1, variables.size());
 
             TestUtil.assertVariable(//
@@ -3867,15 +3867,15 @@ public class SasTransportImporterTest {
     @Test
     public void testVariableWithNonZeroNameHash() throws IOException {
         InputStream testStream = TestUtil.getTestResource("malformed_hash_not_zero.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
-            List<Variable> dataSetVariables = importer.sasLibraryDescription().dataSetDescription().variables();
-            assertNotNull(dataSetVariables);
-            assertEquals(1, dataSetVariables.size()); // only one variable is expected.
+            List<Variable> datasetVariables = importer.sasLibraryDescription().datasetDescription().variables();
+            assertNotNull(datasetVariables);
+            assertEquals(1, datasetVariables.size()); // only one variable is expected.
 
             // Check the variable
             TestUtil.assertVariable(//
-                dataSetVariables.get(0), //
+                datasetVariables.get(0), //
                 "NUMBER", // name
                 1, // number (1-indexed)
                 VariableType.NUMERIC, // type
@@ -3898,8 +3898,8 @@ public class SasTransportImporterTest {
     public void testVariablesWithSameVarNum() throws IOException {
 
         InputStream testStream = TestUtil.getTestResource("malformed_variables_same_number.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
-            List<Variable> variables = importer.sasLibraryDescription().dataSetDescription().variables();
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
+            List<Variable> variables = importer.sasLibraryDescription().datasetDescription().variables();
             assertEquals(4, variables.size());
 
             final int variableNumber = 1; // all variable have varnum=1
@@ -3961,7 +3961,7 @@ public class SasTransportImporterTest {
 
     /**
      * Tests importing an XPORT that has multiple variables with the same name (different case). SAS can read and write
-     * an XPORT file without any problem but ignores the first variable when manipulating the data set.
+     * an XPORT file without any problem but ignores the first variable when manipulating the dataset.
      */
     @Test
     public void testVariablesWithSameName() {
@@ -3970,7 +3970,7 @@ public class SasTransportImporterTest {
         runImportMalformedXportTest(//
             "malformed_variables_same_name.xpt", //
             MalformedTransportFileException.class, //
-            "Data set is malformed", //
+            "Dataset is malformed", //
             "multiple variables have the same name: item");
     }
 
@@ -3980,8 +3980,8 @@ public class SasTransportImporterTest {
     @Test
     public void testVariablesWithNegativeVarNum() throws IOException {
         InputStream testStream = TestUtil.getTestResource("malformed_variable_negative_number.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
-            List<Variable> variables = importer.sasLibraryDescription().dataSetDescription().variables();
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
+            List<Variable> variables = importer.sasLibraryDescription().datasetDescription().variables();
             assertEquals(1, variables.size());
 
             TestUtil.assertVariable(//
@@ -4029,7 +4029,7 @@ public class SasTransportImporterTest {
 
     /**
      * Tests importing an XPORT that has a character variable with length=0 (and the entire observation has a 0 length).
-     * SAS is able to import this but gives strange errors when trying to manipulate the data set. SAS cannot generate
+     * SAS is able to import this but gives strange errors when trying to manipulate the dataset. SAS cannot generate
      * such an XPORT file.
      */
     @Test
@@ -4047,7 +4047,7 @@ public class SasTransportImporterTest {
 
     /**
      * Tests importing an XPORT that has a character variable with a negative length. SAS is able to import this but
-     * gives strange errors when trying to manipulate the data set. SAS cannot generate such an XPORT file.
+     * gives strange errors when trying to manipulate the dataset. SAS cannot generate such an XPORT file.
      */
     @Test
     public void testCharacterVariableWithNegativeLength() {
@@ -4065,8 +4065,8 @@ public class SasTransportImporterTest {
     @Test
     public void testCharacterVariableWithLongLength() throws IOException {
         InputStream testStream = TestUtil.getTestResource("malformed_variable_length_max_short.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
-            List<Variable> variables = importer.sasLibraryDescription().dataSetDescription().variables();
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
+            List<Variable> variables = importer.sasLibraryDescription().datasetDescription().variables();
             assertEquals(2, variables.size());
 
             TestUtil.assertVariable(//
@@ -4157,16 +4157,16 @@ public class SasTransportImporterTest {
     @Test
     public void testVariableWithReservedName() throws IOException {
         InputStream testStream = TestUtil.getTestResource("malformed_variable_reserved_name.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
             // Getting the variables should still work.
-            List<Variable> dataSetVariables = importer.sasLibraryDescription().dataSetDescription().variables();
-            assertNotNull(dataSetVariables);
-            assertEquals(1, dataSetVariables.size()); // only one variable is expected.
+            List<Variable> datasetVariables = importer.sasLibraryDescription().datasetDescription().variables();
+            assertNotNull(datasetVariables);
+            assertEquals(1, datasetVariables.size()); // only one variable is expected.
 
             // Check the variable
             TestUtil.assertVariable(//
-                dataSetVariables.get(0), //
+                datasetVariables.get(0), //
                 "_N_", // name
                 1, // number (1-indexed)
                 VariableType.NUMERIC, // type
@@ -4217,16 +4217,16 @@ public class SasTransportImporterTest {
         // Currently this library does not have format-specific w/d checks.
         // If such checks are added, then this test will need to be updated.
         InputStream testStream = TestUtil.getTestResource("malformed_format_width_equals_digits.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
             // Getting the variables should still work.
-            List<Variable> dataSetVariables = importer.sasLibraryDescription().dataSetDescription().variables();
-            assertNotNull(dataSetVariables);
-            assertEquals(1, dataSetVariables.size()); // only one variable is expected.
+            List<Variable> datasetVariables = importer.sasLibraryDescription().datasetDescription().variables();
+            assertNotNull(datasetVariables);
+            assertEquals(1, datasetVariables.size()); // only one variable is expected.
 
             // Check the variable
             TestUtil.assertVariable(//
-                dataSetVariables.get(0), //
+                datasetVariables.get(0), //
                 "BADVAR", // name
                 1, // number (1-indexed)
                 VariableType.NUMERIC, // type
@@ -4262,16 +4262,16 @@ public class SasTransportImporterTest {
     @Test
     public void testVariableWithUnknownJustification() throws IOException {
         InputStream testStream = TestUtil.getTestResource("malformed_variable_justification.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
             // Getting the variables should still work.
-            List<Variable> dataSetVariables = importer.sasLibraryDescription().dataSetDescription().variables();
-            assertNotNull(dataSetVariables);
-            assertEquals(1, dataSetVariables.size()); // only one variable is expected.
+            List<Variable> datasetVariables = importer.sasLibraryDescription().datasetDescription().variables();
+            assertNotNull(datasetVariables);
+            assertEquals(1, datasetVariables.size()); // only one variable is expected.
 
             // Check the variable
             TestUtil.assertVariable(//
-                dataSetVariables.get(0), //
+                datasetVariables.get(0), //
                 "BADJUST", // name
                 1, // number (1-indexed)
                 VariableType.NUMERIC, // type
@@ -4306,16 +4306,16 @@ public class SasTransportImporterTest {
     @Test
     public void testReadingMalformedMissingValue_At() throws IOException {
         InputStream testStream = TestUtil.getTestResource("malformed_missing_value_at.xpt");
-        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(testStream)) {
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(testStream)) {
 
             // Getting the variables should still work.
-            List<Variable> dataSetVariables = importer.sasLibraryDescription().dataSetDescription().variables();
-            assertNotNull(dataSetVariables);
-            assertEquals(1, dataSetVariables.size()); // only one variable is expected.
+            List<Variable> datasetVariables = importer.sasLibraryDescription().datasetDescription().variables();
+            assertNotNull(datasetVariables);
+            assertEquals(1, datasetVariables.size()); // only one variable is expected.
 
             // Check the variable
             TestUtil.assertVariable(//
-                dataSetVariables.get(0), //
+                datasetVariables.get(0), //
                 "NUMBER", // name
                 1, // number (1-indexed)
                 VariableType.NUMERIC, // type

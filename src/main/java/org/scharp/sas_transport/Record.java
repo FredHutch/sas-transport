@@ -14,7 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * This is a Java POJO representation of a record in a SAS Data Set, as described in the INTRODUCTION of TS-140.
+ * This is a Java POJO representation of a record in a SAS dataset, as described in the INTRODUCTION of TS-140.
  */
 class Record {
 

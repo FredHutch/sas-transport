@@ -44,11 +44,11 @@ class Xport2Csv {
 
     def show() {
         try {
-            def importer = SasLibraryDescription.importTransportDataSet(xportFile)
+            def importer = SasLibraryDescription.importTransportDataset(xportFile)
 
             // Print the header.
             // The header values do not need to be escaped because variable names cannot have special characters.
-            def variables = importer.sasLibraryDescription().dataSetDescription().variables()
+            def variables = importer.sasLibraryDescription().datasetDescription().variables()
             def variableNames = variables.collect { it.name() }
             println variableNames.join(',')
 

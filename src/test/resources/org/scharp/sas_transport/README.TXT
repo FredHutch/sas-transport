@@ -28,11 +28,11 @@ numeric_truncations.xpt                - XPORT with variations on numeric data a
 numeric_variations.xpt                 - XPORT with variations on numeric data
 max_variables.xpt                      - XPORT with max number of variables in an observation (9999)
 no_variables.xpt                       - XPORT with no variables
-multiple_datasets.xpt                  - XPORT with two data sets (not supported)
-blank_first_dataset.xpt                - XPORT with two data sets, the first has no observations (not supported)
+multiple_datasets.xpt                  - XPORT with two datasets (not supported)
+blank_first_dataset.xpt                - XPORT with two datasets, the first has no observations (not supported)
 reused_data.xpt                        - XPORT with multiple variables with overlapping locations in observation
 user_defined_format.xpt                - XPORT that references user-defined formats
-dataset_nonascii_type.xpt              - XPORT that has a non-ASCII character in the data set type
+dataset_nonascii_type.xpt              - XPORT that has a non-ASCII character in the dataset type
 variable_nonascii_label.xpt            - XPORT that has a non-ASCII character in a variable's label
 nonascii_value.xpt                     - XPORT that has a non-ASCII character in the variable's value
 utf8.xpt                               - XPORT that has Greek characters encoded in UTF-8
@@ -44,14 +44,14 @@ malformed_library_nonascii_os.xpt        - XPORT with a non-ASCII character in t
 malformed_library_nonascii_version.xpt   - XPORT with a non-ASCII character in the library SAS version
 malformed_library_createtime.xpt         - XPORT with malformed library creation timestamp
 malformed_library_modifiedtime.xpt       - XPORT with malformed library modification timestamp
-malformed_blank_name.xpt                 - XPORT with a blank data set name
+malformed_blank_name.xpt                 - XPORT with a blank dataset name
 malformed_first_dataset_blank_name.xpt   - XPORT with multiple datasets and the first one has a blank name
-malformed_nonascii_name.xpt              - XPORT with a non-ASCII character in the data set name
-malformed_blank_in_name.xpt              - XPORT with a space character in the data set name
-malformed_dataset_nonascii_os.xpt        - XPORT with a non-ASCII character in the data set OS
-malformed_dataset_nonascii_version.xpt   - XPORT with a non-ASCII character in the data set SAS version
-malformed_dataset_createtime.xpt         - XPORT with a malformed timestamp for the data set creation time
-malformed_dataset_modifiedtime.xpt       - XPORT with a malformed timestamp for the data set modification time
+malformed_nonascii_name.xpt              - XPORT with a non-ASCII character in the dataset name
+malformed_blank_in_name.xpt              - XPORT with a space character in the dataset name
+malformed_dataset_nonascii_os.xpt        - XPORT with a non-ASCII character in the dataset OS
+malformed_dataset_nonascii_version.xpt   - XPORT with a non-ASCII character in the dataset SAS version
+malformed_dataset_createtime.xpt         - XPORT with a malformed timestamp for the dataset creation time
+malformed_dataset_modifiedtime.xpt       - XPORT with a malformed timestamp for the dataset modification time
 malformed_variable_empty_name.xpt        - XPORT with a variable with a blank name
 malformed_variable_nonascii_name.xpt     - XPORT with a non-ASCII character in a variable name
 malformed_number_too_long.xpt            - XPORT with a numeric variable whose length is 9
@@ -69,12 +69,12 @@ malformed_format_nonascii_name.xpt       - XPORT with a non-ASCII character in a
 malformed_variables_same_number.xpt      - XPORT with four variables, all of which have the same varnum (1)
 malformed_variables_same_name.xpt        - XPORT with multiple variables that have the same name (ITEM)
 malformed_variables_reverse_order.xpt    - XPORT whose variables are given in the opposite order as in the observation
-malformed_variables_negative.xpt         - XPORT with a data set that claims to have a negative number of variables
-malformed_variables_badnum.xpt           - XPORT with a data set that claims to have "1XXX" as the number of variables
-malformed_variables_padded.xpt           - XPORT with a data set that claims to have "1   " as the number of variables
-malformed_variables_nonnumeric_count.xpt - XPORT with a data set that claims to have "NAN!" as the number of variables
-malformed_variables_count_too_small.xpt  - XPORT with a data set that claims to have 1 NAMESTR records, but has 4
-malformed_variables_count_too_large.xpt  - XPORT with a data set that claims to have 10 NAMESTR records, but has 4
+malformed_variables_negative.xpt         - XPORT with a dataset that claims to have a negative number of variables
+malformed_variables_badnum.xpt           - XPORT with a dataset that claims to have "1XXX" as the number of variables
+malformed_variables_padded.xpt           - XPORT with a dataset that claims to have "1   " as the number of variables
+malformed_variables_nonnumeric_count.xpt - XPORT with a dataset that claims to have "NAN!" as the number of variables
+malformed_variables_count_too_small.xpt  - XPORT with a dataset that claims to have 1 NAMESTR records, but has 4
+malformed_variables_count_too_large.xpt  - XPORT with a dataset that claims to have 10 NAMESTR records, but has 4
 malformed_variable_negative_offset.xpt   - XPORT with a variable that has a large negative offset in the observation
 malformed_variable_justification.xpt     - XPORT with a variable that has an unknown justification code (3)
 malformed_variable_negative_number.xpt   - XPORT with a variable with a negative varnum

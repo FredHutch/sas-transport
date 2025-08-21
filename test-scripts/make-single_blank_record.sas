@@ -10,7 +10,7 @@
 * The variable is 20 characters long, which means 4 fill an XPORT record (80 chars).;
 * Record #1 - All missing values (also looks like padding);
 libname xportout xport 'single_blank_record.xpt';
-data xportout.testdata(label='Data set with single record of blanks');
+data xportout.testdata(label='A dataset with single record of blanks');
    input  CHARDATA $ 20;
    format CHARDATA $20.;
    label  CHARDATA='Character data';

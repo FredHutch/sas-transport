@@ -8,7 +8,7 @@
 
 * create a XPORT file from a SAS dataset using the XPORT engine;
 libname xportout xport 'nonascii_value.xpt';
-data xportout.data(label='Data set with non-ASCII character in value');
+data xportout.data(label='A dataset with a non-ASCII character in a value');
    input  TEXT $hex30.;
    format TEXT $15.;
    label  TEXT='Character data';

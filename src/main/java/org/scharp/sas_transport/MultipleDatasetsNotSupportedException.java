@@ -5,15 +5,15 @@
 package org.scharp.sas_transport;
 
 /**
- * An exception that represents that the XPORT has multiple data sets which is not supported by the API.
+ * An exception that represents that the XPORT has multiple datasets, which is not supported by the API.
  */
-public class MultipleDataSetsNotSupportedException extends UnsupportedTransportFileException {
+public class MultipleDatasetsNotSupportedException extends UnsupportedTransportFileException {
 
     /**
      * Standard serialization UID.
      */
     private static final long serialVersionUID = 1L;
 
-    MultipleDataSetsNotSupportedException() {
+    MultipleDatasetsNotSupportedException() {
     }
 }

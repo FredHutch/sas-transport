@@ -32,7 +32,7 @@ Value between records with blanks
 .
 run;
 
-* Export the data set into a V5 XPORT file;
+* Export the dataset into a V5 XPORT file;
 %loc2xpt(libref=work, filespec='two_records_with_blanks.xpt', format=V5);
 run;
 

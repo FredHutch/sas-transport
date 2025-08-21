@@ -7,7 +7,7 @@
  *********************************************************************/
 
 * create sample data;
-data report(label='Sample Data Set' type='SALES');
+data report(label='Sample Dataset' type='SALES');
 
    input Item $ 1-6 Material $ 8-14 Cost 16-22 Profit 24-31;
    format Item

@@ -10,7 +10,7 @@
 * Unlike most engines, the XPORT engine does not implement OUTENCODING;
 
 libname xportout xport 'utf8.xpt';
-data xportout.data(label='Data set with UTF-8 data');
+data xportout.data(label='A dataset with UTF-8 data');
    input  TEXT $20.;
    format TEXT $30.;
    label  TEXT='Character data';

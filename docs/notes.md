@@ -57,8 +57,8 @@ There is significant whitespace within the header markers, but whitespace is con
 For example, there are two spaces between "MEMBER" and "HEADER" in
 "HEADER RECORD*******MEMBER HEADER RECORD!!!!!!!", but it's documented as one space.
 
-**Can have multiple data sets per XPORT.**
-This is not mentioned in TS-140, but XPORT files can have multiple data sets.
+**Can have multiple datasets per XPORT.**
+This is not mentioned in TS-140, but XPORT files can have multiple datasets.
 In this case, the observation records are padded to the 80 byte boundary and then
 followed by the "HEADER RECORD*******MEMBER HEADER RECORD!!!!!!!"
 
@@ -138,8 +138,8 @@ I expect that Java is correct and that SAS has two bugs:
 
 **XPORT vs CSV in SAS**
 
-SAS has multiple ways to read a CSV. One is to create the data set with the
-shape (names and formats) hard-coded and copy the data from the CSV into your data set.
+SAS has multiple ways to read a CSV. One is to create the dataset with the
+shape (names and formats) hard-coded and copy the data from the CSV into your dataset.
 The other is to PROC IMPORT the CSV which takes the variable names from the first line of
 the CSV and infers the type and formats from the content (you can configure how many
 lines to read, in case some of the values are missing).

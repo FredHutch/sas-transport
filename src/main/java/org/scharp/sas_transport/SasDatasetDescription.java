@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /**
- * A description of a SAS Data Set.
+ * A description of a SAS dataset.
  *
  * <p>
  * This includes a description of the metadata but no observations.
@@ -23,10 +23,10 @@ import java.util.TreeSet;
  * Instances of this class are immutable.
  * </p>
  */
-public final class SasDataSetDescription {
+public final class SasDatasetDescription {
 
     /**
-     * The maximum number of variables that can fit into a data set within a V5 XPORT file.
+     * The maximum number of variables that can fit into a dataset within a V5 XPORT file.
      */
     private static final int MAX_V5_XPORT_VARIABLES = 9999;
 
@@ -40,25 +40,25 @@ public final class SasDataSetDescription {
     private final List<Variable> variables;
 
     /**
-     * Creates a description of a data set. This includes the description of the variables within the data set but no
+     * Creates a description of a dataset. This includes the description of the variables within the dataset but no
      * observations.
      *
      * @param name
-     *     The name of the data set. This is required.
+     *     The name of the dataset. This is required.
      *     <p>
      *     To fit into an XPORT file, this should be 8 characters or fewer and only contain characters from the ASCII
      *     character set.
      *     </p>
      * @param label
-     *     This data set's label. This may be blank but not {@code null}.
+     *     This dataset's label. This may be blank but not {@code null}.
      *     <p>
      *     To fit into an XPORT file, this must be 40 characters or fewer and only contain characters from the ASCII
      *     character set.
      *     </p>
      * @param type
-     *     The data set's type. For example, "BOXPLOT" or "TREE". SAS defines a few special SAS dataset upon which
+     *     The dataset's type. For example, "BOXPLOT" or "TREE". SAS defines a few special SAS dataset upon which
      *     specialized applications can work. See the SAS documentation for more information. If specified, the data
-     *     within the data set should conform to the type.
+     *     within the dataset should conform to the type.
      *     <p>
      *     This is typically left blank. This must not be {@code null}.
      *     </p>
@@ -67,16 +67,16 @@ public final class SasDataSetDescription {
      *     {@code StrictnessMode.FDA_SUBMISSION}, then this must contain only ASCII characters.
      *     </p>
      * @param sourceOperatingSystem
-     *     The operating system on which the data set was created. For example, "Linux", "SunOS", or "LIN X64". This
-     *     must not be {@code null}.
+     *     The operating system on which the dataset was created. For example, "Linux", "SunOS", or "LIN X64". This must
+     *     not be {@code null}.
      *     <p>
      *     To fit into an XPORT file, this must be 8 characters or fewer and only contain characters from the ASCII
      *     character set.
      *     </p>
      * @param sourceSasVersion
-     *     The version of SAS used to create this data set. This must not be {@code null}.
+     *     The version of SAS used to create this dataset. This must not be {@code null}.
      *     <p>
-     *     This is meaningless for data sets created with this library, but for compatibility, specify a SAS version,
+     *     This is meaningless for datasets created with this library, but for compatibility, specify a SAS version,
      *     such as "5.2".
      *     </p>
      *     <p>
@@ -84,18 +84,18 @@ public final class SasDataSetDescription {
      *     character set.
      *     </p>
      * @param variables
-     *     A list of variable within the data set. This must not be {@code null}. This list is copied into the
-     *     constructed data set so further modifications to the provided list do not affect the constructed data set.
+     *     A list of variable within the dataset. This must not be {@code null}. This list is copied into the
+     *     constructed dataset so further modifications to the provided list do not affect the constructed dataset.
      *     <p>
      *     A V5 XPORT file can only hold 9999 variables.
      *     </p>
      * @param createTime
-     *     The date and time on which this data set was created. This must not be {@code null}.
+     *     The date and time on which this dataset was created. This must not be {@code null}.
      *     <p>
      *     In an XPORT file, this date is stored with second granularity and the year is stored as a two digit number.
      *     </p>
      * @param modifiedTime
-     *     The date and time on which this data set was last modified. This must not be {@code null}.
+     *     The date and time on which this dataset was last modified. This must not be {@code null}.
      *     <p>
      *     In an XPORT file, this date is stored with second granularity and the year is stored as a two digit number.
      *     </p>
@@ -110,7 +110,7 @@ public final class SasDataSetDescription {
      *     {@code sourceOperatingSystem} is longer than 8 characters; or if {@code sourceSasVersion} is longer than 8
      *     characters. if {@code variables} has more variables than 9999.
      */
-    SasDataSetDescription(String name, String label, String type, String sourceOperatingSystem, String sourceSasVersion,
+    SasDatasetDescription(String name, String label, String type, String sourceOperatingSystem, String sourceSasVersion,
         Collection<Variable> variables, LocalDateTime createTime, LocalDateTime modifiedTime,
         StrictnessMode strictness) {
 
@@ -118,26 +118,26 @@ public final class SasDataSetDescription {
         if (!name.matches("[A-Za-z_][\\w_]{0,7}")) {
             // The variable name is not well-formed.  Throw the appropriate exception.
             if (name.isEmpty()) {
-                throw new IllegalArgumentException("data set names cannot be blank");
+                throw new IllegalArgumentException("dataset names cannot be blank");
             }
-            ArgumentUtil.checkMaximumLength(name, 8, "data set names");
-            ArgumentUtil.checkIsAscii(name, "data set names");
-            throw new IllegalArgumentException("data set name is illegal for SAS");
+            ArgumentUtil.checkMaximumLength(name, 8, "dataset names");
+            ArgumentUtil.checkIsAscii(name, "dataset names");
+            throw new IllegalArgumentException("dataset name is illegal for SAS");
         }
 
         ArgumentUtil.checkNotNull(label, "label");
-        ArgumentUtil.checkMaximumLength(label, 40, "data set labels");
+        ArgumentUtil.checkMaximumLength(label, 40, "dataset labels");
 
         ArgumentUtil.checkNotNull(type, "type");
-        ArgumentUtil.checkMaximumLength(type, 8, "data set types");
+        ArgumentUtil.checkMaximumLength(type, 8, "dataset types");
 
         ArgumentUtil.checkNotNull(sourceOperatingSystem, "sourceOperatingSystem");
-        ArgumentUtil.checkMaximumLength(sourceOperatingSystem, 8, "data set operating system");
-        ArgumentUtil.checkIsAscii(sourceOperatingSystem, "data set operating system");
+        ArgumentUtil.checkMaximumLength(sourceOperatingSystem, 8, "dataset operating system");
+        ArgumentUtil.checkIsAscii(sourceOperatingSystem, "dataset operating system");
 
         ArgumentUtil.checkNotNull(sourceSasVersion, "sourceSasVersion");
-        ArgumentUtil.checkMaximumLength(sourceSasVersion, 8, "data set SAS versions");
-        ArgumentUtil.checkIsAscii(sourceSasVersion, "data set SAS versions");
+        ArgumentUtil.checkMaximumLength(sourceSasVersion, 8, "dataset SAS versions");
+        ArgumentUtil.checkIsAscii(sourceSasVersion, "dataset SAS versions");
 
         ArgumentUtil.checkNotNull(variables, "variables");
         if (MAX_V5_XPORT_VARIABLES < variables.size()) {
@@ -149,7 +149,7 @@ public final class SasDataSetDescription {
         ArgumentUtil.checkNotNull(modifiedTime, "modifiedTime");
 
         if (strictness == StrictnessMode.FDA_SUBMISSION) {
-            ArgumentUtil.checkIsAscii(type, "data set type");
+            ArgumentUtil.checkIsAscii(type, "dataset type");
         }
 
         // Check that none of the variables have the same name.
@@ -172,25 +172,25 @@ public final class SasDataSetDescription {
     }
 
     /**
-     * Creates a description of a data set. This includes the description of the variables within the data set but no
+     * Creates a description of a dataset. This includes the description of the variables within the dataset but no
      * observations.
      *
      * @param name
-     *     The name of the data set. This is required.
+     *     The name of the dataset. This is required.
      *     <p>
      *     To fit into an XPORT file, this should be 8 characters or fewer and only contain characters from the ASCII
      *     character set.
      *     </p>
      * @param label
-     *     This data set's label. This may be blank but not {@code null}.
+     *     This dataset's label. This may be blank but not {@code null}.
      *     <p>
      *     To fit into an XPORT file, this must be 40 characters or fewer and only contain characters from the ASCII
      *     character set.
      *     </p>
      * @param type
-     *     The data set's type. For example, "BOXPLOT" or "TREE". SAS defines a few special SAS dataset upon which
+     *     The dataset's type. For example, "BOXPLOT" or "TREE". SAS defines a few special SAS dataset upon which
      *     specialized applications can work. See the SAS documentation for more information. If specified, the data
-     *     within the data set should conform to the type.
+     *     within the dataset should conform to the type.
      *     <p>
      *     This is typically left blank. This must not be {@code null}.
      *     </p>
@@ -199,16 +199,16 @@ public final class SasDataSetDescription {
      *     character set.
      *     </p>
      * @param sourceOperatingSystem
-     *     The operating system on which the data set was created. For example, "Linux", "SunOS", or "LIN X64". This
-     *     must not be {@code null}.
+     *     The operating system on which the dataset was created. For example, "Linux", "SunOS", or "LIN X64". This must
+     *     not be {@code null}.
      *     <p>
      *     To fit into an XPORT file, this must be 8 characters or fewer and only contain characters from the ASCII
      *     character set.
      *     </p>
      * @param sourceSasVersion
-     *     The version of SAS used to create this data set. This must not be {@code null}.
+     *     The version of SAS used to create this dataset. This must not be {@code null}.
      *     <p>
-     *     This is meaningless for data sets created with this library, but for compatibility, specify a SAS version,
+     *     This is meaningless for datasets created with this library, but for compatibility, specify a SAS version,
      *     such as "5.2".
      *     </p>
      *     <p>
@@ -216,18 +216,18 @@ public final class SasDataSetDescription {
      *     character set.
      *     </p>
      * @param variables
-     *     A list of variable within the data set. This must not be {@code null}. This list is copied into the
-     *     constructed data set so further modifications to the provided list do not affect the constructed data set.
+     *     A list of variable within the dataset. This must not be {@code null}. This list is copied into the
+     *     constructed dataset so further modifications to the provided list do not affect the constructed dataset.
      *     <p>
      *     A V5 XPORT file can only hold 9999 variables.
      *     </p>
      * @param createTime
-     *     The date and time on which this data set was created. This must not be {@code null}.
+     *     The date and time on which this dataset was created. This must not be {@code null}.
      *     <p>
      *     In an XPORT file, this date is stored with second granularity and the year is stored as a two digit number.
      *     </p>
      * @param modifiedTime
-     *     The date and time on which this data set was last modified. This must not be {@code null}.
+     *     The date and time on which this dataset was last modified. This must not be {@code null}.
      *     <p>
      *     In an XPORT file, this date is stored with second granularity and the year is stored as a two digit number.
      *     </p>
@@ -240,59 +240,59 @@ public final class SasDataSetDescription {
      *     {@code sourceOperatingSystem} is longer than 8 characters; or if {@code sourceSasVersion} is longer than 8
      *     characters. if {@code variables} has more variables than 9999.
      */
-    public SasDataSetDescription(String name, String label, String type, String sourceOperatingSystem,
+    public SasDatasetDescription(String name, String label, String type, String sourceOperatingSystem,
         String sourceSasVersion, Collection<Variable> variables, LocalDateTime createTime, LocalDateTime modifiedTime) {
         this(name, label, type, sourceOperatingSystem, sourceSasVersion, variables, createTime, modifiedTime,
             StrictnessMode.FDA_SUBMISSION);
     }
 
     /**
-     * Gets this data set's name.
+     * Gets this dataset's name.
      *
-     * @return This data set's name. This is never {@code null}.
+     * @return This dataset's name. This is never {@code null}.
      */
     public String name() {
         return name;
     }
 
     /**
-     * Gets this data set's type.
+     * Gets this dataset's type.
      *
-     * @return This data set's type. For example, "BOXPLOT" or "TREE". This is never {@code null}.
+     * @return This dataset's type. For example, "BOXPLOT" or "TREE". This is never {@code null}.
      */
     public String type() {
         return type;
     }
 
     /**
-     * Gets the operating system on which this data set was created.
+     * Gets the operating system on which this dataset was created.
      *
-     * @return The operating system on which this data set was created. This is never {@code null}.
+     * @return The operating system on which this dataset was created. This is never {@code null}.
      */
     public String sourceOperatingSystem() {
         return sourceOperatingSystem;
     }
 
     /**
-     * Gets the version of SAS on which this data set was last modified.
+     * Gets the version of SAS on which this dataset was last modified.
      *
-     * @return The version of SAS on which this data set was last modified. This is never {@code null}.
+     * @return The version of SAS on which this dataset was last modified. This is never {@code null}.
      */
     public String sourceSasVersion() {
         return sourceSasVersion;
     }
 
     /**
-     * Gets this data set's label.
+     * Gets this dataset's label.
      *
-     * @return This data set's label. This is never {@code null}.
+     * @return This dataset's label. This is never {@code null}.
      */
     public String label() {
         return label;
     }
 
     /**
-     * Gets a list of this data set's variables.  This list is not modifiable.
+     * Gets a list of this dataset's variables.  This list is not modifiable.
      *
      * @return A list of this data's variables. This is never {@code null}.
      */
@@ -301,28 +301,28 @@ public final class SasDataSetDescription {
     }
 
     /**
-     * Gets the date/time on which this data set was created.
+     * Gets the date/time on which this dataset was created.
      *
-     * @return The date/time on which this data set was created. This is never {@code null}.
+     * @return The date/time on which this dataset was created. This is never {@code null}.
      */
     public LocalDateTime createTime() {
         return createTime;
     }
 
     /**
-     * Gets the date/time on which this data set was most recently modified.
+     * Gets the date/time on which this dataset was most recently modified.
      *
-     * @return The date/time on which this data set was most recently modified. This is never {@code null}.
+     * @return The date/time on which this dataset was most recently modified. This is never {@code null}.
      */
     public LocalDateTime modifiedTime() {
         return modifiedTime;
     }
 
     /**
-     * Creates a new SAS Library description that wraps this data set description. The library description has the same
-     * operating system, SAS version, create time, and modified time as this data set description.
+     * Creates a new SAS Library description that wraps this dataset description. The library description has the same
+     * operating system, SAS version, create time, and modified time as this dataset description.
      *
-     * @return A new SAS library description that wraps this data set description.
+     * @return A new SAS library description that wraps this dataset description.
      */
     public SasLibraryDescription newLibraryDescription() {
         return new SasLibraryDescription(this, sourceOperatingSystem, sourceSasVersion, createTime(), modifiedTime());

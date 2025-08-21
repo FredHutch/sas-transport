@@ -6,7 +6,7 @@
  *  src/test/res/datetime_variations.xpt
  *********************************************************************/
 
-* Data set with variations on datetimes including:
+* Dataset with variations on datetimes including:
 *   All kinds of missing values;
 *   one second before the Epoch;
 *   the Epoch;

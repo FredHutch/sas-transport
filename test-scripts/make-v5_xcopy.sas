@@ -7,11 +7,11 @@
  *
  * PROC XCOPY is the oldest way to create an XPORT file and it
  * pre-dates the XPORT Engine.  However, it generates identical
- * data sets, so I expect that it uses the XPORT engine.
+ * datasets, so I expect that it uses the XPORT engine.
  ********************************************************************/
 
 * create sample data;
-data report(label='Sample Data Set' type='SALES');
+data report(label='A Sample Dataset' type='SALES');
 
    input Item $ 1-6 Material $ 8-14 Cost 16-22 Profit 24-31;
    format Item

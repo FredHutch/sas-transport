@@ -19,7 +19,7 @@ datalines;
 This is an observation. After this value is EOF.
 run;
 
-* Export the data set to a V5 XPORT file;
+* Export the dataset to a V5 XPORT file;
 %loc2xpt(libref=work, filespec='81_byte_observation.xpt', format=V5);
 run;
 

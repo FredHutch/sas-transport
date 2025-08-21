@@ -50,7 +50,7 @@ The following code shows how to use the library to read a SAS transport file a h
             Justification.LEFT,
             Format.UNSPECIFIED));
 
-        SasDataSetDescription dataSet = new SasDataSetDescription(
+        SasDatasetDescription dataset = new SasDatasetDescription(
             "TEMP", // name
             "Average daily temperatures", // label
             "", // type
@@ -59,7 +59,7 @@ The following code shows how to use the library to read a SAS transport file a h
             variables, // variables
             LocalDateTime.now(), // create
             LocalDateTime.now()); // modified
-        try (SasTransportExporter exporter = dataSet.newLibraryDescription().exportTransportDataSet(path)) {
+        try (SasTransportExporter exporter = dataset.newLibraryDescription().exportTransportDataset(path)) {
             exporter.appendObservation(Arrays.asList("Atlanta", "GA", 72, 53));
             exporter.appendObservation(Arrays.asList("Austin", "TX", 80, 5));
             exporter.appendObservation(Arrays.asList("Baltimore", "MD", 65, 45));
@@ -76,14 +76,14 @@ The following code sample demonstrates how to read a SAS transport file and prin
 
     Path path = ...;
    
-    try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(path)) {
+    try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(path)) {
    
         // Get the variables.
-        List<Variable> dataSetVariables = importer.sasLibraryDescription().dataSetDescription().variables();
+        List<Variable> datasetVariables = importer.sasLibraryDescription().datasetDescription().variables();
    
         // Display a header using the variables.
         StringBuilder header = new StringBuilder();
-        for (Variable variable : dataSetVariables) {
+        for (Variable variable : datasetVariables) {
             header.append(String.format("%-" + (variable.outputFormat().width() + 1) + "s ", variable.name()));
         }
         System.out.println(header.toString());
@@ -94,7 +94,7 @@ The following code sample demonstrates how to read a SAS transport file and prin
    
             // Render each value in the observation
             for (int i = 0; i < observation.size(); i++) {
-                final Variable variable = dataSetVariables.get(i);
+                final Variable variable = datasetVariables.get(i);
                 final Object value = observation.get(i);
    
                 final String formattedValue;
@@ -114,7 +114,7 @@ Limitations
 -----------
 
 * Only XPORT V5 is supported.
-* The transport files must only have one data set per file.
+* The transport files must only have one dataset per file.
 * Only ASCII strings are supported (as required by the FDA).
 * Requires Java 8 or later.
 * Compressed files (CPORT) are not supported.

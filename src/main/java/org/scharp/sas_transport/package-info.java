@@ -25,17 +25,17 @@
  * <h2>SAS for Java Programmers</h2>
  *
  * <p>
- * In SAS, a row of data is called an observation. Observations with an identical structure are organized into "data
- * sets", which corresponds to the {@link org.scharp.sas_transport.SasDataSetDescription} class. Zero or more SAS data
- * sets are organized into a SAS library, which corresponds to the
+ * In SAS, a row of data is called an observation. Observations with an identical structure are organized into
+ * "datasets", which corresponds to the {@link org.scharp.sas_transport.SasDatasetDescription} class. Zero or more SAS
+ * datasets are organized into a SAS library, which corresponds to the
  * {@link org.scharp.sas_transport.SasLibraryDescription} class. However, as the FDA requires that all submitted XPORT
- * files contain only one data set, the many-to-one relationship between data sets and SAS libraries is not supported by
+ * files contain only one dataset, the many-to-one relationship between datasets and SAS libraries is not supported by
  * this library.
  * </p>
  *
  * <p>
- * The V5 XPORT has limitations that SAS data sets do not have, so exporting to an XPORT may have data loss. For
- * example, variable names may only be 8 characters, variable labels may only be 40 characters long, and all numbers are
+ * The V5 XPORT has limitations that SAS datasets do not have, so exporting to an XPORT may have data loss. For example,
+ * variable names may only be 8 characters, variable labels may only be 40 characters long, and all numbers are
  * represented in an old mainframe floating point format that has oscillating precision loss as the exponent increases.
  * As a result, the V5 XPORT format is not the preferred format used by SAS programmers.
  * </p>
@@ -158,7 +158,7 @@
  *         Justification.LEFT,
  *         Format.UNSPECIFIED));
  *
- * SasDataSetDescription dataSet = new SasDataSetDescription(
+ * SasDatasetDescription dataset = new SasDatasetDescription(
  *     "TEMP", // name
  *     "Average daily temperatures", // label
  *     "", // type
@@ -168,7 +168,7 @@
  *     LocalDateTime.now(), // create
  *     LocalDateTime.now()); // modified
  *
- * try (SasTransportExporter exporter = dataSet.newLibraryDescription().exportTransportDataSet(path)) {
+ * try (SasTransportExporter exporter = dataset.newLibraryDescription().exportTransportDataset(path)) {
  *     exporter.appendObservation(List.of("Atlanta", "GA", 72, 53));
  *     exporter.appendObservation(List.of("Austin", "TX", 80, 5));
  *     exporter.appendObservation(List.of("Baltimore", "MD", 65, 45));
@@ -190,14 +190,14 @@
  * <pre>
  * Path path = ...;
  *
- * try (SasTransportImporter importer = SasLibraryDescription.importTransportDataSet(path)) {
+ * try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(path)) {
  *
  *     // Get the variables.
- *     List&lt;Variable&gt; dataSetVariables = importer.sasLibraryDescription().dataSetDescription().variables();
+ *     List&lt;Variable&gt; datasetVariables = importer.sasLibraryDescription().datasetDescription().variables();
  *
  *     // Display a header using the variables.
  *     StringBuilder header = new StringBuilder();
- *     for (Variable variable : dataSetVariables) {
+ *     for (Variable variable : datasetVariables) {
  *         header.append(String.format("%-" + (variable.outputFormat().width() + 1) + "s ", variable.name()));
  *     }
  *     System.out.println(header.toString());
@@ -208,7 +208,7 @@
  *
  *         // Render each value in the observation.
  *         for (int i = 0; i &lt; observation.size(); i++) {
- *             final Variable variable = dataSetVariables.get(i);
+ *             final Variable variable = datasetVariables.get(i);
  *             final Object value = observation.get(i);
  *
  *             final String formattedValue;

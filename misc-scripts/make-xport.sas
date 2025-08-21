@@ -8,7 +8,7 @@
 ***********************************************************************************************/
 * create a XPORT file from a SAS dataset using the XPORT engine;
 libname xportout xport 'sample.xpt';
-data xportout.report(label='Sample Data Set' type='SALES');
+data xportout.report(label='Sample Dataset' type='SALES');
 
    input Item $ 1-6 Material $ 8-14 Cost 16-22 Profit 24-31;
    format Item

@@ -95,7 +95,7 @@ public final class SasTransportExporter implements AutoCloseable {
         this.outputStream = outputStream;
 
         // Store the non-mutable bits of the dataset description that we'll need later.
-        List<Variable> inputVariables = dataDescription.dataSetDescription().variables();
+        List<Variable> inputVariables = dataDescription.datasetDescription().variables();
         this.variables = new Variable[inputVariables.size()];
         int i = 0;
         int observationBufferLength = 0;
@@ -126,7 +126,7 @@ public final class SasTransportExporter implements AutoCloseable {
         secondRealHeader.write(outputStream);
 
         //
-        // Write the SAS data set header.
+        // Write the SAS dataset header.
         //
         Record memberHeader1 = new Record(Record.MEMBER_HEADER_RECORD_STANDARD);
         memberHeader1.write(outputStream);
@@ -136,17 +136,17 @@ public final class SasTransportExporter implements AutoCloseable {
 
         Record memberHeaderData1 = new RealHeader(//
             "SAS", //
-            dataDescription.dataSetDescription().name(), //
+            dataDescription.datasetDescription().name(), //
             "SASDATA", //
-            dataDescription.dataSetDescription().sourceSasVersion(), //
-            dataDescription.dataSetDescription().sourceOperatingSystem(), //
-            dataDescription.dataSetDescription().createTime());
+            dataDescription.datasetDescription().sourceSasVersion(), //
+            dataDescription.datasetDescription().sourceOperatingSystem(), //
+            dataDescription.datasetDescription().createTime());
         memberHeaderData1.write(outputStream);
 
         Record memberHeaderData2 = new SecondHeader(//
-            dataDescription.dataSetDescription().modifiedTime(), //
-            dataDescription.dataSetDescription().label(), //
-            dataDescription.dataSetDescription().type());
+            dataDescription.datasetDescription().modifiedTime(), //
+            dataDescription.datasetDescription().label(), //
+            dataDescription.datasetDescription().type());
         memberHeaderData2.write(outputStream);
 
         // Write the header for the field descriptions.
@@ -221,7 +221,7 @@ public final class SasTransportExporter implements AutoCloseable {
      * Appends an observation to the XPORT file's dataset.
      *
      * @param observation
-     *     The observation (list of variable values) to append to the data set. These must be given in the same order as
+     *     The observation (list of variable values) to append to the dataset. These must be given in the same order as
      *     the variables were given in this object's constructor.
      *
      *     <p>
@@ -271,12 +271,12 @@ public final class SasTransportExporter implements AutoCloseable {
      * @throws IOException
      *     if there was a problem writing to the output stream.
      * @throws IllegalStateException
-     *     if this exporter has already been closed or if {@code observations} doesn't match the variables from the data
-     *     set description that was provided in this object's constructor.
+     *     if this exporter has already been closed or if {@code observations} doesn't match the variables from the
+     *     dataset description that was provided in this object's constructor.
      * @throws NullPointerException
      *     if one of the values in {@code observation} is {@code null}.
      * @throws IllegalArgumentException
-     *     if the values in {@code observation} does not conform to the variables in the data set description.
+     *     if the values in {@code observation} does not conform to the variables in the dataset description.
      */
     public void appendObservation(List<Object> observation) throws IOException {
 
@@ -286,7 +286,7 @@ public final class SasTransportExporter implements AutoCloseable {
 
         if (observation.size() != variables.length) {
             throw new IllegalArgumentException(
-                "observation has different number of values than data set has variables");
+                "observation has different number of values than the dataset has variables");
         }
 
         // Write the values in the observation to an "observation buffer" according to the definition

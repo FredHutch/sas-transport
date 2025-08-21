@@ -29,42 +29,42 @@ public class SasLibraryDescriptionTest {
         // Create a library.
         final LocalDateTime createdTime = LocalDateTime.of(1999, 12, 31, 23, 59, 59, 999);
         final LocalDateTime modifiedTime = LocalDateTime.of(2001, 6, 30, 12, 59, 59, 123);
-        SasDataSetDescription dataSet = newDataSetDescription();
-        SasLibraryDescription library = new SasLibraryDescription(dataSet, "SOUREOS", "12.4", createdTime,
+        SasDatasetDescription dataset = newDatasetDescription();
+        SasLibraryDescription library = new SasLibraryDescription(dataset, "SOUREOS", "12.4", createdTime,
             modifiedTime);
 
         // Confirm that all of its properties were set correctly.
         TestUtil.assertSasLibraryDescription(library, "SOUREOS", "12.4", createdTime, modifiedTime);
-        assertEquals(dataSet, library.dataSetDescription());
+        assertEquals(dataset, library.datasetDescription());
     }
 
-    private static void runConstructWithIllegalArgumentTest(SasDataSetDescription dataSetDescription,
+    private static void runConstructWithIllegalArgumentTest(SasDatasetDescription datasetDescription,
         String sourceOperatingSystem, String sourceSasVersion, LocalDateTime createTime, LocalDateTime modifiedTime,
         String expectedExceptionMessage) {
         Exception exception = assertThrows( //
             IllegalArgumentException.class, //
-            () -> new SasLibraryDescription(dataSetDescription, sourceOperatingSystem, sourceSasVersion, createTime,
+            () -> new SasLibraryDescription(datasetDescription, sourceOperatingSystem, sourceSasVersion, createTime,
                 modifiedTime), //
             "creating SasLibraryDescription with a bad argument");
         assertEquals(expectedExceptionMessage, exception.getMessage());
     }
 
-    private static void runConstructWithNullArgumentTest(SasDataSetDescription dataSetDescription,
+    private static void runConstructWithNullArgumentTest(SasDatasetDescription datasetDescription,
         String sourceOperatingSystem, String sourceSasVersion, LocalDateTime createTime, LocalDateTime modifiedTime,
         String expectedExceptionMessage) {
         Exception exception = assertThrows( //
             NullPointerException.class, //
-            () -> new SasLibraryDescription(dataSetDescription, sourceOperatingSystem, sourceSasVersion, createTime,
+            () -> new SasLibraryDescription(datasetDescription, sourceOperatingSystem, sourceSasVersion, createTime,
                 modifiedTime), //
             "creating SasLibraryDescription with a null argument");
         assertEquals(expectedExceptionMessage, exception.getMessage());
     }
 
     /**
-     * @return A well-formed SAS data set, for tests that need one but don't care what it is.
+     * @return A well-formed SAS dataset, for tests that need one but don't care what it is.
      */
-    private static SasDataSetDescription newDataSetDescription() {
-        return new SasDataSetDescription(//
+    private static SasDatasetDescription newDatasetDescription() {
+        return new SasDatasetDescription(//
             "TESTDATA", // name
             "label", // label
             "type", // type
@@ -88,22 +88,22 @@ public class SasLibraryDescriptionTest {
      * @return A well-formed SAS library description, for tests that need one but don't care what it is.
      */
     private SasLibraryDescription newLibraryDescription() {
-        return new SasLibraryDescription(newDataSetDescription(), "OS", "9.3", LocalDateTime.now(),
+        return new SasLibraryDescription(newDatasetDescription(), "OS", "9.3", LocalDateTime.now(),
             LocalDateTime.now());
     }
 
     /**
-     * Tests constructing a SAS library description with a {@code null} data set.
+     * Tests constructing a SAS library description with a {@code null} dataset.
      */
     @Test
-    public void constructWithNullDataSetDescription() {
+    public void constructWithNullDatasetDescription() {
         runConstructWithNullArgumentTest(//
-            null, // ERROR: null data set
+            null, // ERROR: null dataset
             "os", // os
             "9.3", // version
             LocalDateTime.now(), // create date
             LocalDateTime.now(), // modified date
-            "dataSetDescription must not be null");
+            "datasetDescription must not be null");
     }
 
     /**
@@ -112,7 +112,7 @@ public class SasLibraryDescriptionTest {
     @Test
     public void constructWithNullSourceOperatingSystem() {
         runConstructWithNullArgumentTest(//
-            newDataSetDescription(), // data set
+            newDatasetDescription(), // dataset
             null, // ERROR: null os
             "9.3", // version
             LocalDateTime.now(), // create date
@@ -131,7 +131,7 @@ public class SasLibraryDescriptionTest {
 
         // The 8 character operating system is permitted.
         SasLibraryDescription library = new SasLibraryDescription(//
-            newDataSetDescription(), // data set
+            newDatasetDescription(), // dataset
             limitOperatingSystem, // os
             "9.3", // version
             LocalDateTime.now(), // create date
@@ -140,7 +140,7 @@ public class SasLibraryDescriptionTest {
 
         // The 9 character operating system is prohibited.
         runConstructWithIllegalArgumentTest(//
-            newDataSetDescription(), // data set
+            newDatasetDescription(), // dataset
             longOperatingSystem, // os
             "9.3", // version
             LocalDateTime.now(), // create date
@@ -154,7 +154,7 @@ public class SasLibraryDescriptionTest {
     @Test
     public void constructWithNullSourceSasVersion() {
         runConstructWithNullArgumentTest(//
-            newDataSetDescription(), // data set
+            newDatasetDescription(), // dataset
             "OS", // os
             null, // ERROR: bad version
             LocalDateTime.now(), // create date
@@ -173,7 +173,7 @@ public class SasLibraryDescriptionTest {
 
         // The 8 character SAS version is permitted.
         SasLibraryDescription library = new SasLibraryDescription(//
-            newDataSetDescription(), // data set
+            newDatasetDescription(), // dataset
             "OS", // os
             limitSasVersion, // version
             LocalDateTime.now(), // create date
@@ -182,7 +182,7 @@ public class SasLibraryDescriptionTest {
 
         // The 9 character SAS version is prohibited.
         runConstructWithIllegalArgumentTest(//
-            newDataSetDescription(), // data set
+            newDatasetDescription(), // dataset
             "OS", // os
             longSasVersion, // version
             LocalDateTime.now(), // create date
@@ -196,7 +196,7 @@ public class SasLibraryDescriptionTest {
     @Test
     public void constructWithNullCreationDate() {
         runConstructWithNullArgumentTest(//
-            newDataSetDescription(), // data set
+            newDatasetDescription(), // dataset
             "OS", // os
             "9.3", // SAS version
             null, // ERROR: invalid create date
@@ -210,7 +210,7 @@ public class SasLibraryDescriptionTest {
     @Test
     public void constructWithNullModificationDate() {
         runConstructWithNullArgumentTest(//
-            newDataSetDescription(), // data set
+            newDatasetDescription(), // dataset
             "OS", // os
             "9.3", // SAS version
             LocalDateTime.now(), // create date
@@ -219,51 +219,51 @@ public class SasLibraryDescriptionTest {
     }
 
     /**
-     * Tests constructing a SAS data set exporter with a {@code null} file path.
+     * Tests constructing a SAS dataset exporter with a {@code null} file path.
      */
     @Test
     public void exportWithNullPath() {
         SasLibraryDescription library = newLibraryDescription();
         Exception exception = assertThrows( //
             NullPointerException.class, //
-            () -> library.exportTransportDataSet((Path) null), //
+            () -> library.exportTransportDataset((Path) null), //
             "Creating a SasTransportExporter with a null Path");
         assertEquals("path must not be null", exception.getMessage());
     }
 
     /**
-     * Tests constructing a SAS data set exporter with a {@code null} output stream.
+     * Tests constructing a SAS dataset exporter with a {@code null} output stream.
      */
     @Test
     public void exportWithNullOutputStream() {
         SasLibraryDescription library = newLibraryDescription();
         Exception exception = assertThrows( //
             NullPointerException.class, //
-            () -> library.exportTransportDataSet((OutputStream) null), //
+            () -> library.exportTransportDataset((OutputStream) null), //
             "Creating a SasTransportExporter with a null OutputStream");
         assertEquals("outputStream must not be null", exception.getMessage());
     }
 
     /**
-     * Tests constructing a SAS data set importer with a {@code null} file path.
+     * Tests constructing a SAS dataset importer with a {@code null} file path.
      */
     @Test
     public void importWithNullPath() {
         Exception exception = assertThrows( //
             NullPointerException.class, //
-            () -> SasLibraryDescription.importTransportDataSet((Path) null), //
+            () -> SasLibraryDescription.importTransportDataset((Path) null), //
             "Creating a SasTransportImporter with a null Path");
         assertEquals("path must not be null", exception.getMessage());
     }
 
     /**
-     * Tests constructing a SAS data set importer with a {@code null} input stream.
+     * Tests constructing a SAS dataset importer with a {@code null} input stream.
      */
     @Test
     public void importWithNullInputStream() {
         Exception exception = assertThrows( //
             NullPointerException.class, //
-            () -> SasLibraryDescription.importTransportDataSet((InputStream) null), //
+            () -> SasLibraryDescription.importTransportDataset((InputStream) null), //
             "Creating a SasTransportExporter with a null InputStream");
         assertEquals("inputStream must not be null", exception.getMessage());
     }

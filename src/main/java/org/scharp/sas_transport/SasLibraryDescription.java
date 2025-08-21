@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
  * </p>
  */
 public final class SasLibraryDescription {
-    private final SasDataSetDescription dataSetDescription;
+    private final SasDatasetDescription datasetDescription;
     private final String sourceOperatingSystem;
     private final String sourceSasVersion;
     private final LocalDateTime createTime;
@@ -29,18 +29,18 @@ public final class SasLibraryDescription {
     /**
      * Constructs a new SAS library.
      *
-     * @param dataSetDescription
-     *     A description of the library's one and only data set. This must not be {@code null}.
+     * @param datasetDescription
+     *     A description of the library's one and only dataset. This must not be {@code null}.
      * @param sourceOperatingSystem
-     *     The operating system on which the data set was created. For example, "Linux", "SunOS", or "LIN X64".
+     *     The operating system on which the dataset was created. For example, "Linux", "SunOS", or "LIN X64".
      *     <p>
      *     To fit into an XPORT file, this must be 8 characters or fewer and only contain characters from the ASCII
      *     character set.
      *     </p>
      * @param sourceSasVersion
-     *     The version of SAS used to create this data set. This must not be {@code null}.
+     *     The version of SAS used to create this dataset. This must not be {@code null}.
      *     <p>
-     *     This is meaningless for data sets created with this library, but for compatibility, specify a SAS version,
+     *     This is meaningless for datasets created with this library, but for compatibility, specify a SAS version,
      *     such as "5.2".
      *     </p>
      *     <p>
@@ -64,10 +64,10 @@ public final class SasLibraryDescription {
      *     if {@code sourceOperatingSystem} or {@code sourceSasVersion} are longer than 8 characters or contain
      *     non-ASCII characters.
      */
-    public SasLibraryDescription(SasDataSetDescription dataSetDescription, String sourceOperatingSystem,
+    public SasLibraryDescription(SasDatasetDescription datasetDescription, String sourceOperatingSystem,
         String sourceSasVersion, LocalDateTime createTime, LocalDateTime modifiedTime) {
 
-        ArgumentUtil.checkNotNull(dataSetDescription, "dataSetDescription");
+        ArgumentUtil.checkNotNull(datasetDescription, "datasetDescription");
 
         ArgumentUtil.checkNotNull(sourceOperatingSystem, "sourceOperatingSystem");
         ArgumentUtil.checkMaximumLength(sourceOperatingSystem, 8, "sourceOperatingSystem");
@@ -81,7 +81,7 @@ public final class SasLibraryDescription {
         ArgumentUtil.checkNotNull(modifiedTime, "modifiedTime");
 
         // TODO: add builder pattern
-        this.dataSetDescription = dataSetDescription;
+        this.datasetDescription = datasetDescription;
         this.sourceOperatingSystem = sourceOperatingSystem;
         this.sourceSasVersion = sourceSasVersion;
         this.createTime = createTime;
@@ -98,21 +98,21 @@ public final class SasLibraryDescription {
     }
 
     /**
-     * Gets the version of SAS which most recently modified this data set.
+     * Gets the version of SAS which most recently modified this dataset.
      *
-     * @return The version of SAS which most recently modified this data set. This is never {@code null}.
+     * @return The version of SAS which most recently modified this dataset. This is never {@code null}.
      */
     public String sourceSasVersion() {
         return sourceSasVersion;
     }
 
     /**
-     * Gets this SAS library's one and only data set.
+     * Gets this SAS library's one and only dataset.
      *
-     * @return This library's one and only data set. This is never {@code null}.
+     * @return This library's one and only dataset. This is never {@code null}.
      */
-    public SasDataSetDescription dataSetDescription() {
-        return dataSetDescription;
+    public SasDatasetDescription datasetDescription() {
+        return datasetDescription;
     }
 
     /**
@@ -152,9 +152,9 @@ public final class SasLibraryDescription {
      * @throws IOException
      *     if there was a problem writing to {@code path}.
      */
-    public SasTransportExporter exportTransportDataSet(Path path) throws IOException {
+    public SasTransportExporter exportTransportDataset(Path path) throws IOException {
         ArgumentUtil.checkNotNull(path, "path");
-        return exportTransportDataSet(new BufferedOutputStream(Files.newOutputStream(path)));
+        return exportTransportDataset(new BufferedOutputStream(Files.newOutputStream(path)));
     }
 
     /**
@@ -177,7 +177,7 @@ public final class SasLibraryDescription {
      * @throws IOException
      *     if there was a problem writing to {@code outputStream}.
      */
-    public SasTransportExporter exportTransportDataSet(OutputStream outputStream) throws IOException {
+    public SasTransportExporter exportTransportDataset(OutputStream outputStream) throws IOException {
         ArgumentUtil.checkNotNull(outputStream, "outputStream");
         return new SasTransportExporter(outputStream, this);
     }
@@ -208,9 +208,9 @@ public final class SasLibraryDescription {
      * @throws UnsupportedTransportFileException
      *     if {@code path} is some other kind of SAS file but not a V5 XPORT file.
      */
-    public static SasTransportImporter importTransportDataSet(Path path) throws IOException {
+    public static SasTransportImporter importTransportDataset(Path path) throws IOException {
         ArgumentUtil.checkNotNull(path, "path");
-        return importTransportDataSet(new BufferedInputStream(Files.newInputStream(path)));
+        return importTransportDataset(new BufferedInputStream(Files.newInputStream(path)));
     }
 
     /**
@@ -240,7 +240,7 @@ public final class SasLibraryDescription {
      * @throws UnsupportedTransportFileException
      *     if {@code inputStream} is some other kind of SAS file but not a V5 XPORT file.
      */
-    public static SasTransportImporter importTransportDataSet(InputStream inputStream) throws IOException {
+    public static SasTransportImporter importTransportDataset(InputStream inputStream) throws IOException {
         ArgumentUtil.checkNotNull(inputStream, "inputStream");
         return new SasTransportImporter(inputStream);
     }

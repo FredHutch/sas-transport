@@ -16,8 +16,8 @@ import java.util.List;
 /**
  * A class for reading SAS Transport files.
  * <p>
- * Instances of this class are created with {@link SasLibraryDescription#importTransportDataSet(InputStream)} or
- * {@link SasLibraryDescription#importTransportDataSet(Path)}.
+ * Instances of this class are created with {@link SasLibraryDescription#importTransportDataset(InputStream)} or
+ * {@link SasLibraryDescription#importTransportDataset(Path)}.
  * </p>
  */
 public final class SasTransportImporter implements AutoCloseable {
@@ -110,11 +110,11 @@ public final class SasTransportImporter implements AutoCloseable {
             throw new MalformedTransportFileException("missing first member header data record");
         }
 
-        RealHeader dataSetHeader = new RealHeader(recordData, SasTransportImporter::twoDigitYearToRealYear);
-        String dataSetName = dataSetHeader.symbol2();
-        String dataSetOperatingSystem = dataSetHeader.operatingSystem();
-        String dataSetSasVersion = dataSetHeader.sasVersion();
-        LocalDateTime dataSetCreateDate = dataSetHeader.createDate();
+        RealHeader datasetHeader = new RealHeader(recordData, SasTransportImporter::twoDigitYearToRealYear);
+        String datasetName = datasetHeader.symbol2();
+        String datasetOperatingSystem = datasetHeader.operatingSystem();
+        String datasetSasVersion = datasetHeader.sasVersion();
+        LocalDateTime datasetCreateDate = datasetHeader.createDate();
 
         // Get the "second member header data record" (Section 5 TS-140)
         totalBytesRead = inputStream.read(recordData);
@@ -123,10 +123,10 @@ public final class SasTransportImporter implements AutoCloseable {
         }
 
         SecondHeader secondMemberDataRecord = new SecondHeader(recordData);
-        LocalDateTime dataSetModifiedDate = secondMemberDataRecord
-            .modifiedDate(SasTransportImporter::twoDigitYearToRealYear);
-        String dataSetLabel = secondMemberDataRecord.label();
-        String dataSetType = secondMemberDataRecord.type();
+        LocalDateTime datasetModifiedDate = secondMemberDataRecord.modifiedDate(
+            SasTransportImporter::twoDigitYearToRealYear);
+        String datasetLabel = secondMemberDataRecord.label();
+        String datasetType = secondMemberDataRecord.type();
 
         // Read the namestr header record (Section 6, TS-140)
         totalBytesRead = inputStream.read(recordData);
@@ -198,19 +198,19 @@ public final class SasTransportImporter implements AutoCloseable {
 
         // Assemble all header information into a structured form.
         try {
-            SasDataSetDescription dataSet = new SasDataSetDescription(//
-                dataSetName, // name
-                dataSetLabel, // label
-                dataSetType, // type
-                dataSetOperatingSystem, // OS version
-                dataSetSasVersion, // SAS Version
+            SasDatasetDescription dataset = new SasDatasetDescription(//
+                datasetName, // name
+                datasetLabel, // label
+                datasetType, // type
+                datasetOperatingSystem, // OS version
+                datasetSasVersion, // SAS Version
                 Arrays.asList(variables), // variables
-                dataSetCreateDate, // create
-                dataSetModifiedDate, // modified
+                datasetCreateDate, // create
+                datasetModifiedDate, // modified
                 StrictnessMode.BASIC); // ignore non-fatal errors
 
             dataDescription = new SasLibraryDescription(//
-                dataSet, //
+                dataset, //
                 libraryOperatingSystem, //
                 librarySasVersion, //
                 libraryCreateDate, //
@@ -219,8 +219,8 @@ public final class SasTransportImporter implements AutoCloseable {
         } catch (IllegalArgumentException exception) {
             // If the variable list is malformed in a manner that each variable is well-formed,
             // but together they are malformed (for example, it has duplicated variable names),
-            // then creating the data set throws this exception.
-            throw new MalformedTransportFileException("Data set is malformed", exception);
+            // then creating the dataset throws this exception.
+            throw new MalformedTransportFileException("Dataset is malformed", exception);
         }
 
         // Determine the size of the buffer we need to hold the observations.
@@ -292,7 +292,7 @@ public final class SasTransportImporter implements AutoCloseable {
         return true;
     }
 
-    private static boolean isDataSetHeader(byte[] record) {
+    private static boolean isDatasetHeader(byte[] record) {
         return arrayMatchesString(record, Record.MEMBER_HEADER_RECORD_STANDARD)
             || arrayMatchesString(record, Record.MEMBER_HEADER_RECORD_VMS);
     }
@@ -319,10 +319,10 @@ public final class SasTransportImporter implements AutoCloseable {
      *
      * @throws IOException
      *     if there was an error reading the input stream
-     * @throws MultipleDataSetsNotSupportedException
-     *     if, instead an observation, a new data set was found within the XPORT file. This indicates the end of the
-     *     current data set and all observations imported so far is valid and complete. However, the API does not
-     *     provide a way to access multiple data sets, so an exception is thrown.
+     * @throws MultipleDatasetsNotSupportedException
+     *     if, instead an observation, a new dataset was found within the XPORT file. This indicates the end of the
+     *     current dataset and all observations imported so far is valid and complete. However, the API does not provide
+     *     a way to access multiple datasets, so an exception is thrown.
      * @throws IllegalStateException
      *     if the input stream was already closed.
      */
@@ -341,14 +341,14 @@ public final class SasTransportImporter implements AutoCloseable {
                 return null;
             }
 
-            // Although not documented as such, the XPORT format supports multiple data sets within
-            // the same transport file.  In this case, the header record for the next data set appears
+            // Although not documented as such, the XPORT format supports multiple datasets within
+            // the same transport file.  In this case, the header record for the next dataset appears
             // where an observation is expected.  This is ambiguous, as the header record could be data,
-            // but we resolve the ambiguous by assuming it's a second data set (which is more likely).
-            if (recordDataOffset == 0 && isDataSetHeader(recordData)) {
-                // The XPORT file has multiple data sets, but the API for this class only provides
+            // but we resolve the ambiguous by assuming it's a second dataset (which is more likely).
+            if (recordDataOffset == 0 && isDatasetHeader(recordData)) {
+                // The XPORT file has multiple datasets, but the API for this class only provides
                 // access to one of them.  Throw an exception.
-                throw new MultipleDataSetsNotSupportedException();
+                throw new MultipleDatasetsNotSupportedException();
             }
 
             // TS-140 states that the final record may be padded with blanks, which looks
@@ -373,11 +373,11 @@ public final class SasTransportImporter implements AutoCloseable {
                 }
 
                 // Even if the next record exists in the file, it's possible that the blanks were
-                // the end-of-dataset padding if the next record is the header for a new data set.
-                if (nextRecordDataLimit == Record.RECORD_SIZE && isDataSetHeader(nextRecordData)) {
-                    // XPORT file has multiple data sets.
+                // the end-of-dataset padding if the next record is the header for a new dataset.
+                if (nextRecordDataLimit == Record.RECORD_SIZE && isDatasetHeader(nextRecordData)) {
+                    // XPORT file has multiple datasets.
                     // Because the API for this class only provides access to one of them, we throw an exception.
-                    throw new MultipleDataSetsNotSupportedException();
+                    throw new MultipleDatasetsNotSupportedException();
                 }
             }
 
@@ -470,7 +470,7 @@ public final class SasTransportImporter implements AutoCloseable {
                     break;
 
                 case NUMERIC:
-                    // Numeric values can have a length from 2-8 bytes in a data set, even though
+                    // Numeric values can have a length from 2-8 bytes in a dataset, even though
                     // they're always 8 bytes in memory.
                     assert 2 <= variables[i].length() && variables[i].length() <= 8 : variables[i].length();
 

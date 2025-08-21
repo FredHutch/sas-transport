@@ -12,7 +12,7 @@ import java.nio.file.Path
 class XportView {
 
     private static final Class SasLibraryDescription
-    private static final Class MultipleDataSetsNotSupportedException
+    private static final Class MultipleDatasetsNotSupportedException
     static {
         // Make sure the library has been compiled.
         // It should be relative to this script's location.
@@ -27,7 +27,7 @@ class XportView {
 
         XportView.classLoader.rootLoader.addURL(new URL(jarFile.toUri().toString()))
         SasLibraryDescription = Class.forName("org.scharp.sas_transport.SasLibraryDescription")
-        MultipleDataSetsNotSupportedException = Class.forName("org.scharp.sas_transport.MultipleDataSetsNotSupportedException")
+        MultipleDatasetsNotSupportedException = Class.forName("org.scharp.sas_transport.MultipleDatasetsNotSupportedException")
     }
 
     private final Path xportFile
@@ -38,7 +38,7 @@ class XportView {
 
     def show() {
 
-        def importer = SasLibraryDescription.importTransportDataSet(xportFile)
+        def importer = SasLibraryDescription.importTransportDataset(xportFile)
 
         def library = importer.sasLibraryDescription()
         println "Library OS             : ${library.sourceOperatingSystem()}"
@@ -47,17 +47,17 @@ class XportView {
         println "Library last modified  : ${library.modifiedTime()}"
         println "------------------------------------------------------------"
 
-        def dataSetDescription = library.dataSetDescription()
-        println "Data Set Name          : ${dataSetDescription.name()}"
-        println "Data Set Label         : ${dataSetDescription.label()}"
-        println "Data Set Type          : ${dataSetDescription.type()}"
-        println "Data Set OS            : ${dataSetDescription.sourceOperatingSystem()}"
-        println "Data Set SAS Version   : ${dataSetDescription.sourceSasVersion()}"
-        println "Data Set created       : ${dataSetDescription.createTime()}"
-        println "Data Set last modified : ${dataSetDescription.modifiedTime()}"
+        def datasetDescription = library.datasetDescription()
+        println "Dataset Name          : ${datasetDescription.name()}"
+        println "Dataset Label         : ${datasetDescription.label()}"
+        println "Dataset Type          : ${datasetDescription.type()}"
+        println "Dataset OS            : ${datasetDescription.sourceOperatingSystem()}"
+        println "Dataset SAS Version   : ${datasetDescription.sourceSasVersion()}"
+        println "Dataset created       : ${datasetDescription.createTime()}"
+        println "Dataset last modified : ${datasetDescription.modifiedTime()}"
         println "------------------------------------------------------------"
 
-        for (def variable : dataSetDescription.variables()) {
+        for (def variable : datasetDescription.variables()) {
             println "Variable Number        : ${variable.number()}"
             println "Variable Name          : ${variable.name()}"
             println "Variable Type          : ${variable.type()}"
@@ -79,9 +79,9 @@ class XportView {
                 i++
             }
         } catch (IOException error) {
-            if (error.getClass() == MultipleDataSetsNotSupportedException) {
+            if (error.getClass() == MultipleDatasetsNotSupportedException) {
                 // handle this exception so it doesn't look like a crash
-                println "\nERROR: multiple data sets were found."
+                println "\nERROR: multiple datasets were found."
             }
         } finally {
             importer.close()

@@ -20,7 +20,7 @@ This is an observation.  The next observation is missing.  After that is EOF.
 .
 run;
 
-* Export the data set to a V5 XPORT file;
+* Export the dataset to a V5 XPORT file;
 %loc2xpt(libref=work, filespec='80_byte_observation.xpt', format=V5);
 run;
 

@@ -97,7 +97,7 @@ A
 Z
 run;
 
-* Export the data set to a V5 XPORT file;
+* Export the dataset to a V5 XPORT file;
 %loc2xpt(libref=work, filespec='not_missing_at_end_of_record.xpt', format=V5);
 run;
 

@@ -6,7 +6,7 @@
  *  src/test/res/numeric_variations.xpt
  *********************************************************************/
 
-* Data set with variations on numeric data including;
+* Create a dataset with variations on numeric data including;
 *   All kinds of missing values;
 *;
 *   -10;
@@ -243,6 +243,6 @@ datalines;
 1.23E+75
 ;
 
-* Export the data set into an V5 XPORT file;
+* Export the dataset into an V5 XPORT file;
 %loc2xpt(libref=work, filespec='numeric_variations.xpt', format=V5);
 run;

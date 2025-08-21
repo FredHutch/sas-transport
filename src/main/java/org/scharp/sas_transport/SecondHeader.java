@@ -31,14 +31,14 @@ import java.time.LocalDateTime;
  */
 class SecondHeader extends Record {
 
-    SecondHeader(LocalDateTime createDate, String dataSetLabel, String dataSetType) {
-        assert dataSetLabel.getBytes(StandardCharsets.US_ASCII).length <= 40;
-        assert dataSetType.getBytes(StandardCharsets.US_ASCII).length <= 8;
+    SecondHeader(LocalDateTime createDate, String datasetLabel, String datasetType) {
+        assert datasetLabel.getBytes(StandardCharsets.US_ASCII).length <= 40;
+        assert datasetType.getBytes(StandardCharsets.US_ASCII).length <= 8;
 
         formatDate(createDate, 0); // dmod_*
         toSpacePaddedArray("                ", 16, 16); // padding[16]
-        toSpacePaddedArray(dataSetLabel, 32, 40); // dslabel[40]
-        toSpacePaddedArray(dataSetType, 32 + 40, 8); // dstype
+        toSpacePaddedArray(datasetLabel, 32, 40); // dslabel[40]
+        toSpacePaddedArray(datasetType, 32 + 40, 8); // dstype
     }
 
     /**

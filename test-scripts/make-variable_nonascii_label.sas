@@ -7,7 +7,7 @@
  ********************************************************************/
 
 libname xportout xport 'variable_nonascii_label.xpt';
-data xportout.testdata(label='Data set w/ non-ASCII label on variable');
+data xportout.testdata(label='A dataset with a non-ASCII label on a variable');
    input  TEXT $;
    format TEXT $10.;
    label  TEXT=Non-Ascii Label: copyright: '9A'x; * 9A is (c);

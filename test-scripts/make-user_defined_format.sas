@@ -26,7 +26,7 @@ run;
 
 * create a XPORT file from a SAS dataset using the XPORT engine;
 libname xportout xport 'user_defined_format.xpt';
-data xportout.report(label='Data Set with User-Defined Formats');
+data xportout.report(label='A Dataset with User-Defined Formats');
 
    input ID $ Sex $ Income Smoker;
    format ID     $UPCASE9.

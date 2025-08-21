@@ -12,7 +12,7 @@
 * The byte are given in numerical order.;
 
 libname xportout xport 'binary_character_data.xpt';
-data xportout.testdata(label='Data set of binary data (all bytes)');
+data xportout.testdata(label='Dataset of binary data (all bytes)');
    input  BINARY $HEX32.;
    format BINARY $BASE64X24.;
    label  BINARY=16 bytes of binary data;

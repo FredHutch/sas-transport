@@ -6,7 +6,7 @@
  *  src/test/res/max_length_variable.xpt
  *********************************************************************/
 
-* Create a data set with the values that have the maximum length possible;
+* Create a dataset with the values that have the maximum length possible;
 libname xportout xport 'max_length_variable.xpt';
 data xportout.testdata(label='Variables with maximum length');
    infile datalines LINESIZE=32767 SCANOVER;

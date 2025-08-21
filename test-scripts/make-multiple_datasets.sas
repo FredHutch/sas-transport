@@ -6,8 +6,8 @@
  *  src/test/res/multiple_datasets.xpt
  *********************************************************************/
 
-* Data set A;
-data a(label='Data set A');
+* Dataset A;
+data a(label='Dataset A');
    input  A1 $ 1-20;
    format A1 $20.;
    label  A1='Text in dataset A';
@@ -16,8 +16,8 @@ data-in-dataset-a
 ;
 run;
 
-* Data set B;
-data b(label='Data set B');
+* Dataset B;
+data b(label='Dataset B');
    input  B1 $ 1-20;
    format B1 $20.;
    label  B1='Text in dataset B';
@@ -27,7 +27,7 @@ data-in-dataset-b
 run;
 
 
-* Export both data sets to the same V5 XPORT file;
+* Export both datasets to the same V5 XPORT file;
 libname xportout xport 'multiple_datasets.xpt';
 proc copy in=work out=xportout memtype=data;
 run;

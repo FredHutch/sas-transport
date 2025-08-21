@@ -6,8 +6,8 @@
  *  src/test/res/minidata.xpt
  *********************************************************************/
 
-* A data set with a single numeric value;
-data minidata(label='Data set with only one value');
+* A dataset with a single numeric value;
+data minidata(label='A dataset with only one value');
    input  NUMBER;
    format NUMBER 5.2;
    label  NUMBER='A number';
@@ -15,7 +15,7 @@ datalines;
 .
 ;
 
-* Export the data set into an V5 XPORT file;
+* Export the dataset into an V5 XPORT file;
 %loc2xpt(libref=work, filespec='minidata.xpt', format=V5);
 run;
 
