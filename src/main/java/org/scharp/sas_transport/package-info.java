@@ -193,16 +193,25 @@
  * try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(path)) {
  *
  *     // Get the variables.
- *     List&lt;Variable&gt; datasetVariables = importer.sasLibraryDescription().datasetDescription().variables();
+ *     List&lt;Variable> datasetVariables = importer.sasLibraryDescription().datasetDescription().variables();
  *
- *     // Display a header using the variables.
- *     StringBuilder header = new StringBuilder();
+ *     // Figure out how to format each column (really, how much space to give it).
+ *     List&lt;String> columnFormats = new ArrayList&lt;>(datasetVariables.size());
  *     for (Variable variable : datasetVariables) {
- *         header.append(String.format("%-" + (variable.outputFormat().width() + 1) + "s ", variable.name()));
+ *         int columnWidth = Math.max(variable.name().length(), variable.outputFormat().width()) + 1;
+ *         columnFormats.add("%-" + columnWidth + "s ");
  *     }
- *     System.out.println(header.toString());
  *
- *     List&lt;Object&gt; observation;
+ *     // Display a header using the variable names.
+ *     StringBuilder header = new StringBuilder();
+ *     for (int i = 0; i &lt; datasetVariables.size(); i++) {
+ *         final Variable variable = datasetVariables.get(i);
+ *         header.append(String.format(columnFormats.get(i), variable.name()));
+ *     }
+ *     System.out.println(header);
+ *
+ *     // Display each observation as a row in the table.
+ *     List&lt;Object> observation;
  *     while ((observation = importer.nextObservation()) != null) {
  *         StringBuilder row = new StringBuilder(header.length());
  *
@@ -211,17 +220,14 @@
  *             final Variable variable = datasetVariables.get(i);
  *             final Object value = observation.get(i);
  *
- *             final String formattedValue;
- *             if (value instanceof MissingValue) {
- *                 formattedValue = String.format("%-" + (variable.outputFormat().width() + 1) + "s", ".");
- *             } else {
- *                 formattedValue = String.format("%-" + (variable.outputFormat().width() + 1) + "s",
- *                     value.toString());
- *             }
- *             row.append(formattedValue + " ");
+ *             // Format the value for display.
+ *             final String formattedValue = (value instanceof MissingValue) ? "." : value.toString();
+ *
+ *             // Write the value with a fixed width, as done for the header.
+ *             row.append(String.format(columnFormats.get(i), formattedValue));
  *         }
  *
- *         System.out.println(row.toString());
+ *         System.out.println(row);
  *     }
  * }
  * </pre>

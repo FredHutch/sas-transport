@@ -75,39 +75,46 @@ The following code shows how to use the library to read a SAS transport file a h
 The following code sample demonstrates how to read a SAS transport file and print out its contents into a table.
 
     Path path = ...;
-   
+
     try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(path)) {
-   
-        // Get the variables.
-        List<Variable> datasetVariables = importer.sasLibraryDescription().datasetDescription().variables();
-   
-        // Display a header using the variables.
-        StringBuilder header = new StringBuilder();
-        for (Variable variable : datasetVariables) {
-            header.append(String.format("%-" + (variable.outputFormat().width() + 1) + "s ", variable.name()));
-        }
-        System.out.println(header.toString());
-   
-        List<Object> observation;
-        while ((observation = importer.nextObservation()) != null) {
-            StringBuilder row = new StringBuilder(header.length());
-   
-            // Render each value in the observation
-            for (int i = 0; i < observation.size(); i++) {
-                final Variable variable = datasetVariables.get(i);
-                final Object value = observation.get(i);
-   
-                final String formattedValue;
-                if (value instanceof MissingValue) {
-                    formattedValue = String.format("%-" + (variable.outputFormat().width() + 1) + "s", ".");
-                } else {
-                    formattedValue = String.format("%-" + (variable.outputFormat().width() + 1) + "s", value.toString());
-                }
-                row.append(formattedValue + " ");
-            }
-   
-            System.out.println(row.toString());
-        }
+    
+         // Get the variables.
+         List<Variable> datasetVariables = importer.sasLibraryDescription().datasetDescription().variables();
+    
+         // Figure out how to format each column (really, how much space to give it).
+         List<String> columnFormats = new ArrayList<>(datasetVariables.size());
+         for (Variable variable : datasetVariables) {
+             int columnWidth = Math.max(variable.name().length(), variable.outputFormat().width()) + 1;
+             columnFormats.add("%-" + columnWidth + "s ");
+         }
+    
+         // Display a header using the variable names.
+         StringBuilder header = new StringBuilder();
+         for (int i = 0; i < datasetVariables.size(); i++) {
+             final Variable variable = datasetVariables.get(i);
+             header.append(String.format(columnFormats.get(i), variable.name()));
+         }
+         System.out.println(header);
+    
+         // Display each observation as a row in the table.
+         List<Object> observation;
+         while ((observation = importer.nextObservation()) != null) {
+             StringBuilder row = new StringBuilder(header.length());
+    
+             // Render each value in the observation.
+             for (int i = 0; i < observation.size(); i++) {
+                 final Variable variable = datasetVariables.get(i);
+                 final Object value = observation.get(i);
+    
+                 // Format the value for display.
+                 final String formattedValue = (value instanceof MissingValue) ? "." : value.toString();
+    
+                 // Write the value with a fixed width, as done for the header.
+                 row.append(String.format(columnFormats.get(i), formattedValue));
+             }
+    
+             System.out.println(row);
+         }
     }
 
 Limitations

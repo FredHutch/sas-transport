@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -97,43 +98,45 @@ public class SampleCodeTest {
         }
     }
 
-    private String padRight(Variable variable, String value) {
-        int fullWidth = Math.max(variable.outputFormat().width(), variable.name().length());
-        return String.format("%-" + fullWidth + "s ", value.trim());
-    }
-
     private void importSampleTransportFile(Path path) throws IOException {
-
         try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(path)) {
 
             // Get the variables.
             List<Variable> datasetVariables = importer.sasLibraryDescription().datasetDescription().variables();
 
-            // Display a header using the variable names.
+            // Figure out how to format each column (really, how much space to give it).
+            List<String> columnFormats = new ArrayList<>(datasetVariables.size());
             for (Variable variable : datasetVariables) {
-                System.out.print(padRight(variable, variable.name()));
+                int columnWidth = Math.max(variable.name().length(), variable.outputFormat().width()) + 1;
+                columnFormats.add("%-" + columnWidth + "s ");
             }
-            System.out.println();
 
+            // Display a header using the variable names.
+            StringBuilder header = new StringBuilder();
+            for (int i = 0; i < datasetVariables.size(); i++) {
+                final Variable variable = datasetVariables.get(i);
+                header.append(String.format(columnFormats.get(i), variable.name()));
+            }
+            System.out.println(header);
+
+            // Display each observation as a row in the table.
             List<Object> observation;
             while ((observation = importer.nextObservation()) != null) {
+                StringBuilder row = new StringBuilder(header.length());
 
                 // Render each value in the observation.
                 for (int i = 0; i < observation.size(); i++) {
                     final Variable variable = datasetVariables.get(i);
                     final Object value = observation.get(i);
 
-                    final String formattedValue;
-                    if (value instanceof MissingValue) {
-                        formattedValue = padRight(variable, ".");
-                    } else {
-                        formattedValue = padRight(variable, value.toString());
-                    }
+                    // Format the value for display.
+                    final String formattedValue = (value instanceof MissingValue) ? "." : value.toString();
 
-                    System.out.print(formattedValue);
+                    // Write the value with a fixed width, as done for the header.
+                    row.append(String.format(columnFormats.get(i), formattedValue));
                 }
 
-                System.out.println();
+                System.out.println(row);
             }
         }
     }
