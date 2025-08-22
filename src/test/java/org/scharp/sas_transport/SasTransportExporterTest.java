@@ -1221,7 +1221,10 @@ public class SasTransportExporterTest {
                     NullPointerException.class, //
                     () -> exporter.appendObservation(Arrays.asList(13.2, null)), //
                     "writing a null value to a CHARACTER variable");
-                assertEquals("null given as a value to TEXT, which has a CHARACTER type", exception.getMessage());
+                assertEquals(
+                    "A null reference was given as a value to the variable named TEXT, which has a CHARACTER type " + //
+                        "(CHARACTER variables use the empty string for missing values)",
+                    exception.getMessage());
 
                 // Write a well-formed row (to confirm that the exceptions failed without
                 // writing a partial row).

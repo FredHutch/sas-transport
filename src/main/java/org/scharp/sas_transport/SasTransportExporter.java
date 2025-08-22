@@ -315,7 +315,8 @@ public final class SasTransportExporter implements AutoCloseable {
                 if (!(value instanceof String)) {
                     if (value == null) {
                         throw new NullPointerException(
-                            "null given as a value to " + variable.name() + ", which has a CHARACTER type");
+                            "A null reference was given as a value to the variable named " + variable.name() +
+                                ", which has a CHARACTER type (CHARACTER variables use the empty string for missing values)");
                     }
                     if (value instanceof MissingValue) {
                         // MissingValue is only for numeric variables.  CHARACTER variables use the empty string.
