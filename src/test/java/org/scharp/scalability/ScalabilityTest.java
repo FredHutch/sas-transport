@@ -18,7 +18,9 @@ import org.scharp.sas_transport.VariableType;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -97,9 +99,9 @@ public class ScalabilityTest {
                 "XPORT will pad it to fill exactly 200 bytes.", // VAR02
             34.4, // VAR03
             1002, // VAR04
-            new java.sql.Timestamp(System.currentTimeMillis()), // VAR05
-            new java.sql.Date(System.currentTimeMillis()), // VAR06
-            new java.sql.Time(System.currentTimeMillis()), // VAR07
+            LocalDateTime.now(), // VAR05
+            LocalDate.now(), // VAR06
+            LocalTime.now(), // VAR07
             252.02, // VAR08
             200052.02, // VAR09
             634.4, // VAR10

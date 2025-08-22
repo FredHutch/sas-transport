@@ -9,8 +9,14 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,22 +37,6 @@ public final class SasTransportExporter implements AutoCloseable {
      * The largest possible number that can be represented in an XPORT file.
      */
     public static final double MAX_VALUE = 9.0462569716653265E+74;
-
-    /**
-     * The number of milliseconds in a second.
-     */
-    private final static long MILLISECONDS_PER_SECOND = 1000;
-
-    /**
-     * The number of milliseconds in a day.
-     */
-    private final static long MILLISECONDS_PER_DAY = 24 * 60 * 60 * MILLISECONDS_PER_SECOND;
-
-    /**
-     * The number of milliseconds between midnight on Jan 1 1960 (inclusive) and midnight on Jan 1, 1970 (exclusive).
-     * There are three leap years in the 1960s (1960, 1964, and 1968).
-     */
-    private final static long MILLISECONDS_IN_1960S = (7 * 365 + 3 * 366) * MILLISECONDS_PER_DAY;
 
     /**
      * The index of the observation that is to be written next (zero-indexed)
@@ -205,18 +195,16 @@ public final class SasTransportExporter implements AutoCloseable {
         }
     }
 
-    /**
-     * Computes a positive modulo
-     *
-     * @param dividend
-     *     The number to be divided
-     * @param divisor
-     *     The number to divide by
-     *
-     * @return {@code dividend} MOD {@code divisor}, which is always positive.
-     */
-    private long mod(long dividend, long divisor) {
-        return (dividend % divisor + divisor) % divisor;
+    private static byte[] daysBetween(Temporal startDay, Temporal endDay) {
+        final long daysBetweenLong = startDay.until(endDay, ChronoUnit.DAYS);
+        final double daysBetweenDouble = Long.valueOf(daysBetweenLong).doubleValue();
+        return DoubleConverter.doubleToXport(daysBetweenDouble);
+    }
+
+    private static byte[] secondsBetween(Temporal startTime, Temporal endTime) {
+        final Duration range = Duration.between(startTime, endTime);
+        final double rangeInSeconds = range.getSeconds() + range.getNano() * 1E-9;
+        return DoubleConverter.doubleToXport(rangeInSeconds);
     }
 
     /**
@@ -260,21 +248,27 @@ public final class SasTransportExporter implements AutoCloseable {
      *             </tr>
      *             <tr>
      *                 <td>{@code VariableType.NUMERIC}</td>
-     *                 <td>a {@link java.sql.Date}</td>
+     *                 <td>a {@link LocalDate}</td>
      *                 <td>A SAS date, the number of days between 1960-01-01 and the value</td>
      *             </tr>
      *             <tr>
      *                 <td>{@code VariableType.NUMERIC}</td>
-     *                 <td>a {@link java.sql.Time}</td>
+     *                 <td>a {@link LocalTime}</td>
      *                 <td>A SAS time, the number of seconds between midnight and the value</td>
      *             </tr>
      *             <tr>
      *                 <td>{@code VariableType.NUMERIC}</td>
-     *                 <td>a {@link java.sql.Timestamp}</td>
+     *                 <td>a {@link LocalDateTime}</td>
      *                 <td>A SAS datetime, the number of seconds between 1960-01-0100:00 and the value</td>
      *             </tr>
      *         </tbody>
      *     </table>
+     *     <p>
+     *     Note that date/time classes within the JDK that have an implicit time zone, such as {@link Instant},
+     *     {@link Time}, and {@link Timestamp}, are illegal because SAS dates, SAS times, and SAS timestamps don't have a time zone.
+     *     If they were supported, then {@code SasTransportExporter} would have to pick a time zone for the 1960-01-01/midnight epoch.
+     *     If it picked the wrong time zone, it would silently alter the data.
+     *     </p>
      *     <p>
      *     The observation and its data are immediately copied, so subsequent modifications to it don't change the
      *     SAS7BDAT that is exported.
@@ -373,44 +367,19 @@ public final class SasTransportExporter implements AutoCloseable {
                     double number = ((Number) value).doubleValue();
                     bytes = DoubleConverter.doubleToXport(number);
 
-                } else if (value instanceof java.sql.Timestamp) {
-                    long javaDateTime = ((Date) value).getTime();
+                } else if (value instanceof LocalDate) {
+                    // SAS dates are numeric values given as the number of days since 1960-01-01.
+                    bytes = daysBetween(LocalDate.of(1960, 1, 1), (LocalDate) value);
 
-                    // The Java Epoch is Jan 1, 1970.  The SAS Epoch is Jan 1, 1960.
-                    long sasDateTime = javaDateTime + MILLISECONDS_IN_1960S;
+                } else if (value instanceof LocalTime) {
+                    // SAS times are numeric values given as the number of seconds since midnight.
+                    bytes = secondsBetween(LocalTime.MIDNIGHT, (LocalTime) value);
 
-                    // Java times millisecond granularity and SAS times are in seconds
-                    // (but retain millisecond granularity by being floating point).
-                    double number = (double) sasDateTime / MILLISECONDS_PER_SECOND;
-                    bytes = DoubleConverter.doubleToXport(number);
-
-                } else if (value instanceof java.sql.Time) {
-                    long javaDateTime = ((Date) value).getTime();
-
-                    // Java times have millisecond granularity and SAS times are in seconds.
-                    // SAS requires that times are between 0 and 86400 (seconds in a day),
-                    // so we translate the Java time to millisecond-in-day by taking the
-                    // modulo of MILLISECONDS_PER_DAY.
-                    long sasDateTime = mod(javaDateTime, MILLISECONDS_PER_DAY);
-
-                    // Java times millisecond granularity and SAS times are in seconds
-                    // (but retain millisecond granularity by being floating point).
-                    double number = (double) sasDateTime / MILLISECONDS_PER_SECOND;
-                    bytes = DoubleConverter.doubleToXport(number);
-
-                } else if (value instanceof java.sql.Date) {
-                    long javaDateTime = ((Date) value).getTime();
-
-                    // The Java Epoch is Jan 1, 1970.  The SAS Epoch is Jan 1, 1960.
-                    long sasDateTime = javaDateTime + MILLISECONDS_IN_1960S;
-
-                    // Java dates are given in milliseconds and SAS dates are in days.
-                    // (but retain millisecond granularity by being floating point).
-                    double number = (double) sasDateTime / MILLISECONDS_PER_DAY;
-                    bytes = DoubleConverter.doubleToXport(number);
-
+                } else if (value instanceof LocalDateTime) {
+                    // SAS timestamps are numeric values given as the number of seconds since 1960-01-01T00:00:00.
                     // TODO: truncate time portion (so it's an even date)?
                     // TODO: throw an exception if out of acceptable range (1582 - 19900)?
+                    bytes = secondsBetween(LocalDateTime.of(1960, 1, 1, 0, 0), (LocalDateTime) value);
 
                 } else {
                     throw new IllegalArgumentException(
@@ -418,9 +387,9 @@ public final class SasTransportExporter implements AutoCloseable {
                             variable.name() + ", which has a NUMERIC type " +
                             "(NUMERIC values must be null or of type " +
                             MissingValue.class.getCanonicalName() + ", " +
-                            Timestamp.class.getCanonicalName() + ", " +
-                            Time.class.getCanonicalName() + ", " +
-                            java.sql.Date.class.getCanonicalName() + ", or " +
+                            LocalDate.class.getCanonicalName() + ", " +
+                            LocalTime.class.getCanonicalName() + ", " +
+                            LocalDateTime.class.getCanonicalName() + ", or " +
                             Number.class.getCanonicalName() + ")");
                 }
 

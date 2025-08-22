@@ -10,10 +10,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -952,18 +950,6 @@ public class SasTransportExporterTest {
 
         new ExportTestRunner(dataset.newLibraryDescription(), "SasTransportExporterTest_testDateTimeVariations.xpt") {
 
-            private java.sql.Date sqlDateOf(Instant instant) {
-                return new java.sql.Date(instant.toEpochMilli());
-            }
-
-            private java.sql.Time sqlTimeOf(Instant instant) {
-                return new java.sql.Time(instant.toEpochMilli());
-            }
-
-            private java.sql.Timestamp sqlTimestampOf(Instant instant) {
-                return java.sql.Timestamp.from(instant);
-            }
-
             @Override
             void addObservations(SasTransportExporter exporter) throws IOException {
                 // Test all variations of missing data
@@ -996,50 +982,64 @@ public class SasTransportExporterTest {
                 exporter.appendObservation(repeat(variables.size(), MissingValue.Y));
                 exporter.appendObservation(repeat(variables.size(), MissingValue.Z));
 
-                Instant sasEpoch = LocalDateTime.of(1960, 1, 1, 0, 0).toInstant(ZoneOffset.UTC);
-                Instant sasEpochMinusOneDay = sasEpoch.minus(1, ChronoUnit.DAYS);
-                Instant sasEpochMinusOneSecond = sasEpoch.minusSeconds(1);
-                Instant sasEpochMinusOneMillisecond = sasEpoch.minusMillis(1);
-                Instant sasEpochPlusOneMillisecond = sasEpoch.plusMillis(1);
-                Instant sasEpochPlusOneSecond = sasEpoch.plusSeconds(1);
-                Instant sasEpochPlusOneDay = sasEpoch.plus(1, ChronoUnit.DAYS);
+                LocalDateTime sasEpoch = LocalDateTime.of(1960, 1, 1, 0, 0);
+                LocalDateTime sasEpochMinusOneDay = sasEpoch.minusDays(1);
+                LocalDateTime sasEpochMinusOneSecond = sasEpoch.minusSeconds(1);
+                LocalDateTime sasEpochMinusOneMillisecond = sasEpoch.minusNanos(1_000_000);
+                LocalDateTime sasEpochMinusOneNanosecond = sasEpoch.minusNanos(1);
+                LocalDateTime sasEpochPlusOneNanosecond = sasEpoch.plusNanos(1);
+                LocalDateTime sasEpochPlusOneMillisecond = sasEpoch.plusNanos(1_000_000);
+                LocalDateTime sasEpochPlusOneSecond = sasEpoch.plusSeconds(1);
+                LocalDateTime sasEpochPlusOneDay = sasEpoch.plusDays(1);
 
-                // write the SAS Epoch - 1 second
+                // write the SAS Epoch - 1 second/day
                 exporter.appendObservation(Arrays.asList(//
-                    sqlTimestampOf(sasEpochMinusOneSecond), // minus one second
-                    sqlDateOf(sasEpochMinusOneDay), // minus one day
-                    sqlTimeOf(sasEpochMinusOneSecond))); // minus one second
+                    sasEpochMinusOneSecond, // minus one second
+                    sasEpochMinusOneDay.toLocalDate(), // minus one day
+                    sasEpochMinusOneSecond.toLocalTime())); // minus one second
 
                 // write the SAS Epoch
                 exporter.appendObservation(Arrays.asList(//
-                    sqlTimestampOf(sasEpoch), //
-                    sqlDateOf(sasEpoch), //
-                    sqlTimeOf(sasEpoch)));
+                    sasEpoch, //
+                    sasEpoch.toLocalDate(), //
+                    sasEpoch.toLocalTime()));
 
                 // write the SAS Epoch + 1 second/day
                 exporter.appendObservation(Arrays.asList(//
-                    sqlTimestampOf(sasEpochPlusOneSecond), // plus one second
-                    sqlDateOf(sasEpochPlusOneDay), // plus one day
-                    sqlTimeOf(sasEpochPlusOneSecond))); // plus one second
+                    sasEpochPlusOneSecond, // plus one second
+                    sasEpochPlusOneDay.toLocalDate(), // plus one day
+                    sasEpochPlusOneSecond.toLocalTime())); // plus one second
 
                 // write the SAS Epoch - 1 millisecond
                 exporter.appendObservation(Arrays.asList(//
-                    sqlTimestampOf(sasEpochMinusOneMillisecond), // minus one millisecond
-                    sqlDateOf(sasEpochMinusOneMillisecond), // minus one millisecond
-                    sqlTimeOf(sasEpochMinusOneMillisecond))); // minus one millisecond
+                    sasEpochMinusOneMillisecond, // minus one millisecond
+                    sasEpochMinusOneMillisecond.toLocalDate(), // minus one millisecond
+                    sasEpochMinusOneMillisecond.toLocalTime())); // minus one millisecond
+
+                // write the SAS Epoch - 1 nanosecond
+                exporter.appendObservation(Arrays.asList(//
+                    sasEpochMinusOneNanosecond, // minus one nanosecond
+                    sasEpochMinusOneNanosecond.toLocalDate(), // minus one nanosecond
+                    sasEpochMinusOneNanosecond.toLocalTime())); // minus one nanosecond
 
                 // write the SAS Epoch + 1 millisecond
                 exporter.appendObservation(Arrays.asList(//
-                    sqlTimestampOf(sasEpochPlusOneMillisecond), // plus one millisecond
-                    sqlDateOf(sasEpochPlusOneMillisecond), // plus one millisecond
-                    sqlTimeOf(sasEpochPlusOneMillisecond))); // plus one millisecond
+                    sasEpochPlusOneMillisecond, // plus one millisecond
+                    sasEpochPlusOneMillisecond.toLocalDate(), // plus one millisecond
+                    sasEpochPlusOneMillisecond.toLocalTime())); // plus one millisecond
+
+                // write the SAS Epoch + 1 nanosecond
+                exporter.appendObservation(Arrays.asList(//
+                    sasEpochPlusOneNanosecond, // plus one nanosecond
+                    sasEpochPlusOneNanosecond.toLocalDate(), // plus one nanosecond
+                    sasEpochPlusOneNanosecond.toLocalTime())); // plus one nanosecond
 
                 // the Epoch of the Gregorian calendar.
-                Instant gregorianEpoch = LocalDateTime.of(1601, 1, 1, 0, 0).toInstant(ZoneOffset.UTC);
+                LocalDateTime gregorianEpoch = LocalDateTime.of(1601, 1, 1, 0, 0);
                 exporter.appendObservation(Arrays.asList(//
-                    sqlTimestampOf(gregorianEpoch), //
-                    sqlDateOf(gregorianEpoch), //
-                    new java.sql.Time(0))); // this is always mapped between 0-86400 before persisting
+                    gregorianEpoch, //
+                    gregorianEpoch, //
+                    LocalTime.MIDNIGHT)); // this is always mapped between 0-86400 before persisting
 
                 // The minimum supported date documented by SAS is 1582 in the Gregorian Calendar
                 // https://support.sas.com/documentation/cdl/en/basess/58133/HTML/default/viewer.htm#a001397898.htm
@@ -1051,40 +1051,42 @@ public class SasTransportExporterTest {
                 // When using LocalDateTime, you have to add 10 days.  This isn't a Julian to Gregorian
                 // calendar conversion because that would be 13 days, so it's not clear where the 10 days
                 // comes from.
-                Instant minDay = LocalDateTime.of(1582, 1, 11, 0, 0).toInstant(ZoneOffset.UTC);
+                LocalDateTime minDay = LocalDateTime.of(1582, 1, 11, 0, 0);
                 exporter.appendObservation(Arrays.asList(//
-                    sqlTimestampOf(minDay), //
-                    sqlDateOf(minDay), //
-                    new java.sql.Time(0))); // this is always mapped between 0-86400 before persisting
+                    minDay, //
+                    minDay.toLocalDate(), //
+                    LocalTime.MIDNIGHT)); // this is always mapped between 0-86400 before persisting
 
                 // The last second with a four digit year, accounting for what is probably
                 // a bug in SAS which mis-calculates Dec. 29th as Dec. 31st.
                 // I suspect that it's not handling the century leap years correctly.
-                Instant buggyMaxFourDigitYear = LocalDateTime.of(9999, 12, 29, 23, 59, 59).toInstant(ZoneOffset.UTC);
+                LocalDateTime buggyMaxFourDigitYear = LocalDateTime.of(9999, 12, 29, 23, 59, 59, 999_999_999);
                 exporter.appendObservation(Arrays.asList(//
-                    sqlTimestampOf(buggyMaxFourDigitYear), //
-                    sqlDateOf(buggyMaxFourDigitYear), //
-                    new java.sql.Time(0))); // this is always mapped between 0-86400 before persisting
+                    buggyMaxFourDigitYear, //
+                    buggyMaxFourDigitYear.toLocalDate(), //
+                    LocalTime.MIDNIGHT)); // this is always mapped between 0-86400 before persisting
 
                 // last second with a four digit year.
-                Instant maxFourDigitYear = LocalDateTime.of(9999, 12, 31, 23, 59, 59).toInstant(ZoneOffset.UTC);
+                LocalDateTime maxFourDigitYear = LocalDateTime.of(9999, 12, 31, 23, 59, 59, 999_999_999);
                 exporter.appendObservation(Arrays.asList(//
-                    sqlTimestampOf(maxFourDigitYear), //
-                    sqlDateOf(maxFourDigitYear), //
-                    new java.sql.Time(0))); // this is always mapped between 0-86400 before persisting
+                    maxFourDigitYear, //
+                    maxFourDigitYear.toLocalDate(), //
+                    LocalTime.MIDNIGHT)); // this is always mapped between 0-86400 before persisting
 
                 // maximum supported dates documented by SAS
-                Instant maxDay = LocalDateTime.of(19999, 12, 31, 23, 59, 59).toInstant(ZoneOffset.UTC);
+                LocalDateTime maxDay = LocalDateTime.of(19999, 12, 31, 23, 59, 59, 999_999_999);
                 exporter.appendObservation(Arrays.asList(//
-                    sqlTimestampOf(maxDay), //
-                    sqlDateOf(maxDay), //
-                    new java.sql.Time(0))); // this is always mapped between 0-86400 before persisting
+                    maxDay, //
+                    maxDay.toLocalDate(), //
+                    LocalTime.MIDNIGHT)); // this is always mapped between 0-86400 before persisting
 
                 // raw decimal values (to see how SAS handles them)
                 exporter.appendObservation(repeat(3, 0.5));
-                exporter.appendObservation(repeat(3, 0.1));
-                exporter.appendObservation(repeat(3, 0.01));
-                exporter.appendObservation(repeat(3, 0.001));
+                exporter.appendObservation(repeat(3, 1E-1));
+                exporter.appendObservation(repeat(3, 1E-2));
+                exporter.appendObservation(repeat(3, 1E-3));
+                exporter.appendObservation(repeat(3, 1E-4));
+                exporter.appendObservation(repeat(3, 1E-5));
             }
         }.run();
     }
@@ -1290,9 +1292,9 @@ public class SasTransportExporterTest {
                             + " was given as a value to the variable named NUMBER2, which has a NUMERIC type "
                             + "(NUMERIC values must be null or of type " //
                             + "org.scharp.sas_transport.MissingValue, " //
-                            + "java.sql.Timestamp, "  //
-                            + "java.sql.Time, " //
-                            + "java.sql.Date, or " //
+                            + "java.time.LocalDate, "  //
+                            + "java.time.LocalTime, " //
+                            + "java.time.LocalDateTime, or " //
                             + "java.lang.Number)",
                         new Object[] { goodNumber, badNumber });
                 }

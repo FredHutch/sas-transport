@@ -124,6 +124,15 @@ This is to support a strong typing system.
 Following from naturalness in Java...this will support JVMs configured in any locale or character sets.
 Mostly, this means not relying on the default character set or calendar formatting for dates.
 
+**Can't export Date, Instant, Timestamp, or Time values**
+
+SAS's dates, times, and timestamp are all in "local time", in that they are offsets from an Epoch
+that doesn't have a timestamp. Any Java type with an implicit or explicit time zone can't be converted
+to "local time" without knowing the time zone. Guessing the wrong time zone would lead to silent data loss.
+
+It's better to make the programmer provide the time zone by converting it to local time than to
+silently corrupt the data.
+
 **There will be a "strict" mode when reading**
 
 There will be different parsing modes to let the reader decide how lenient the API should be.
