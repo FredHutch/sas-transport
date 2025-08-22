@@ -271,7 +271,7 @@ public final class SasTransportExporter implements AutoCloseable {
      *     </p>
      *     <p>
      *     The observation and its data are immediately copied, so subsequent modifications to it don't change the
-     *     SAS7BDAT that is exported.
+     *     SAS transport file that is exported.
      *     </p>
      *
      * @throws IOException
