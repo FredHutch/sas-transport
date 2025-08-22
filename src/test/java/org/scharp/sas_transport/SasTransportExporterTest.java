@@ -323,6 +323,7 @@ public class SasTransportExporterTest {
             @Override
             void addObservations(SasTransportExporter exporter) throws IOException {
                 // Test all variations of missing data
+                exporter.appendObservation(repeat(variables.size(), null));
                 exporter.appendObservation(Collections.singletonList(MissingValue.STANDARD));
                 exporter.appendObservation(Collections.singletonList(MissingValue.UNDERSCORE));
                 exporter.appendObservation(Collections.singletonList(MissingValue.A));
@@ -576,6 +577,7 @@ public class SasTransportExporterTest {
             @Override
             void addObservations(SasTransportExporter exporter) throws IOException {
                 // Test all variations of missing data
+                exporter.appendObservation(repeat(variables.size(), null));
                 exporter.appendObservation(repeat(variables.size(), MissingValue.STANDARD));
                 exporter.appendObservation(repeat(variables.size(), MissingValue.UNDERSCORE));
                 exporter.appendObservation(repeat(variables.size(), MissingValue.A));
@@ -1089,6 +1091,7 @@ public class SasTransportExporterTest {
             @Override
             void addObservations(SasTransportExporter exporter) throws IOException {
                 // Test all variations of missing data
+                exporter.appendObservation(repeat(variables.size(), null));
                 exporter.appendObservation(repeat(variables.size(), MissingValue.STANDARD));
                 exporter.appendObservation(repeat(variables.size(), MissingValue.UNDERSCORE));
                 exporter.appendObservation(repeat(variables.size(), MissingValue.A));
