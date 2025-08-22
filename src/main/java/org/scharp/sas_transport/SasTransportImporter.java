@@ -318,7 +318,7 @@ public final class SasTransportImporter implements AutoCloseable {
      * @return A list of values in the next observation, or {@code null} if we've read to the end of the XPORT file.
      *
      * @throws IOException
-     *     if there was an error reading the input stream
+     *     if there was an error reading the input stream.
      * @throws MultipleDatasetsNotSupportedException
      *     if, instead an observation, a new dataset was found within the XPORT file. This indicates the end of the
      *     current dataset and all observations imported so far is valid and complete. However, the API does not provide
