@@ -212,7 +212,7 @@ public final class SasTransportExporter implements AutoCloseable {
      *
      * @param observation
      *     The observation (list of variable values) to append to the dataset. These must be given in the same order as
-     *     the variables were given in this object's constructor. The values must be legal for the corresponding
+     *     the variables in this exporter's dataset description. The values must be legal for the corresponding
      *     variable's type, as shown in the following table:
      *     <table>
      *         <caption>Legal Values for a Variable</caption>
@@ -234,32 +234,32 @@ public final class SasTransportExporter implements AutoCloseable {
      *             <tr>
      *                 <td>{@code VariableType.NUMERIC}</td>
      *                 <td>a {@code null} reference</td>
-     *                 <td>The standard missing value</td>
+     *                 <td>The standard missing value.</td>
      *             </tr>
      *             <tr>
      *                 <td>{@code VariableType.NUMERIC}</td>
      *                 <td>a {@link Number}</td>
-     *                 <td>The return value of {@link Number#doubleValue() doubleValue()}</td>
+     *                 <td>The return value of {@link Number#doubleValue() doubleValue()}.</td>
      *             </tr>
      *             <tr>
      *                 <td>{@code VariableType.NUMERIC}</td>
      *                 <td>a {@link MissingValue}</td>
-     *                 <td>The correct encoding of the missing value</td>
+     *                 <td>The correct encoding of the missing value.</td>
      *             </tr>
      *             <tr>
      *                 <td>{@code VariableType.NUMERIC}</td>
      *                 <td>a {@link LocalDate}</td>
-     *                 <td>A SAS date, the number of days between 1960-01-01 and the value</td>
+     *                 <td>A SAS date, the number of days between 1960-01-01 and the value.</td>
      *             </tr>
      *             <tr>
      *                 <td>{@code VariableType.NUMERIC}</td>
      *                 <td>a {@link LocalTime}</td>
-     *                 <td>A SAS time, the number of seconds between midnight and the value</td>
+     *                 <td>A SAS time, the number of seconds between midnight and the value.</td>
      *             </tr>
      *             <tr>
      *                 <td>{@code VariableType.NUMERIC}</td>
      *                 <td>a {@link LocalDateTime}</td>
-     *                 <td>A SAS datetime, the number of seconds between 1960-01-0100:00 and the value</td>
+     *                 <td>A SAS datetime, the number of seconds between 1960-01-0100:00 and the value.</td>
      *             </tr>
      *         </tbody>
      *     </table>
@@ -277,14 +277,13 @@ public final class SasTransportExporter implements AutoCloseable {
      * @throws IOException
      *     if there was a problem writing to the output stream.
      * @throws IllegalStateException
-     *     if this exporter has already been closed or if {@code observations} doesn't match the variables from the
-     *     dataset description that was provided in this object's constructor.
+     *     if this exporter has already been closed.
      * @throws NullPointerException
      *     If {@code observation} is {@code null} or has a {@code null} value that is given to a variable whose type is
      *     {@code VariableType.CHARACTER}.
      * @throws IllegalArgumentException
-     *     if {@code observation} contains a value that doesn't conform to the {@code variables} that was given to this
-     *     object's constructor.
+     *     if {@code observation} doesn't conform to the variables in this exporter's dataset description, including if
+     *     a value doesn't conform to corresponding variable's type.
      */
     public void appendObservation(List<Object> observation) throws IOException {
 
