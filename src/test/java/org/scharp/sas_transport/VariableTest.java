@@ -255,26 +255,26 @@ public class VariableTest {
      */
     @Test
     public void constructCharacterTooLong() {
-        final int limitLength = 200;
+        final int fdaLengthLimit = 200;
 
         // Confirm that the limit can be constructed.
         Variable variable = new Variable(//
             "VARIABLE", // variable name
             2, // number
             VariableType.CHARACTER, // type
-            limitLength, // just barely fits (for character data)
+            fdaLengthLimit, // just barely fits (for character data)
             "label", // label
             Format.UNSPECIFIED, // output format
             Justification.LEFT, // output format justification
             Format.UNSPECIFIED); // input format
-        assertEquals(limitLength, variable.length(), "length was not saved");
+        assertEquals(fdaLengthLimit, variable.length(), "length was not saved");
 
         // Confirm that beyond the limit, variables cannot be constructed with the public constructor.
         runConstructWithIllegalArgumentTest(//
             variable.name(), // name
             variable.number(), // number
             variable.type(), // type
-            variable.length() + 1, // too long (for character)
+            fdaLengthLimit + 1, // too long (for character)
             variable.label(), // label
             variable.inputFormat(), // output format
             variable.outputFormatJustification(), // output format justification
@@ -286,7 +286,7 @@ public class VariableTest {
             variable.name(), // name
             variable.number(), // number
             variable.type(), // type
-            variable.length() + 1, // too long (for character)
+            fdaLengthLimit + 1, // too long (for character)
             variable.label(), // label
             variable.inputFormat(), // output format
             variable.outputFormatJustification(), // output format justification
@@ -305,6 +305,19 @@ public class VariableTest {
             variable.outputFormatJustification(), // output format justification
             variable.inputFormat(), // input format
             StrictnessMode.BASIC);
+
+        // In BASIC strictness mode, lengths can't go above Short.MAX_VALUE
+        runConstructWithIllegalArgumentTest(//
+            variable.name(), // name
+            variable.number(), // number
+            variable.type(), // type
+            Short.MAX_VALUE + 1, // too long (for character)
+            variable.label(), // label
+            variable.inputFormat(), // output format
+            variable.outputFormatJustification(), // output format justification
+            variable.inputFormat(), // input format
+            StrictnessMode.BASIC, //
+            "character variables must not have a length greater than Short.MAX_VALUE");
     }
 
     /**
