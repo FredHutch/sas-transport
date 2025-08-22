@@ -1476,13 +1476,13 @@ public class SasTransportExporterTest {
                 // Try to write too many values in an observation.
                 addObservationWithIllegalArgument(//
                     exporter, //
-                    "observation has different number of values than the dataset has variables", //
+                    "observation has too few values, expected 2 but got 3", //
                     new Object[] { "text", 1.2, "too many" });
 
                 // Try to write too few values in an observation.
                 addObservationWithIllegalArgument(//
                     exporter, //
-                    "observation has different number of values than the dataset has variables", //
+                    "observation has too few values, expected 2 but got 1", //
                     new Object[] { "too few" });
 
                 // Write a well-formed row (to confirm that the exceptions failed without

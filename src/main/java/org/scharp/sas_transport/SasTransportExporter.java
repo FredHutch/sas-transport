@@ -292,9 +292,11 @@ public final class SasTransportExporter implements AutoCloseable {
             throw new IllegalStateException("Writing to a closed exporter");
         }
 
-        if (observation.size() != variables.length) {
+        if (variables.length != observation.size()) {
             throw new IllegalArgumentException(
-                "observation has different number of values than the dataset has variables");
+                "observation has too " +
+                    (variables.length < observation.size() ? "many" : "few") +
+                    " values, expected " + variables.length + " but got " + observation.size());
         }
 
         // Write the values in the observation to an "observation buffer" according to the definition
