@@ -37,11 +37,11 @@ public class SasTransportImporterTest {
 
     private static void assertEndOfObservations(SasTransportImporter importer) throws IOException {
         List<Object> observation = importer.nextObservation();
-        assertEquals(null, observation, "nextObservation() did not return null");
+        assertNull(observation, "nextObservation() did not return null");
 
         // reading past EOF is not an error (it stays at EOF)
         observation = importer.nextObservation();
-        assertEquals(null, observation, "second invocation of nextObservation() did not return null");
+        assertNull(observation, "second invocation of nextObservation() did not return null");
     }
 
     private static <T extends Exception> void assertNextObservationsThrowsException(SasTransportImporter importer,
