@@ -64,6 +64,7 @@ public class SasTransportExporterTest {
             }
 
             // Uncomment to write out a file for manual validation.
+            // The file will be written to the project's root directory and won't overwrite the reference resource.
             // Files.write(Paths.get(expectedOutputResourceName), outputStream.toByteArray());
 
             // Check the exported file against a known (manually validated) version
