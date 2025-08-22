@@ -7,6 +7,8 @@ package org.scharp.sas_transport;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -222,50 +224,60 @@ public final class SasTransportExporter implements AutoCloseable {
      *
      * @param observation
      *     The observation (list of variable values) to append to the dataset. These must be given in the same order as
-     *     the variables were given in this object's constructor.
-     *
-     *     <p>
-     *     A {@code null} value is always written as {@code MissingValue.STANDARD}.
-     *     </p>
-     *
-     *     <p>
-     *     If the corresponding variable's type is numeric, then the object must be a {@code MissingValue},
-     *     {@code Number}, {@code java.sql.Timestamp}, {@code java.sql.Date}, or {@code java.sql.Time}. The values are
-     *     persisted according to the table.
-     *     </p>
-     *
+     *     the variables were given in this object's constructor. The values must be legal for the corresponding
+     *     variable's type, as shown in the following table:
      *     <table>
-     *     <caption>Persistence Rules</caption>
-     *     <tr>
-     *     <th>Type</th>
-     *     <th>Persistence Rules</th>
-     *     </tr>
-     *     <tr>
-     *     <td>{@link MissingValue}</td>
-     *     <td>persisted using the byte sequence that corresponds to the missing value</td>
-     *     </tr>
-     *     <tr>
-     *     <td>{@link Number}</td>
-     *     <td>converted to a Double and persisted</td>
-     *     </tr>
-     *     <tr>
-     *     <td>{@link java.sql.Timestamp}</td>
-     *     <td>converted to seconds since Jan 1, 1960 GMT (the SAS Epoch) and persisted as a Double</td>
-     *     </tr>
-     *     <tr>
-     *     <td>{@link java.sql.Date}</td>
-     *     <td>converted to days since Jan 1, 1960 GMT (the SAS Epoch) and persisted as a Double</td>
-     *     </tr>
-     *     <tr>
-     *     <td>{@link java.sql.Time}</td>
-     *     <td>converted to seconds since midnight on the corresponding day and persisted as a Double</td>
-     *     </tr>
+     *         <caption>Legal Values for a Variable</caption>
+     *         <thead>
+     *             <tr>
+     *                 <th>Variable Type</th>
+     *                 <th>Value</th>
+     *                 <th>Written As</th>
+     *             </tr>
+     *         </thead>
+     *         <tbody>
+     *             <tr>
+     *                 <td>{@code VariableType.CHARACTER}</td>
+     *                 <td>a {@link String}</td>
+     *                 <td>The string, padded with blanks to the variable's length.
+     *                 The string must have only ASCII characters and fit within the variable's length.
+     *                 Note that the empty string and a value consisting of only space characters are identical in the XPORT format.</td>
+     *             </tr>
+     *             <tr>
+     *                 <td>{@code VariableType.NUMERIC}</td>
+     *                 <td>a {@code null} reference</td>
+     *                 <td>The standard missing value</td>
+     *             </tr>
+     *             <tr>
+     *                 <td>{@code VariableType.NUMERIC}</td>
+     *                 <td>a {@link Number}</td>
+     *                 <td>The return value of {@link Number#doubleValue() doubleValue()}</td>
+     *             </tr>
+     *             <tr>
+     *                 <td>{@code VariableType.NUMERIC}</td>
+     *                 <td>a {@link MissingValue}</td>
+     *                 <td>The correct encoding of the missing value</td>
+     *             </tr>
+     *             <tr>
+     *                 <td>{@code VariableType.NUMERIC}</td>
+     *                 <td>a {@link java.sql.Date}</td>
+     *                 <td>A SAS date, the number of days between 1960-01-01 and the value</td>
+     *             </tr>
+     *             <tr>
+     *                 <td>{@code VariableType.NUMERIC}</td>
+     *                 <td>a {@link java.sql.Time}</td>
+     *                 <td>A SAS time, the number of seconds between midnight and the value</td>
+     *             </tr>
+     *             <tr>
+     *                 <td>{@code VariableType.NUMERIC}</td>
+     *                 <td>a {@link java.sql.Timestamp}</td>
+     *                 <td>A SAS datetime, the number of seconds between 1960-01-0100:00 and the value</td>
+     *             </tr>
+     *         </tbody>
      *     </table>
-     *
      *     <p>
-     *     If the corresponding variable's type is {@code VariableType.CHARACTER}, then the object must be a
-     *     String that contains only ASCII characters and fit within the variable's length. Note that the empty string
-     *     and a value consisting of only space characters are identical in the XPORT format.
+     *     The observation and its data are immediately copied, so subsequent modifications to it don't change the
+     *     SAS7BDAT that is exported.
      *     </p>
      *
      * @throws IOException
@@ -274,9 +286,11 @@ public final class SasTransportExporter implements AutoCloseable {
      *     if this exporter has already been closed or if {@code observations} doesn't match the variables from the
      *     dataset description that was provided in this object's constructor.
      * @throws NullPointerException
-     *     if one of the values in {@code observation} is {@code null}.
+     *     If {@code observation} has a {@code null} value that is given to a variable whose type is
+     *     {@code VariableType.CHARACTER}.
      * @throws IllegalArgumentException
-     *     if the values in {@code observation} does not conform to the variables in the dataset description.
+     *     if {@code observation} contains a value that doesn't conform to the {@code variables} that was given to this
+     *     object's constructor.
      */
     public void appendObservation(List<Object> observation) throws IOException {
 
@@ -298,119 +312,127 @@ public final class SasTransportExporter implements AutoCloseable {
             final Variable variable = variables[i];
             final Object value = observation.get(i);
 
-            if (value == null) {
-                // This could be mapped MissingValue.STANDARD, but rather than
-                // assuming something for the caller, we throw a bad input exception.
-                throw new NullPointerException("values in observation must not be null");
-            }
-
-            int paddingNeeded = variable.length();
-            if (value instanceof MissingValue) {
-                switch (variable.type()) {
-                case CHARACTER:
-                    // MissingValue is only for numeric variables.  CHARACTER variables use the empty string.
-                    throw new IllegalArgumentException("CHARACTER variables use the empty string for missing values");
-
-                case NUMERIC:
-                    // write the missing value byte
-                    byte missingValueByte = ((MissingValue) value).xportByteRepresentation();
-                    observationBuffer[observationBufferOffset] = missingValueByte;
-
-                    // numeric values pad with NUL.
-                    Arrays.fill(//
-                        observationBuffer, //
-                        observationBufferOffset + 1, //
-                        observationBufferOffset + variable.length(), //
-                        (byte) 0);
-                    observationBufferOffset += variable.length();
-                    paddingNeeded = 0;
-                    break;
-                }
-            } else {
-                final byte[] bytes;
-                switch (variable.type()) {
-                case CHARACTER:
-                    // check for bad input
-                    if (!(value instanceof String)) {
-                        throw new IllegalArgumentException("values for character variables must be String");
+            // CHARACTER and NUMERIC variables allow different types of values.
+            switch (variable.type()) {
+            case CHARACTER:
+                // CHARACTER types only accept String objects (not even null).
+                if (!(value instanceof String)) {
+                    if (value == null) {
+                        throw new NullPointerException(
+                            "null given as a value to " + variable.name() + ", which has a CHARACTER type");
                     }
-
-                    String stringValue = (String) value;
-                    ArgumentUtil.checkIsAscii(stringValue, "values of character variables");
-                    if (variable.length() < stringValue.length()) {
-                        // We cannot store this without data loss.
+                    if (value instanceof MissingValue) {
+                        // MissingValue is only for numeric variables.  CHARACTER variables use the empty string.
                         throw new IllegalArgumentException(
-                            "value length exceeds maximum length for variable " + variable.name());
+                            "CHARACTER variables use the empty string for missing values");
                     }
-
-                    // value is an ASCII String.
-                    bytes = stringValue.getBytes(StandardCharsets.US_ASCII);
-                    break;
-
-                case NUMERIC:
-                    double number;
-                    if (value instanceof Number) {
-                        number = ((Number) value).doubleValue();
-                    } else if (value instanceof java.sql.Timestamp) {
-                        long javaDateTime = ((Date) value).getTime();
-
-                        // The Java Epoch is Jan 1, 1970.  The SAS Epoch is Jan 1, 1960.
-                        long sasDateTime = javaDateTime + MILLISECONDS_IN_1960S;
-
-                        // Java times millisecond granularity and SAS times are in seconds
-                        // (but retain millisecond granularity by being floating point).
-                        number = (double) sasDateTime / MILLISECONDS_PER_SECOND;
-
-                    } else if (value instanceof java.sql.Time) {
-                        long javaDateTime = ((Date) value).getTime();
-
-                        // Java times have millisecond granularity and SAS times are in seconds.
-                        // SAS requires that times are between 0 and 86400 (seconds in a day),
-                        // so we translate the Java time to millisecond-in-day by taking the
-                        // modulo of MILLISECONDS_PER_DAY.
-                        long sasDateTime = mod(javaDateTime, MILLISECONDS_PER_DAY);
-
-                        // Java times millisecond granularity and SAS times are in seconds
-                        // (but retain millisecond granularity by being floating point).
-                        number = (double) sasDateTime / MILLISECONDS_PER_SECOND;
-
-                    } else if (value instanceof java.sql.Date) {
-                        long javaDateTime = ((Date) value).getTime();
-
-                        // The Java Epoch is Jan 1, 1970.  The SAS Epoch is Jan 1, 1960.
-                        long sasDateTime = javaDateTime + MILLISECONDS_IN_1960S;
-
-                        // Java dates are given in milliseconds and SAS dates are in days.
-                        // (but retain millisecond granularity by being floating point).
-                        number = (double) sasDateTime / MILLISECONDS_PER_DAY;
-
-                        // TODO: truncate time portion (so it's an even date)?
-                        // TODO: throw an exception if out of acceptable range (1582 - 19900)?
-                    } else {
-                        // We have a non-numeric value in a numeric value.
-                        throw new IllegalArgumentException("non-numeric value given for a numeric variable");
-                    }
-
-                    // The Variable class guarantees that the length cannot be >8 for numeric types.
-                    // As a result, we never need to pad a converted numeric value (only truncate).
-                    assert variable.length() <= 8 : variable.length();
-                    bytes = DoubleConverter.doubleToXport(number);
-                    break;
-
-                default:
-                    throw new AssertionError("can't happen");
+                    throw new IllegalArgumentException(
+                        "A " + value.getClass().getTypeName() + " was given as a value to the variable named " +
+                            variable.name() + ", which has a CHARACTER type (CHARACTER values must be of type java.lang.String)");
                 }
-                int lengthToWrite = Math.min(variable.length(), bytes.length);
-                System.arraycopy(bytes, 0, observationBuffer, observationBufferOffset, lengthToWrite);
-                observationBufferOffset += lengthToWrite;
-                paddingNeeded -= lengthToWrite;
-            }
 
-            // Pad the value with spaces, if needed.
-            if (paddingNeeded != 0) {
-                Arrays.fill(observationBuffer, observationBufferOffset, observationBufferOffset + paddingNeeded,
-                    Record.ASCII_BLANK);
-                observationBufferOffset += paddingNeeded;
+                // Disallow non-ASCII values.
+                String stringValue = (String) value;
+                ArgumentUtil.checkIsAscii(stringValue, "values of character variables");
+
+                // value is an ASCII String.
+                // Check that the value's length fits into the data without truncation.
+                byte[] valueBytes = stringValue.getBytes(StandardCharsets.US_ASCII);
+                if (variable.length() < valueBytes.length) {
+                    // We cannot store this without data loss.
+                    throw new IllegalArgumentException(
+                        "A value of " + stringValue.length() + " characters was given to the variable named " +
+                            variable.name() + ", which has a length of " + variable.length());
+                }
+
+                System.arraycopy(valueBytes, 0, observationBuffer, observationBufferOffset, valueBytes.length);
+                observationBufferOffset += valueBytes.length;
+
+                // Pad the value with spaces, if needed.
+                int totalPaddingBytes = variable.length() - valueBytes.length;
+                if (totalPaddingBytes != 0) {
+                    Arrays.fill(observationBuffer, observationBufferOffset, observationBufferOffset + totalPaddingBytes,
+                        Record.ASCII_BLANK);
+                    observationBufferOffset += totalPaddingBytes;
+                }
+                break;
+
+            case NUMERIC:
+                // NUMERIC types accept many different classes (even null).
+                final byte[] bytes;
+                if (value == null) {
+                    // null is persisted as ".", the standard missing value.
+                    bytes = new byte[8];
+                    bytes[0] = MissingValue.STANDARD.xportByteRepresentation();
+
+                } else if (value instanceof MissingValue) {
+                    bytes = new byte[8];
+                    bytes[0] = ((MissingValue) value).xportByteRepresentation();
+
+                } else if (value instanceof Number) {
+                    double number = ((Number) value).doubleValue();
+                    bytes = DoubleConverter.doubleToXport(number);
+
+                } else if (value instanceof java.sql.Timestamp) {
+                    long javaDateTime = ((Date) value).getTime();
+
+                    // The Java Epoch is Jan 1, 1970.  The SAS Epoch is Jan 1, 1960.
+                    long sasDateTime = javaDateTime + MILLISECONDS_IN_1960S;
+
+                    // Java times millisecond granularity and SAS times are in seconds
+                    // (but retain millisecond granularity by being floating point).
+                    double number = (double) sasDateTime / MILLISECONDS_PER_SECOND;
+                    bytes = DoubleConverter.doubleToXport(number);
+
+                } else if (value instanceof java.sql.Time) {
+                    long javaDateTime = ((Date) value).getTime();
+
+                    // Java times have millisecond granularity and SAS times are in seconds.
+                    // SAS requires that times are between 0 and 86400 (seconds in a day),
+                    // so we translate the Java time to millisecond-in-day by taking the
+                    // modulo of MILLISECONDS_PER_DAY.
+                    long sasDateTime = mod(javaDateTime, MILLISECONDS_PER_DAY);
+
+                    // Java times millisecond granularity and SAS times are in seconds
+                    // (but retain millisecond granularity by being floating point).
+                    double number = (double) sasDateTime / MILLISECONDS_PER_SECOND;
+                    bytes = DoubleConverter.doubleToXport(number);
+
+                } else if (value instanceof java.sql.Date) {
+                    long javaDateTime = ((Date) value).getTime();
+
+                    // The Java Epoch is Jan 1, 1970.  The SAS Epoch is Jan 1, 1960.
+                    long sasDateTime = javaDateTime + MILLISECONDS_IN_1960S;
+
+                    // Java dates are given in milliseconds and SAS dates are in days.
+                    // (but retain millisecond granularity by being floating point).
+                    double number = (double) sasDateTime / MILLISECONDS_PER_DAY;
+                    bytes = DoubleConverter.doubleToXport(number);
+
+                    // TODO: truncate time portion (so it's an even date)?
+                    // TODO: throw an exception if out of acceptable range (1582 - 19900)?
+
+                } else {
+                    throw new IllegalArgumentException(
+                        "A " + value.getClass().getTypeName() + " was given as a value to the variable named " +
+                            variable.name() + ", which has a NUMERIC type " +
+                            "(NUMERIC values must be null or of type " +
+                            MissingValue.class.getCanonicalName() + ", " +
+                            Timestamp.class.getCanonicalName() + ", " +
+                            Time.class.getCanonicalName() + ", " +
+                            java.sql.Date.class.getCanonicalName() + ", or " +
+                            Number.class.getCanonicalName() + ")");
+                }
+
+                // The Variable class guarantees that the length <8 for numeric types.
+                // As a result, we never need to pad a converted numeric value, only truncate.
+                assert variable.length() <= 8 : variable.length();
+                System.arraycopy(bytes, 0, observationBuffer, observationBufferOffset, variable.length());
+                observationBufferOffset += variable.length();
+                break;
+
+            default:
+                throw new AssertionError("can't happen");
             }
         }
 

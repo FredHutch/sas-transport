@@ -1131,19 +1131,12 @@ public class SasTransportExporterTest {
             @Override
             void addObservations(SasTransportExporter exporter) throws IOException {
 
-                // Try to write a null numeric value
+                // Try to write a null character value
                 Exception exception = assertThrows(//
                     NullPointerException.class, //
-                    () -> exporter.appendObservation(Arrays.asList(null, "first row")), //
-                    "writing a null value");
-                assertEquals("values in observation must not be null", exception.getMessage());
-
-                // Try to write a null character value
-                exception = assertThrows(//
-                    NullPointerException.class, //
                     () -> exporter.appendObservation(Arrays.asList(13.2, null)), //
-                    "writing a null value");
-                assertEquals("values in observation must not be null", exception.getMessage());
+                    "writing a null value to a CHARACTER variable");
+                assertEquals("null given as a value to TEXT, which has a CHARACTER type", exception.getMessage());
 
                 // Write a well-formed row (to confirm that the exceptions failed without
                 // writing a partial row).
@@ -1208,17 +1201,19 @@ public class SasTransportExporterTest {
                 // Try writing a value that exceeds the length of the variable.
                 addObservationWithIllegalArgument(//
                     exporter, //
-                    "value length exceeds maximum length for variable TEXT2", //
+                    "A value of 11 characters was given to the variable named TEXT2, which has a length of 10", //
                     new Object[] { "first", "0123456789X" });
 
-                // Try writing an object that isn't a String class
+                // Try writing an object that isn't a String class, including ones that are legal for Numeric types.
                 addObservationWithIllegalArgument(//
                     exporter, //
-                    "values for character variables must be String", //
+                    "A java.util.Date was given as a value to the variable named TEXT2, which has a CHARACTER type " //
+                        + "(CHARACTER values must be of type java.lang.String)",
                     new Object[] { "first", new Date() });
                 addObservationWithIllegalArgument(//
                     exporter, //
-                    "values for character variables must be String", //
+                    "A java.lang.Double was given as a value to the variable named TEXT2, which has a CHARACTER type "//
+                        + "(CHARACTER values must be of type java.lang.String)",
                     new Object[] { "first", Double.valueOf(12.3) });
 
                 // Try writing a string that isn't fully ASCII
@@ -1291,7 +1286,14 @@ public class SasTransportExporterTest {
                 for (Object badNumber : badNumbers) {
                     addObservationWithIllegalArgument(//
                         exporter, //
-                        "non-numeric value given for a numeric variable", //
+                        "A " + badNumber.getClass().getTypeName() //
+                            + " was given as a value to the variable named NUMBER2, which has a NUMERIC type "
+                            + "(NUMERIC values must be null or of type " //
+                            + "org.scharp.sas_transport.MissingValue, " //
+                            + "java.sql.Timestamp, "  //
+                            + "java.sql.Time, " //
+                            + "java.sql.Date, or " //
+                            + "java.lang.Number)",
                         new Object[] { goodNumber, badNumber });
                 }
 

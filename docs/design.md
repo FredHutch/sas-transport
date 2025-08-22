@@ -78,9 +78,14 @@ There are some C structs documented in TS-140 that need to be serialized and uns
 I created package-private intermediate classes for these, but the truth is that the writing
 is so different from the reading that there is no overlap in their use.
 
-**Is writing a "null" observation a MissingValue, or an NPE?**
+**You can write a null value, but you read it as MissingValue**
 Reading a missing numeric value results in the corresponding MissingValue being returned,
-but should writing "null" be interpreted as MissingValue.STANDARD or throw an NPE?
+but writing allows "null" be interpreted as MissingValue.STANDARD.
+
+The rationale is that the data may be coming from JSON, YAML, or a database.
+These storage formats all support "null" as a possible value but not MissingValue.
+Rather than require developers to convert null to a missing value, we do it for them.
+This is only for numeric values, because SAS represents a missing character value as a blank string.
 
 **createExporter() is an instance method, createImporter() is static.**
 In one case, you have a library object to export.
