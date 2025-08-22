@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -195,6 +196,88 @@ public class SasTransportExporterTest {
             @Override
             void addObservations(SasTransportExporter exporter) throws IOException {
                 exporter.appendObservation(Arrays.asList(15.2, 5, "first row"));
+                exporter.appendObservation(Arrays.asList(0, 10000, "second row"));
+                exporter.appendObservation(Arrays.asList(-400, 10000, ""));
+                exporter.appendObservation(Arrays.asList(MissingValue.B, 10000, "final row"));
+            }
+        }.run();
+    }
+
+    /**
+     * Tests that changing the Exports a small XPORT that contains interesting variations.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testChangingObservationAfterAppend() throws IOException {
+
+        // Use the same metadata that smokeTest uses.
+        List<Variable> variables = Arrays.asList(//
+            new Variable(//
+                "VAR01", // name
+                1, // variable number
+                VariableType.NUMERIC, //
+                8, // length
+                "The label for Var 1", //
+                new Format("", 10, 2), //
+                Justification.LEFT, //
+                Format.UNSPECIFIED), //
+            new Variable(//
+                "second", //
+                2, // variable number
+                VariableType.NUMERIC, //
+                8, // length
+                "Label for second var", //
+                new Format("DOLLAR", 10), //
+                Justification.LEFT, //
+                new Format("", 0)), //
+            new Variable(//
+                "TEXT", //
+                3, //
+                VariableType.CHARACTER, //
+                15, //
+                "Var 3", //
+                new Format("$CHAR", 16), //
+                Justification.LEFT, //
+                new Format("", 0)));
+
+        SasDatasetDescription dataset = new SasDatasetDescription(//
+            "mydata", // name
+            "label for test dataset", // label
+            "DATA", // type
+            "Java", // OS version
+            "6.7", // SAS Version
+            variables, // variables
+            LocalDateTime.of(1999, 12, 23, 23, 59, 59), // create
+            LocalDateTime.of(2015, 2, 2, 3, 4, 5)); // modified
+
+        // Insert the dataset into a library with distinct OS/version/create/modified values.
+        SasLibraryDescription library = new SasLibraryDescription(//
+            dataset, //
+            "SunOS", //
+            "5.4", //
+            LocalDateTime.of(2015, 1, 1, 0, 0), // create
+            LocalDateTime.of(2015, 1, 1, 0, 0)); // modified
+
+        new ExportTestRunner(library, "SasTransportExporterTest_smokeTest.xpt") {
+            @Override
+            void addObservations(SasTransportExporter exporter) throws IOException {
+                // Create an observation that we can modify.
+                // This initially matches the first observation in smokeTest.
+                AtomicInteger mutableNumber = new AtomicInteger(5);
+                List<Object> observation1 = new ArrayList<>(Arrays.asList(15.2, mutableNumber, "first row"));
+
+                // Append the observation.
+                exporter.appendObservation(observation1);
+
+                // Modify the observation.
+                // This should not modify the SAS transport file.
+                observation1.set(1, 0.0);
+                mutableNumber.set(-1);
+                observation1.set(2, "new value");
+                observation1.add("too many");
+
+                // Write out the rest of the observations, consistent with smokeTest.
                 exporter.appendObservation(Arrays.asList(0, 10000, "second row"));
                 exporter.appendObservation(Arrays.asList(-400, 10000, ""));
                 exporter.appendObservation(Arrays.asList(MissingValue.B, 10000, "final row"));
