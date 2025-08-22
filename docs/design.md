@@ -69,9 +69,8 @@ This means we need a way to get the enum and the String form.
 **Years are two-digits.**
 Create or Modify time are stored as strings, giving 2 digits for dates.
 
-The writer takes a Date (naturally), but the reader cannot set a Date
-without caller intervention to supply the base year.
-Most caller won't even care about this until the year 2060.
+The writer takes a LocalDateTime, but the reader cannot set a LocalDateTime without caller intervention
+to supply the base year. Most caller won't even care about this until the year 2060.
 
 **Internal "Header" records.**
 There are some C structs documented in TS-140 that need to be serialized and unserialized.
