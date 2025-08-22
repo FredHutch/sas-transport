@@ -128,6 +128,7 @@ public class RealHeaderTest {
         assertEquals("SASLIB", realHeader.sasLibrary());
         assertEquals("1.0", realHeader.sasVersion());
         assertEquals("OS", realHeader.operatingSystem());
+        assertEquals("", realHeader.blanks());
         assertEquals(LocalDateTime.of(2015, 10, 25, 13, 18, 7), realHeader.createDate());
     }
 
