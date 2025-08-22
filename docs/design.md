@@ -71,7 +71,7 @@ Create or Modify time are stored as strings, giving 2 digits for dates.
 
 The writer takes a Date (naturally), but the reader cannot set a Date
 without caller intervention to supply the base year.
-Most caller won't even care about this.
+Most caller won't even care about this until the year 2060.
 
 **Internal "Header" records.**
 There are some C structs documented in TS-140 that need to be serialized and unserialized.
