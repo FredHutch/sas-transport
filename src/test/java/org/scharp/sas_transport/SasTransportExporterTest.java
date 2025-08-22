@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -776,6 +777,58 @@ public class SasTransportExporterTest {
                 exporter.appendObservation(repeat(variables.size(), Double.valueOf(1.234567890123456E+74)));
             }
         }.run();
+    }
+
+    @Test
+    public void testAppendNullObservation() throws IOException {
+
+        LocalDateTime fixedTimestamp = LocalDateTime.of(2015, 1, 1, 0, 0);
+
+        // Add variations on numeric truncations from length=2 to length=8.
+        List<Variable> variables = Collections.singletonList(//
+            new Variable(//
+                "text", // name
+                1, // variable number
+                VariableType.CHARACTER, //
+                16, // length
+                "Text", //
+                new Format("$", 16, 0), //
+                Justification.LEFT, //
+                Format.UNSPECIFIED));
+
+        SasDatasetDescription dataset = new SasDatasetDescription(//
+            "DATA", // name
+            "Test dataset", // label
+            "", // type
+            "Linux\0\0", // OS version
+            "9.1", // SAS Version
+            variables, // variables
+            fixedTimestamp, // create
+            fixedTimestamp); // modified
+
+        // Export to an in-memory byte buffer.
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        try (SasTransportExporter exporter = dataset.newLibraryDescription().exportTransportDataset(outputStream)) {
+            // Append a row
+            exporter.appendObservation(Arrays.asList("row 1"));
+
+            // Appending a null observation should not work.
+            Exception exception = assertThrows(//
+                NullPointerException.class, //
+                () -> exporter.appendObservation(null));
+            assertEquals("observation must not be null", exception.getMessage());
+
+            // The exception should not have corrupted the state, so subsequent writes should work.
+            exporter.appendObservation(Arrays.asList("row 2"));
+        }
+
+        // Read the transport back to confirm that both rows were written correctly.
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+        try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(inputStream)) {
+            assertEquals(Arrays.asList("row 1"), importer.nextObservation());
+            assertEquals(Arrays.asList("row 2"), importer.nextObservation());
+            assertNull(importer.nextObservation());
+        }
     }
 
     /**

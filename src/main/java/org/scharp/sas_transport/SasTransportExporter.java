@@ -280,13 +280,15 @@ public final class SasTransportExporter implements AutoCloseable {
      *     if this exporter has already been closed or if {@code observations} doesn't match the variables from the
      *     dataset description that was provided in this object's constructor.
      * @throws NullPointerException
-     *     If {@code observation} has a {@code null} value that is given to a variable whose type is
+     *     If {@code observation} is {@code null} or has a {@code null} value that is given to a variable whose type is
      *     {@code VariableType.CHARACTER}.
      * @throws IllegalArgumentException
      *     if {@code observation} contains a value that doesn't conform to the {@code variables} that was given to this
      *     object's constructor.
      */
     public void appendObservation(List<Object> observation) throws IOException {
+
+        ArgumentUtil.checkNotNull(observation, "observation");
 
         if (outputStream == null) {
             throw new IllegalStateException("Writing to a closed exporter");
