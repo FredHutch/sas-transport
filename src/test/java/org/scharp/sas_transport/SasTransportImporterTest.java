@@ -102,7 +102,8 @@ public class SasTransportImporterTest {
         importer.close();
 
         // Getting an observation should not work.
-        assertNextObservationsThrowsException(importer, IllegalStateException.class, "reading from closed stream");
+        assertNextObservationsThrowsException(importer, IllegalStateException.class,
+            "Cannot read from a closed importer");
 
         // Closing redundantly should not throw an exception.
         importer.close();

@@ -324,12 +324,12 @@ public final class SasTransportImporter implements AutoCloseable {
      *     current dataset and all observations imported so far is valid and complete. However, the API does not provide
      *     a way to access multiple datasets, so an exception is thrown.
      * @throws IllegalStateException
-     *     if the input stream was already closed.
+     *     if this importer was already closed.
      */
     public List<Object> nextObservation() throws IOException {
         try {
             if (inputStream == null) {
-                throw new IllegalStateException("reading from closed stream");
+                throw new IllegalStateException("Cannot read from a closed importer");
             }
             if (importException != null) {
                 // we are already in an error state, so we don't want to return

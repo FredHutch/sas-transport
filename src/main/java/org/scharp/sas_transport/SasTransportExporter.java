@@ -291,7 +291,7 @@ public final class SasTransportExporter implements AutoCloseable {
         ArgumentUtil.checkNotNull(observation, "observation");
 
         if (outputStream == null) {
-            throw new IllegalStateException("Writing to a closed exporter");
+            throw new IllegalStateException("Cannot append observations to a closed exporter");
         }
 
         if (variables.length != observation.size()) {

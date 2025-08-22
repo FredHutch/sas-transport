@@ -873,7 +873,7 @@ public class SasTransportExporterTest {
             IllegalStateException.class, //
             () -> exporter.appendObservation(Collections.singletonList("data")), //
             "appendObservation() on a closed exporter");
-        assertEquals("Writing to a closed exporter", exception.getMessage());
+        assertEquals("Cannot append observations to a closed exporter", exception.getMessage());
 
         // Closing redundantly should not throw an exception.
         exporter.close();
