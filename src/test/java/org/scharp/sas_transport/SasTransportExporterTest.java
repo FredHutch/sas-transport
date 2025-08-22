@@ -128,8 +128,7 @@ public class SasTransportExporterTest {
                 }
 
                 for (int i = 0; i < actualBytesRead; i++) {
-                    assertEquals(expectedBuffer[i], actualBuffer[i],
-                        "Streams are not identical at offset " + (index + i));
+                    assertEquals(expectedBuffer[i], actualBuffer[i], "Streams are different at offset " + (index + i));
                 }
 
                 index += actualBytesRead;
@@ -1476,7 +1475,7 @@ public class SasTransportExporterTest {
                 // Try to write too many values in an observation.
                 addObservationWithIllegalArgument(//
                     exporter, //
-                    "observation has too few values, expected 2 but got 3", //
+                    "observation has too many values, expected 2 but got 3", //
                     new Object[] { "text", 1.2, "too many" });
 
                 // Try to write too few values in an observation.
@@ -1484,6 +1483,12 @@ public class SasTransportExporterTest {
                     exporter, //
                     "observation has too few values, expected 2 but got 1", //
                     new Object[] { "too few" });
+
+                // Try to write an empty observation.
+                addObservationWithIllegalArgument(//
+                    exporter, //
+                    "observation has too few values, expected 2 but got 0", //
+                    new Object[] {});
 
                 // Write a well-formed row (to confirm that the exceptions failed without
                 // writing a partial row).
