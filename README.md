@@ -119,3 +119,9 @@ Limitations
 * Only ASCII strings are supported (as required by the FDA).
 * Requires Java 8 or later.
 * Compressed files (CPORT) are not supported.
+
+Downloading
+-----------
+This library is published on Maven Central at https://central.sonatype.com/artifact/org.scharp/sas-transport
+
+There, you will find instructions for downloading the library and referencing it your Maven application's `pom.xml`.
