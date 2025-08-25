@@ -188,4 +188,13 @@ public enum MissingValue {
 
         return null;
     }
+
+    /**
+     * Gets the string representation of this missing value, formatted as SAS formats it.
+     *
+     * @return The string representation of this missing value.
+     */
+    public String toString() {
+        return this == STANDARD ? "." : "." + (char) xportByteRepresentation();
+    }
 }

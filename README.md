@@ -95,24 +95,18 @@ The following code sample demonstrates how to read a SAS transport file and prin
              header.append(String.format(columnFormats.get(i), variable.name()));
          }
          System.out.println(header);
-    
+
          // Display each observation as a row in the table.
          List<Object> observation;
          while ((observation = importer.nextObservation()) != null) {
              StringBuilder row = new StringBuilder(header.length());
-    
+
              // Render each value in the observation.
              for (int i = 0; i < observation.size(); i++) {
-                 final Variable variable = datasetVariables.get(i);
-                 final Object value = observation.get(i);
-    
-                 // Format the value for display.
-                 final String formattedValue = (value instanceof MissingValue) ? "." : value.toString();
-    
-                 // Write the value with a fixed width, as done for the header.
-                 row.append(String.format(columnFormats.get(i), formattedValue));
+                 // Format each value as a fixed-width string, as done for the header.
+                 row.append(String.format(columnFormats.get(i), observation.get(i)));
              }
-    
+
              System.out.println(row);
          }
     }

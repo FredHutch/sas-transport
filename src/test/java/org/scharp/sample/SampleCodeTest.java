@@ -126,14 +126,8 @@ public class SampleCodeTest {
 
                 // Render each value in the observation.
                 for (int i = 0; i < observation.size(); i++) {
-                    final Variable variable = datasetVariables.get(i);
-                    final Object value = observation.get(i);
-
-                    // Format the value for display.
-                    final String formattedValue = (value instanceof MissingValue) ? "." : value.toString();
-
-                    // Write the value with a fixed width, as done for the header.
-                    row.append(String.format(columnFormats.get(i), formattedValue));
+                    // Format each value as a fixed-width string, as done for the header.
+                    row.append(String.format(columnFormats.get(i), observation.get(i)));
                 }
 
                 System.out.println(row);
