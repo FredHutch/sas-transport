@@ -193,10 +193,10 @@
  * try (SasTransportImporter importer = SasLibraryDescription.importTransportDataset(path)) {
  *
  *     // Get the variables.
- *     List&lt;Variable> datasetVariables = importer.sasLibraryDescription().datasetDescription().variables();
+ *     List&lt;Variable&gt; datasetVariables = importer.sasLibraryDescription().datasetDescription().variables();
  *
  *     // Figure out how to format each column (really, how much space to give it).
- *     List&lt;String> columnFormats = new ArrayList&lt;>(datasetVariables.size());
+ *     List&lt;String&gt; columnFormats = new ArrayList&lt;&gt;(datasetVariables.size());
  *     for (Variable variable : datasetVariables) {
  *         int columnWidth = Math.max(variable.name().length(), variable.outputFormat().width()) + 1;
  *         columnFormats.add("%-" + columnWidth + "s ");
@@ -211,7 +211,7 @@
  *     System.out.println(header);
  *
  *     // Display each observation as a row in the table.
- *     List&lt;Object> observation;
+ *     List&lt;Object&gt; observation;
  *     while ((observation = importer.nextObservation()) != null) {
  *         StringBuilder row = new StringBuilder(header.length());
  *
